@@ -14,23 +14,6 @@ namespace ChessKnockoff
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
-        private bool checkPasswordMatch()
-        {
-            //Then check if they match
-            if (inpPasswordRegister.Text != inpRePasswordRegister.Text)
-            {
-                //Makes the input appear invalid
-                inpPasswordRegister.Attributes["class"] += " is-invalid";
-                inpRePasswordRegister.Attributes["class"] += " is-invalid";
-
-                //Return false to signify they do not match
-                return false;
-            } else
-            {
-                //Return true to signify they do match
-                return true;
-            }
-        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -46,25 +29,12 @@ namespace ChessKnockoff
 
             //Hide the error message
             fedPasswordHelpBlock.Visible = false;
-
-            //Reset the class attribute to their default
-            inpPasswordRegister.Attributes["class"] = "form-control";
-            inpRePasswordRegister.Attributes["class"] = "form-control";
-
-            inpUsernameRegister.Attributes["class"] = "form-control";
-
-            //Check if any of the password fields have been edited
-            if (Page.IsPostBack)
-            {
-                //Check the passwords match
-                checkPasswordMatch();
-            }
         }
 
         protected void RegisterNewUser(object sender, EventArgs e)
         {
             //If both passwords match then continue
-            if(checkPasswordMatch())
+            if(inpPasswordRegister.Text == inpRePasswordRegister.Text)
             {
                 //Creates database connection
                 UserStore<IdentityUser> userStore = new UserStore<IdentityUser>();
