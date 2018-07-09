@@ -1,0 +1,21 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="BaseWithHeader.Master.cs" Inherits="ChessKnockoff.BaseWithScripts" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chess 2.0</title>
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/js") %>
+    </asp:PlaceHolder>
+    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+</head>
+<body>
+    <asp:ContentPlaceHolder ID="BaseContentWithHeader" runat="server">
+    </asp:ContentPlaceHolder>
+</body>
+</html>
