@@ -5,15 +5,14 @@
             <div class="text-center">
                 <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
                 <h2 class="signinheading mb-2">Login</h2>
-                    <div id="altRegistered" class="alert alert-success" runat="server">
-                        Account successfully created.
-                    </div>
-                    <div id="altMustBeLoggedIn" class="alert alert-info" runat="server">
-                        You must login first.
-                    </div>
-                    <div id="altAuthentication" class="alert alert-danger" runat="server">
-                        Username or password is incorrect.
-                    </div>
+                <div id="altRegistered" class="alert alert-success" runat="server">
+                    Account successfully created.
+                </div>
+                <div id="altMustBeLoggedIn" class="alert alert-info" runat="server">
+                    You must login first.
+                </div>
+                <div id="altAuthentication" class="alert alert-danger" runat="server">
+                </div>
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
