@@ -22,6 +22,24 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
+        /// scriptManagerRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager scriptManagerRegister;
+        
+        /// <summary>
+        /// updatePanelRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel updatePanelRegister;
+        
+        /// <summary>
         /// inpUsernameRegister control.
         /// </summary>
         /// <remarks>
@@ -29,6 +47,15 @@ namespace ChessKnockoff {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox inpUsernameRegister;
+        
+        /// <summary>
+        /// fedUsername control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl fedUsername;
         
         /// <summary>
         /// inpEmailRegister control.
