@@ -1,17 +1,13 @@
 ﻿using System;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security;
-using System.Net;
-using System.Text.RegularExpressions;
-using static ChessKnockoff.Utilities;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using ChessKnockoff.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Owin;
+using ChessKnockoff.Models;
+using static ChessKnockoff.Utilities;
+using System.Text.RegularExpressions;
 
 namespace ChessKnockoff
 {
@@ -40,15 +36,11 @@ namespace ChessKnockoff
             Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$");
             bool regexEmailResult = regexEmail.IsMatch(inpEmailRegister.Text);
 
-            //Validate username so that two error messages are not shown
-            Regex regexUsername = new Regex(@"^[a-z0-9]+$", RegexOptions.IgnoreCase);
-            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Text);
-
             //Validate password
             bool matchResult = inpPasswordRegister.Text == inpRePasswordRegister.Text;
 
             //Check they are all valid
-            if (matchResult && regexEmailResult && regexUsernameResult)
+            if (matchResult && regexEmailResult)
             {
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
@@ -63,9 +55,8 @@ namespace ChessKnockoff
                 }
                 else
                 {
-                    //The identity framework can implement various password rules which passwords can break more than one of
-                    //this allows various errors so be displayed without using a Jquery plugin to display each rule
-                    string tempHolder = Regex.Replace(result.Errors.FirstOrDefault<string>(), "([a-z])([A-Z])", "$1 $2") + "<br>";
+                    //Only one error is ever shown even if there is multiple errors
+                    string tempHolder = result.Errors.FirstOrDefault<string>();
 
                     //Display the error message without escaping HTML enocoding
                     fedPasswordHelpBlock.Visible = true;

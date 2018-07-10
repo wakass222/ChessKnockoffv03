@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace ChessKnockoff
 {
@@ -46,38 +47,47 @@ namespace ChessKnockoff
             }
 
         }
+
         protected void LoginClick(object sender, EventArgs e)
         {
-            //Creates database connection
-            var userStore = new UserStore<IdentityUser>();
-            //Pass database connection to the UserManager
-            var userManager = new UserManager<IdentityUser>(userStore);
+            //Validate the user password
+            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
 
-            //Looks for credentials
-            var user = userManager.Find(inpUsername.Value, inpPassword.Value);
+            //Require the user to have a confirmed email before they can log on.
+            var user = manager.FindByName(inpUsername.Value);
 
-            //The password or username are incorrect
+            //Check if a user by that name exists
             if (user != null)
             {
-                //Creates an interface for OWIN
-                var authenticationManager = HttpContext.Current.GetOwinContext().Authentication;
-                //Pass the OWIN interface to the UserManager
-                var userIdentity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                //Check if their email has been confirmed
+                if (!user.EmailConfirmed)
+                {
+                    //If it has not been confirmed show an error message
+                    altVerify.Visible = true;
+                }
+                else
+                {
+                    //Try to log them in
+                    var result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, false);
 
-                //Only allow persistent cookie if remember me was checked
-                authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = boxMeCheck.Checked }, userIdentity);
-
-                //Redirect to the Play page
-                Response.Redirect("~/Play");
-            }
-            else if (!user.EmailConfirmed) //The username and password are correct but the user has not confirmed their email
-            {
-                altVerify.Visible = true;
-            }
-            else //Authentication was no successful
-            {
-                //Show an error message
-                altAuthentication.Visible = true;
+                    switch (result)
+                    {
+                        case SignInStatus.Success:
+                            Response.Redirect(Request.QueryString["ReturnUrl"]);
+                            break;
+                        case SignInStatus.RequiresVerification:
+                            //Show error message to verify
+                            altVerify.Visible = true;
+                            break;
+                        case SignInStatus.Failure:
+                            //Show error message that password and username are not correct
+                            altAuthentication.Visible = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
     }

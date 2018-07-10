@@ -45,35 +45,13 @@
                     }
                 }
 
-                //Function to check if username is valid
-                function checkUsername() {
-                    var username = $("[id$='inpUsernameRegister']").val();
-
-                    //Create regex expression
-                    var regex = /^[a-z0-9]+$/i;
-
-                    //Evaluate the regex expression to the username
-                    var usernameValid = regex.test(username)
-
-                    //Check if the email is valid
-                    if (usernameValid) {
-                        //If the email is valid then remove the invalid class
-                        $("[id$='inpUsernameRegister']").removeClass("is-invalid");
-                    } else {
-                        //If the email is invalid then add the invalid class
-                        $("[id$='inpUsernameRegister']").addClass("is-invalid");
-                    }
-                }
-
                 //Assign an event when the document fully loads
                 $(document).ready(function () {
                     //Call the validation methods on document load
                     checkPasswordMatch();
                     checkEmail();
-                    checkUsername();
 
                     //Assign the respective events to the inputs on key up
-                    $("[id$='inpUsernameRegister']").keyup(checkUsername);
                     $("[id$='inpEmailRegister']").keyup(checkEmail);
                     $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").keyup(checkPasswordMatch);
                 });

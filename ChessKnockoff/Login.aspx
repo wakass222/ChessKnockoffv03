@@ -31,7 +31,7 @@
             </div>
             <div class="form-group">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="boxMeCheck" runat="server"/>
+                    <input class="form-check-input" type="checkbox" value="" id="boxRememberCheck" runat="server"/>
                     <label class="form-check-label" for="rememberMeCheck">Remember me</label>
                 </div>
             </div>

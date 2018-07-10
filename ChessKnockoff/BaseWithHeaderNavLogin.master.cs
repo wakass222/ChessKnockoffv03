@@ -19,8 +19,10 @@ namespace ChessKnockoff
                 //If the user is not authenticated
                 if (!HttpContext.Current.User.Identity.IsAuthenticated)
                 {
-                    //then redirect to the login page
-                    Response.Redirect("~/Login?MustBeLoggedIn=1");
+                    //Then redirect to the login page with reference to the current page
+                    string OriginalUrl = HttpContext.Current.Request.RawUrl;
+                    string LoginPageUrl = "/Login";
+                    HttpContext.Current.Response.Redirect(String.Format("{0}?ReturnUrl={1}", LoginPageUrl, OriginalUrl));
                 }
             }
         }
