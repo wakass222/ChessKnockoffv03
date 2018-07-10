@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security;
 using ChessKnockoff.Models;
 using System.Net.Mail;
 using System.Net;
 using System.Configuration;
+using Microsoft.Owin.Security;
+using Microsoft.Owin;
 
 namespace ChessKnockoff
 {
@@ -58,7 +58,7 @@ namespace ChessKnockoff
             // Configure validation logic for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
-                AllowOnlyAlphanumericUserNames = false,
+                AllowOnlyAlphanumericUserNames = true,
                 RequireUniqueEmail = true
             };
 

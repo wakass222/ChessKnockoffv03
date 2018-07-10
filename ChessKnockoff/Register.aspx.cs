@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Net;
-using System.Text.RegularExpressions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
+using System.Net;
+using System.Text.RegularExpressions;
 using static ChessKnockoff.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ChessKnockoff.Models;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace ChessKnockoff
 {
@@ -33,15 +36,24 @@ namespace ChessKnockoff
         protected void RegisterNewUser(object sender, EventArgs e)
         {
             //Server sided validation
-            if (inpPasswordRegister.Text == inpRePasswordRegister.Text && IsValidEmail(inpEmailRegister.Text))
-            {
-                //Creates database connection
-                UserStore<IdentityUser> userStore = new UserStore<IdentityUser>();
-                //Pass database connection to the UserManager
-                UserManager<IdentityUser> manager = new UserManager<IdentityUser>(userStore);
+            //Create Regex object for email validation
+            Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$");
+            bool regexEmailResult = regexEmail.IsMatch(inpEmailRegister.Text);
 
-                //Create the new user in the database and escape HTML tags so users may have html tags in their names
-                IdentityUser user = new IdentityUser() { UserName = WebUtility.HtmlEncode(inpUsernameRegister.Text) }; 
+            //Validate username so that two error messages are not shown
+            Regex regexUsername = new Regex(@"^[a-z0-9]+$", RegexOptions.IgnoreCase);
+            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Text);
+
+            //Validate password
+            bool matchResult = inpPasswordRegister.Text == inpRePasswordRegister.Text;
+
+            //Check they are all valid
+            if (matchResult && regexEmailResult && regexUsernameResult)
+            {
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+                var user = new ApplicationUser() { UserName = inpUsernameRegister.Text, Email = inpEmailRegister.Text };
+
                 IdentityResult result = manager.Create(user, inpPasswordRegister.Text);
 
                 //Check if it succeeded
@@ -49,16 +61,11 @@ namespace ChessKnockoff
                 {
                     Response.Redirect("~/Login?Registered=1");
                 }
-                else //An error occured
+                else
                 {
-                    //Will hold the final html string
-                    string tempHolder = "";
-                    foreach (string error in result.Errors)
-                    {
-                        //Add a space in before a capital ignoring the first one
-                        tempHolder += Regex.Replace(error, "([a-z])([A-Z])", "$1 $2");
-                        tempHolder += "<br />";
-                    }
+                    //The identity framework can implement various password rules which passwords can break more than one of
+                    //this allows various errors so be displayed without using a Jquery plugin to display each rule
+                    string tempHolder = Regex.Replace(result.Errors.FirstOrDefault<string>(), "([a-z])([A-Z])", "$1 $2") + "<br>";
 
                     //Display the error message without escaping HTML enocoding
                     fedPasswordHelpBlock.Visible = true;
