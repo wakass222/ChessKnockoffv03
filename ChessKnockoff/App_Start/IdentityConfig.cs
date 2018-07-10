@@ -34,7 +34,6 @@ namespace ChessKnockoff
             }
         }
     }
-    }
 
     public class SmsService : IIdentityMessageService
     {
@@ -90,7 +89,7 @@ namespace ChessKnockoff
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            manager.EmailService = new EmailService();
+            manager.EmailService = new ChessKnockoff.EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
