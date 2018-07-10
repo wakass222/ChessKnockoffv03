@@ -23,12 +23,13 @@ namespace ChessKnockoff
             }
 
             //Make the current link in the navbar active
-            activateNav(this, "likLog");
+            activateNav(this, "likLogin");
 
             //Hide the messages when first entering the page
             altAuthentication.Visible = false;
             altRegistered.Visible = false;
             altMustBeLoggedIn.Visible = false;
+            altVerify.Visible = false;
 
             //If the user was redirected from another page that required to be logged in
             if (Request.QueryString["MustBeLoggedIn"] == "1")
@@ -55,7 +56,7 @@ namespace ChessKnockoff
             //Looks for credentials
             var user = userManager.Find(inpUsername.Value, inpPassword.Value);
 
-            //Authentication was successful
+            //The password or username are incorrect
             if (user != null)
             {
                 //Creates an interface for OWIN
@@ -68,7 +69,12 @@ namespace ChessKnockoff
 
                 //Redirect to the Play page
                 Response.Redirect("~/Play");
-            } else //Authentication was no successful
+            }
+            else if (!user.EmailConfirmed) //The username and password are correct but the user has not confirmed their email
+            {
+                altVerify.Visible = true;
+            }
+            else //Authentication was no successful
             {
                 //Show an error message
                 altAuthentication.Visible = true;

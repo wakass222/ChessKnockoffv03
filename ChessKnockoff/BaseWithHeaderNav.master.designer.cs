@@ -58,22 +58,40 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtName;
         
         /// <summary>
-        /// likLog control.
+        /// navLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl likLog;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navLogin;
         
         /// <summary>
-        /// likLogInner control.
+        /// likLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor likLogInner;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl likLogin;
+        
+        /// <summary>
+        /// likRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl likRegister;
+        
+        /// <summary>
+        /// navLogout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl navLogout;
         
         /// <summary>
         /// BaseContentWithHeaderNav control.

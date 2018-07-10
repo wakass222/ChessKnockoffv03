@@ -14,6 +14,28 @@ namespace ChessKnockoff
     static public class Utilities
     {
         /// <summary>
+        /// Checks if email is valid
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        /// <returns></returns>
+        static public bool IsValidEmail(string email)
+        {
+            try
+            {
+                //See if a MailAddress object can be created
+                var addr = new System.Net.Mail.MailAddress(email);
+
+                //Will return true
+                return addr.Address == email;
+            }
+            catch //An error was thrown
+            {
+                //Return false
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Exposes master page's control 
         /// </summary>
         /// <param name="self">The current page</param>

@@ -15,8 +15,12 @@
                 <li class="nav-item" id="likAccount" runat="server"><a class="nav-link" href="/Account">Account</a></li>
             </ul>
             <span class="navbar-text ml-auto" id="txtName" runat="server"></span>
-            <ul class="navbar-nav">
-                <li class="nav-item" id="likLog" runat="server"><a id="likLogInner" class="nav-link" runat="server"></a></li>
+            <ul class="navbar-nav" id="navLogin" runat="server">
+                <li class="nav-item" runat="server" id="likLogin"><a class="nav-link" href="/Login">Login</a></li>
+                <li class="nav-item" runat="server" id="likRegister"><a class="nav-link" href="/Register">Register</a></li>
+            </ul>
+            <ul class="navbar-nav" id="navLogout" runat="server">
+                <li class="nav-item"><a class="nav-link" OnClick="Logout_Click">Logout</a></li>
             </ul>
         </div>
     </nav>

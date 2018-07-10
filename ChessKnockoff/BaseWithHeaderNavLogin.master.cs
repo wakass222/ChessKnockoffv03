@@ -20,7 +20,7 @@ namespace ChessKnockoff
                 if (!HttpContext.Current.User.Identity.IsAuthenticated)
                 {
                     //then redirect to the login page
-                    Response.Redirect("~/Login.aspx?MustBeLoggedIn=1");
+                    Response.Redirect("~/Login?MustBeLoggedIn=1");
                 }
             }
         }

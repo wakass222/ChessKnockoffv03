@@ -3,6 +3,10 @@
     <div class="inputForm mx-auto">
         <form id="form1" runat="server">
             <script>
+                //Does not use server control validation as it can not edit the tags on the elements
+                //Using javascript and the onkeyup event to submit the postback is wasteful and adds latency to the validation
+                //Server validation is still needed since these functions do not disable submission
+                //Function to check if passwords match
                 function checkPasswordMatch() {
                     //Get values from password inputs
                     var password = $("[id$='inpPasswordRegister']").val();
@@ -19,14 +23,38 @@
                         $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").addClass("is-invalid");
                     }
                 }
-                //Check if passwords match when loaded from previous tries
-                $(document).ready(function () {
-                    //checkPasswordMatch();
-                });
 
-                //Assign the function to the key up event
+                //Function to check if email is valid
+                function checkEmail() {
+                    //Get the value of the email input
+                    var email = $("[id$='inpEmailRegister']").val();
+
+                    //Create regex expression
+                    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+                    //Evaluate the regex expression to the email
+                    var emailValid = regex.test(String(email).toLowerCase());
+
+                    //Check if the email is valid
+                    if (emailValid) {
+                        //If the email is valid then remove the invalid class
+                        $("[id$='inpEmailRegister']").removeClass("is-invalid");
+                    } else {
+                        //If the email is invalid then add the invalid class
+                        $("[id$='inpEmailRegister']").addClass("is-invalid");
+                    }
+                }
+
+                //Function to check if username is valid
+
+                //Assign an event when the document fully loads
                 $(document).ready(function () {
-                   $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").keyup(checkPasswordMatch);
+                    //
+                    checkPasswordMatch();
+                    checkEmail();
+
+                    $("[id$='inpEmailRegister']").keyup(checkEmail);
+                    $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").keyup(checkPasswordMatch);
                 });
             </script>
             <div class="text-center">
@@ -36,6 +64,11 @@
             <div class="form-group">
                 <label for="username">Username</label>
                 <asp:TextBox id="inpUsernameRegister" required="" class="form-control" placeholder="Username" runat="server" ValidateRequestMode="Disabled" ViewStateMode="Enabled"></asp:TextBox>
+            </div>
+            <div class="form-group">
+                <label for="username">Email</label>
+                <asp:TextBox id="inpEmailRegister" required="" class="form-control" placeholder="Email" runat="server" ValidateRequestMode="Disabled" ViewStateMode="Enabled"></asp:TextBox>
+                <div class="invalid-feedback">Email is not valid.</div>
             </div>
             <div class="form-group">
                 <label for="inpPasswordRegister">Password</label>
@@ -51,7 +84,7 @@
                 <button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" onserverclick="RegisterNewUser" runat="server">Login</button>
             </div>
             <div class="form-group text-center">
-                Already have an account? <a href="Login.aspx">Login here</a>
+                Forgot your password? <a href="Reset">Reset here</a>
             </div>
         </form>
     </div>

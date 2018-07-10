@@ -14,7 +14,6 @@ namespace ChessKnockoff
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //If user is already logged in
@@ -25,7 +24,7 @@ namespace ChessKnockoff
             }
 
             //Make the current link in the navbar active
-            activateNav(this, "likLog");
+            activateNav(this, "likRegister");
 
             //Hide the error message
             fedPasswordHelpBlock.Visible = false;
@@ -33,22 +32,22 @@ namespace ChessKnockoff
 
         protected void RegisterNewUser(object sender, EventArgs e)
         {
-            //If both passwords match then continue
-            if(inpPasswordRegister.Text == inpRePasswordRegister.Text)
+            //Server sided validation
+            if (inpPasswordRegister.Text == inpRePasswordRegister.Text && IsValidEmail(inpEmailRegister.Text))
             {
                 //Creates database connection
                 UserStore<IdentityUser> userStore = new UserStore<IdentityUser>();
                 //Pass database connection to the UserManager
                 UserManager<IdentityUser> manager = new UserManager<IdentityUser>(userStore);
 
-                //Create the new user in the database and escape HTML tags
+                //Create the new user in the database and escape HTML tags so users may have html tags in their names
                 IdentityUser user = new IdentityUser() { UserName = WebUtility.HtmlEncode(inpUsernameRegister.Text) }; 
                 IdentityResult result = manager.Create(user, inpPasswordRegister.Text);
 
                 //Check if it succeeded
                 if (result.Succeeded)
                 {
-                    Response.Redirect("~/Login.aspx?Registered=1");
+                    Response.Redirect("~/Login?Registered=1");
                 }
                 else //An error occured
                 {

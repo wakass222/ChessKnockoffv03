@@ -14,18 +14,18 @@ namespace ChessKnockoff
             //If the user is authenticated
             if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                //Display a logout link
-                likLogInner.InnerText = "Logout";
-                likLogInner.Attributes.Add("OnClick", "Logout_Click");
+                //Display a logout link and hide the login links
+                navLogin.Visible = false;
+                navLogout.Visible = true;
 
                 //Display the name of the logged in user
                 txtName.InnerText = HttpContext.Current.User.Identity.Name;
             }
             else
             {
-                //Display a login link
-                likLogInner.InnerText = "Login";
-                likLogInner.Attributes.Add("href", "~/Login");
+                //Display the login link and hide the logout link
+                navLogin.Visible = true;
+                navLogout.Visible = false;
             }
         }
     }
