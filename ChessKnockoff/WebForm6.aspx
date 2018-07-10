@@ -4,21 +4,7 @@
 <head id="Head1" runat="server">
     <title>Restore Focus after background postback</title>
     <script type="text/javascript">
-      var postbackElement = null;
-      function RestoreFocus(source, args)
-      {
-        document.getElementById(postbackElement.id).focus();
-      }
-      function SavePostbackElement(source, args)
-      {
-        postbackElement = args.get_postBackElement();
-      }
-      function AddRequestHandler()
-      {
-        var prm = Sys.WebForms.PageRequestManager.getInstance();
-        prm.add_endRequest(RestoreFocus);
-        prm.add_beginRequest(SavePostbackElement);
-      }
+
     </script>
 </head>
 <body onload="AddRequestHandler()">

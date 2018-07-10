@@ -99,36 +99,12 @@ namespace ChessKnockoff
 
             //Hide the error messages
             fedPasswordHelpBlock.Visible = false;
-
-            //Set them to their defaults class
-            /*
-            inpEmailRegister.Attributes["class"] = "form-control";
-            inpPasswordRegister.Attributes["class"] = "form-control";
-            inpRePasswordRegister.Attributes["class"] = "form-control";
-            inpUsernameRegister.Attributes["class"] = "form-control";
-            */
-
-            if (Page.IsPostBack)
-            {
-                switch (this.Request.Params.Get("__EVENTTARGET"))
-                {
-                    case "inpUsernameRegister":
-                        checkUsername();
-                        break;
-                    case "inpEmailRegister":
-                        checkEmail();
-                        break;
-                    case "inpPasswordRegister":
-                        checkPassword();
-                        break;
-                }
-            }
         }
 
         protected void RegisterNewUser(object sender, EventArgs e)
         {
-            //Check they are all valid
-            if (checkUsername() && checkPassword() && checkEmail())
+            //Check they are all valid and show the appropiate messages
+            if (checkUsername() & checkPassword() & checkEmail())
             {
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
