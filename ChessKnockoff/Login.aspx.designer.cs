@@ -49,22 +49,31 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altAuthentication;
         
         /// <summary>
-        /// inpUsername control.
+        /// altEmailConfirm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsername;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailConfirm;
         
         /// <summary>
-        /// inpPassword control.
+        /// inpUsernameLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPassword;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsernameLogin;
+        
+        /// <summary>
+        /// inpPasswordLogin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordLogin;
         
         /// <summary>
         /// boxRememberCheck control.

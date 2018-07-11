@@ -12,7 +12,6 @@
                 <li class="nav-item" id="likPLay" runat="server"><a class="nav-link" href="/Play">Play</a></li>
                 <li class="nav-item" id="likLeaderboard" runat="server"><a class="nav-link" href="/Leaderboard">Leaderboard</a></li>
                 <li class="nav-item" id="likHowToPlay" runat="server"><a class="nav-link" href="/HowToPlay">How to play</a></li>
-                <li class="nav-item" id="likAccount" runat="server"><a class="nav-link" href="/Account">Account</a></li>
             </ul>
             <span class="navbar-text ml-auto" id="txtName" runat="server"></span>
             <ul class="navbar-nav" id="navLogin" runat="server">

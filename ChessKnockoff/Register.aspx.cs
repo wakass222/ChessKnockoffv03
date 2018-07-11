@@ -15,10 +15,19 @@ namespace ChessKnockoff
     {
         private bool checkUsername()
         {
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultUsername = manager.UserValidator.ValidateAsync(new ApplicationUser() { UserName = inpUsernameRegister.Text, Email = "test@test.com"}).Result;
+            Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
+            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Value);
 
-            if (resultUsername.Succeeded)
+            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var resultUsername = manager.FindByName(inpUsernameRegister.Value);
+
+            //Check if the username is not alphanumeric and the username does not exists
+            if (regexUsernameResult && resultUsername == null)
+            {
+
+            }
+            /*
+            if (resultUsername != null)
             {
                 inpUsernameRegister.Attributes["class"] = "form-control is-valid";
                 return true;
@@ -32,23 +41,24 @@ namespace ChessKnockoff
 
                 return false;
             }
+            */
         }
 
         private bool checkEmail()
         {
             Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$",
-                RegexOptions.IgnoreCase
-                );
-            bool regexEmailResult = regexEmail.IsMatch(inpEmailRegister.Text);
+               RegexOptions.IgnoreCase
+               );
+            bool regexEmailResult = regexEmail.IsMatch(inpEmailRegister.Value);
 
             if (regexEmailResult)
             {
-                inpEmailRegister.Attributes["class"] = "form-control is-valid";
+                //inpEmailRegister.Attributes["class"] = "form-control is-valid";
                 return true;
             }
             else
             {
-                inpEmailRegister.Attributes["class"] = "form-control is-invalid";
+                //inpEmailRegister.Attributes["class"] = "form-control is-invalid";
                 return false;
             }
         }
@@ -56,30 +66,30 @@ namespace ChessKnockoff
         private bool checkPassword()
         {
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Text).Result;
+            var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Value).Result;
 
-            bool matchResult = inpPasswordRegister.Text == inpRePasswordRegister.Text;
+            bool matchResult = inpPasswordRegister.Value == inpRePasswordRegister.Value;
 
             if (matchResult && resultPassword.Succeeded)
             {
-                inpPasswordRegister.Attributes["class"] = "form-control is-valid";
-                inpRePasswordRegister.Attributes["class"] = "form-control is-valid";
+                //inpPasswordRegister.Attributes["class"] = "form-control is-valid";
+                //inpRePasswordRegister.Attributes["class"] = "form-control is-valid";
                 return true;
             }
             else
             {
-                inpPasswordRegister.Attributes["class"] = "form-control is-invalid";
-                inpRePasswordRegister.Attributes["class"] = "form-control is-invalid";
+                //inpPasswordRegister.Attributes["class"] = "form-control is-invalid";
+                //inpRePasswordRegister.Attributes["class"] = "form-control is-invalid";
 
                 if (!matchResult)
                 {
-                    fedPasswordHelpBlock.Visible = true;
+                    //fedPasswordHelpBlock.Visible = true;
                 }
 
                 if (!resultPassword.Succeeded)
                 {
-                    fedPasswordHelpBlock.Visible = true;
-                    fedPasswordHelpBlock.InnerText = resultPassword.Errors.FirstOrDefault<string>();
+                    //fedPasswordHelpBlock.Visible = true;
+                    //fedPasswordHelpBlock.InnerText = resultPassword.Errors.FirstOrDefault<string>();
                 }
                 return false;
             }
@@ -108,13 +118,19 @@ namespace ChessKnockoff
             {
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-                var user = new ApplicationUser() { UserName = inpUsernameRegister.Text, Email = inpEmailRegister.Text };
+                var user = new ApplicationUser() { UserName = inpUsernameRegister.Value, Email = inpEmailRegister.Value };
                 
-                IdentityResult result = manager.Create(user, inpPasswordRegister.Text);
+                IdentityResult result = manager.Create(user, inpPasswordRegister.Value);
 
                 //Check if it succeeded
                 if (result.Succeeded)
                 {
+                    //Send email confirmation link
+                    string code = manager.GenerateEmailConfirmationToken(user.Id);
+                    string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                    manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                    //Redirect them to the login page
                     Response.Redirect("~/Login?Registered=1");
                 }
                 else

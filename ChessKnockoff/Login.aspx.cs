@@ -20,7 +20,14 @@ namespace ChessKnockoff
             if (User.Identity.IsAuthenticated)
             {
                 //Redirect them to the play page
-                Response.Redirect("~/Play");
+                if (this.Request.QueryString["ReturnUrl"] != null)
+                {
+                    this.Response.Redirect(Request.QueryString["ReturnUrl"].ToString());
+                }
+                else
+                {
+                    this.Response.Redirect("/Play");
+                }
             }
 
             //Make the current link in the navbar active
@@ -31,6 +38,7 @@ namespace ChessKnockoff
             altRegistered.Visible = false;
             altMustBeLoggedIn.Visible = false;
             altVerify.Visible = false;
+            altEmailConfirm.Visible = false;
 
             //If the user was redirected from another page that required to be logged in
             if (Request.QueryString["MustBeLoggedIn"] == "1")
@@ -55,7 +63,7 @@ namespace ChessKnockoff
             var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
 
             //Require the user to have a confirmed email before they can log on.
-            var user = manager.FindByName(inpUsername.Value);
+            var user = manager.FindByName(inpUsernameLogin.Value);
 
             //Check if a user by that name exists
             if (user != null)
@@ -63,13 +71,18 @@ namespace ChessKnockoff
                 //Check if their email has been confirmed
                 if (!user.EmailConfirmed)
                 {
+                    //Send email confirmation link
+                    string code = manager.GenerateEmailConfirmationToken(user.Id);
+                    string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                    manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
                     //If it has not been confirmed show an error message
                     altVerify.Visible = true;
                 }
                 else
                 {
                     //Try to log them in
-                    var result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, false);
+                    var result = signinManager.PasswordSignIn(inpUsernameLogin.Value, inpPasswordLogin.Value, boxRememberCheck.Checked, false);
 
                     switch (result)
                     {

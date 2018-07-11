@@ -13,31 +13,13 @@ namespace ChessKnockoff {
     public partial class WebForm2 {
         
         /// <summary>
-        /// form1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        
-        /// <summary>
-        /// scriptManagerRegister control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManager scriptManagerRegister;
-        
-        /// <summary>
         /// inpUsernameRegister control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpUsernameRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsernameRegister;
         
         /// <summary>
         /// fedUsername control.
@@ -55,7 +37,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpEmailRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText inpEmailRegister;
         
         /// <summary>
         /// inpPasswordRegister control.
@@ -64,7 +46,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpPasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordRegister;
         
         /// <summary>
         /// inpRePasswordRegister control.
@@ -73,7 +55,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpRePasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordRegister;
         
         /// <summary>
         /// fedPasswordHelpBlock control.
