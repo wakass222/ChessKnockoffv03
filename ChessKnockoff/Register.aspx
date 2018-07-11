@@ -4,43 +4,73 @@
         <form runat="server">
             <script>
                 function checkPasswordMatch() {
-                    //Get values from password inputs
-                    var password = $("[id$='inpPasswordRegister']").val();
-                    //Class selector has to be used since asp.net creates their own
-                    var confirmPassword = $("[id$='inpRePasswordRegister']").val();
+                    //Get elements
+                    var inpPassword = $("[id$='inpPasswordRegister']");
+                    var inpPasswordConfirm = $("[id$='inpRePasswordRegister']");
+
                     //Check of they match
-                    if (password == confirmPassword) {
-                        //If they match remove the is invalid class
-                        $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").removeClass("is-invalid");
+                    if (inpPassword.val() == inpPasswordConfirm.val()) {
+                        //Show success
+                        inpPassword.add(inpPasswordConfirm).addClass("is-valid");
+                        inpPassword.add(inpPasswordConfirm).removeClass("is-invalid");
                     }
                     else {
-                        //If they dont add the invalid class
-                        $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").addClass("is-invalid");
+                        //Show error
+                        inpPassword.add(inpPasswordConfirm).removeClass("is-valid");
+                        inpPassword.add(inpPasswordConfirm).addClass("is-invalid");
                     }
                 }
 
-                function checkUsernameMatch() {
-                    //Get values from username input
-                    var password = $("[id$='inpUsernameRegister']").val();
+                function checkEmailRule() {
+                    //Get element
+                    var inpEmail = $("[id$='inpEmailRegister']");
 
-                    //Check of they match
-                    if (password == confirmPassword) {
-                        //If they match remove the is invalid class
-                        $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").removeClass("is-invalid");
-                    }
-                    else {
-                        //If they dont add the invalid class
-                        $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").addClass("is-invalid");
+                    //Create regex for email
+                    var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+
+                    //Check it against the regex
+                    if (emailRegex.test(inpEmail.val())) {
+                        //Show success
+                        inpEmail.addClass("is-valid");
+                        inpEmail.removeClass("is-invalid");
+                    } else {
+                        //Show error
+                        inpEmail.removeClass("is-valid");
+                        inpEmail.addClass("is-invalid");
                     }
                 }
 
-                //Check if passwords match when loaded from previous tries
+                function checkUsernameRule() {
+                    //Get element
+                    var inpUsername = $("[id$='inpUsernameRegister']");
+
+                    //Create regex for alphanumeric characters only
+                    var usernameRegex = /^[a-z0-9]+$/i;
+
+                    //Check it against the regex
+                    if (usernameRegex.test(inpUsername.val())) {
+                        //Show success
+                        inpUsername.addClass("is-valid");
+                        inpUsername.removeClass("is-invalid");
+                    } else {
+                        //Show error
+                        inpUsername.removeClass("is-valid");
+                        inpUsername.addClass("is-invalid");
+                    }
+                }
+
+                function checkInput() {
+                    //Call each check
+                    checkEmailRule();
+                    checkUsernameRule();
+                    checkPasswordMatch();
+                }
+
+                //Assign the function to the key up event once the DOM has completely loaded
                 $(document).ready(function () {
-                    //checkPasswordMatch();
-                });
-                //Assign the function to the key up event
-                $(document).ready(function () {
-                   $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").keyup(checkPasswordMatch);
+                    $("[id$='inpEmailRegister']").keyup(checkEmailRule);
+                    $("[id$='inpUsernameRegister']").keyup(checkUsernameRule);
+                    $("[id$='inpPasswordRegister'], [id$='inpRePasswordRegister']").keyup(checkPasswordMatch);
                 });
             </script>
             <div class="text-center">
@@ -50,7 +80,7 @@
             <div class="form-group">
                 <label for="username">Username</label>
                 <input id="inpUsernameRegister" required="" class="form-control" placeholder="Username" runat="server"/>
-                <div id="fedUsername" class="invalid-feedback" runat="server"></div>
+                <div id="fedUsername" class="invalid-feedback" runat="server">Can only contain alphanumeric characters.</div>
             </div>
             <div class="form-group">
                 <label for="username">Email</label>
@@ -68,7 +98,7 @@
                 <div id="fedPasswordHelpBlock" class="alert alert-danger" runat="server">
             </div>
             <div class="form-group">
-                <button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" onserverclick="RegisterNewUser" runat="server">Login</button>
+                <button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" onserverclick="RegisterNewUser" onclick="checkInput()" runat="server">Login</button>
             </div>
             <div class="form-group text-center">
                 Have an account? <a href="Login">Login here</a>

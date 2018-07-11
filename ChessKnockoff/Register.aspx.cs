@@ -13,6 +13,7 @@ namespace ChessKnockoff
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
+
         private bool checkUsername()
         {
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
@@ -21,11 +22,16 @@ namespace ChessKnockoff
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var resultUsername = manager.FindByName(inpUsernameRegister.Value);
 
-            //Check if the username is not alphanumeric and the username does not exists
-            if (regexUsernameResult && resultUsername == null)
+            //Check if the username is alphanumeric and the username does exists
+            if (regexUsernameResult && resultUsername != null)
             {
 
             }
+            else
+            {
+                return false;
+            }
+
             /*
             if (resultUsername != null)
             {
