@@ -13,12 +13,39 @@ namespace ChessKnockoff {
     public partial class WebForm2 {
         
         /// <summary>
-        /// frmReset control.
+        /// inpPasswordReset control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm frmReset;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordReset;
+        
+        /// <summary>
+        /// inpRePasswordReset control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordReset;
+        
+        /// <summary>
+        /// btnSubmitReset control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlButton btnSubmitReset;
+        
+        /// <summary>
+        /// altError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altError;
     }
 }

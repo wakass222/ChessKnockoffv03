@@ -104,7 +104,11 @@ namespace ChessKnockoff
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
+                manager.UserTokenProvider = new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"))
+                {
+                    //Set an expiry on the tokens generated including confirmation and reset tokens
+                    TokenLifespan = TimeSpan.FromHours(2)
+                };
             }
             return manager;
         }

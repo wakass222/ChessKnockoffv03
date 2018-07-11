@@ -31,7 +31,7 @@ namespace ChessKnockoff
                 if (resultUsername != null)
                 {
                     //Only show the email is taken if the email passes the regex test since that is shown client side
-                    altEmailTaken.Visible = true;
+                    altUsernameTaken.Visible = true;
                     return false;
                 }
                 else
@@ -145,11 +145,8 @@ namespace ChessKnockoff
                 }
                 else
                 {
-                    //Only one error is ever shown even if there is multiple errors
-                    string tempHolder = result.Errors.FirstOrDefault<string>();
-
-                    //Display that an error has occured
-                    altError.Visible = true;
+                    //Write to the debug log something has occured
+                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
                 }
             }
         }

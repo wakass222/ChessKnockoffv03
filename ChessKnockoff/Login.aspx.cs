@@ -24,6 +24,7 @@ namespace ChessKnockoff
             altMustBeLoggedIn.Visible = false;
             altVerify.Visible = false;
             altEmailConfirm.Visible = false;
+            altResetPassword.Visible = false;
 
             //If user is already logged in
             if (User.Identity.IsAuthenticated)
@@ -55,6 +56,11 @@ namespace ChessKnockoff
                 {
                     altEmailConfirm.Visible = true;
                 }
+                else
+                {
+                    //Write to the debug log something has occured
+                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
+                }
             }
 
             //If the user was redirected from another page that required to be logged in
@@ -71,10 +77,11 @@ namespace ChessKnockoff
                 altRegistered.Visible = true;
             }
 
-        }
-        protected void LoginClick2(object sender, EventArgs e)
-        {
-            altVerify.Visible = !altVerify.Visible;
+            if (Request.QueryString["ResetPassword"] == "1")
+            {
+                //Displat the message
+                altResetPassword.Visible = true;
+            }
         }
 
         protected void LoginClick(object sender, EventArgs e)

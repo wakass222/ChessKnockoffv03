@@ -67,9 +67,17 @@ namespace ChessKnockoff
             return HttpUtility.UrlDecode(request.QueryString[UserIdKey]);
         }
 
-        public static string GetResetPasswordRedirectUrl(string code, HttpRequest request)
+        /// <summary>
+        /// Also transmits the user id
+        /// </summary>
+        /// <param name="UserID">User's id</param>
+        /// <param name="code">The reset code</param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static string GetResetPasswordRedirectUrl(string UserID, string code, HttpRequest request)
         {
-            var absoluteUri = "/Reset?" + CodeKey + "=" + HttpUtility.UrlEncode(code);
+            //The url will also transmit the username
+            var absoluteUri = "/Reset?" + CodeKey + "=" + HttpUtility.UrlEncode(code) + "&" + UserIdKey + "=" + HttpUtility.UrlEncode(UserID);
             return new Uri(request.Url, absoluteUri).AbsoluteUri.ToString();
         }
 

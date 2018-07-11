@@ -1,6 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="ChessKnockoff.WebForm4" EnableSessionState="True" EnableViewState="False" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
-<form id="form2" class="inputForm mx-auto" runat="server">
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
+<form class="inputForm mx-auto" runat="server">
     <div class="text-center">
         <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
         <h2 class="signinheading mb-2">Login</h2>
@@ -19,6 +19,9 @@
         <div id="altEmailConfirm" class="alert alert-success" runat="server">
             Your email has been confirmed.
         </div>
+        <div id="altResetPassword" class="alert alert-success" runat="server">
+            Your password has been reset.
+        </div>
     </div>
     <div class="form-group">
         <label for="username">Username</label>
@@ -28,7 +31,7 @@
         <label for="password">Password</label>
         <input type="password" id="inpPasswordLogin" class="form-control" name="password" placeholder="Password" required runat="server"/>
         <div class="ml-auto">
-            <small id="emailHelp" class="form-text text-muted">Forgot your password? <a href="Reset.aspx">Reset here</a></small>
+            <small id="emailHelp" class="form-text text-muted">Forgot your password? <a href="Forgot">Reset here</a></small>
         </div>
     </div>
     <div class="form-group">

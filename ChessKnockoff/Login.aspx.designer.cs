@@ -13,15 +13,6 @@ namespace ChessKnockoff {
     public partial class WebForm4 {
         
         /// <summary>
-        /// form2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form2;
-        
-        /// <summary>
         /// altRegistered control.
         /// </summary>
         /// <remarks>
@@ -65,6 +56,15 @@ namespace ChessKnockoff {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailConfirm;
+        
+        /// <summary>
+        /// altResetPassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altResetPassword;
         
         /// <summary>
         /// inpUsernameLogin control.
