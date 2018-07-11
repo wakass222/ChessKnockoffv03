@@ -1,102 +1,102 @@
-﻿using System;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
+﻿using ChessKnockoff.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Owin;
-using ChessKnockoff.Models;
-using static ChessKnockoff.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using static ChessKnockoff.Utilities;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm2 : System.Web.UI.Page
+    public partial class WebForm1 : System.Web.UI.Page
     {
-
         private bool checkUsername()
         {
+            //Create username regex
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
             bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Value);
 
+            //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var resultUsername = manager.FindByName(inpUsernameRegister.Value);
 
-            //Check if the username is alphanumeric and the username does exists
-            if (regexUsernameResult && resultUsername != null)
+            //Will only return true if the username is valid and has not beent taken
+            if (regexUsernameResult)
             {
-
+                if (resultUsername != null)
+                {
+                    //Only show the email is taken if the email passes the regex test since that is shown client side
+                    altEmailTaken.Visible = true;
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
                 return false;
             }
-
-            /*
-            if (resultUsername != null)
-            {
-                inpUsernameRegister.Attributes["class"] = "form-control is-valid";
-                return true;
-            }
-            else
-            {
-                inpUsernameRegister.Attributes["class"] = "form-control is-invalid";
-
-                fedUsername.Visible = true;
-                fedUsername.InnerText = resultUsername.Errors.FirstOrDefault<string>();
-
-                return false;
-            }
-            */
         }
 
         private bool checkEmail()
         {
-            Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$",
-               RegexOptions.IgnoreCase
-               );
-            bool regexEmailResult = regexEmail.IsMatch(inpEmailRegister.Value);
+            //Create manager
+            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var resultEmail = manager.FindByEmail(inpEmailRegister.Value);
 
-            if (regexEmailResult)
+            //Will only return true if the email has not been taken and is valid
+            if (IsValidEmail(inpEmailRegister.Value))
             {
-                //inpEmailRegister.Attributes["class"] = "form-control is-valid";
-                return true;
+                //Only show the email is taken if the email passes the regex check since that is shown clientside
+                if (resultEmail != null)
+                {
+                    altEmailTaken.Visible = true;
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
-                //inpEmailRegister.Attributes["class"] = "form-control is-invalid";
                 return false;
             }
         }
 
         private bool checkPassword()
         {
+            //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            //Check if password is valid
             var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Value).Result;
 
+            //Check if passwords match
             bool matchResult = inpPasswordRegister.Value == inpRePasswordRegister.Value;
 
-            if (matchResult && resultPassword.Succeeded)
+            //Only returns true if the password is valid against password rules and they both match
+            if (matchResult)
             {
-                //inpPasswordRegister.Attributes["class"] = "form-control is-valid";
-                //inpRePasswordRegister.Attributes["class"] = "form-control is-valid";
-                return true;
+                if (!resultPassword.Succeeded)
+                {
+                    altPassword.Visible = true;
+                    altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
-                //inpPasswordRegister.Attributes["class"] = "form-control is-invalid";
-                //inpRePasswordRegister.Attributes["class"] = "form-control is-invalid";
-
-                if (!matchResult)
-                {
-                    //fedPasswordHelpBlock.Visible = true;
-                }
-
-                if (!resultPassword.Succeeded)
-                {
-                    //fedPasswordHelpBlock.Visible = true;
-                    //fedPasswordHelpBlock.InnerText = resultPassword.Errors.FirstOrDefault<string>();
-                }
                 return false;
             }
         }
@@ -113,19 +113,23 @@ namespace ChessKnockoff
             //Make the current link in the navbar active
             activateNav(this, "likRegister");
 
-            //Hide the error messages
-            fedPasswordHelpBlock.Visible = false;
+            //Hide errors as the viewstate is not saved
+            altPassword.Visible = false;
+            altEmailTaken.Visible = false;
+            altUsernameTaken.Visible = false;
+            altError.Visible = false;
         }
 
         protected void RegisterNewUser(object sender, EventArgs e)
         {
+            altError.Visible = true;
             //Check they are all valid and show the appropiate messages
             if (checkUsername() & checkPassword() & checkEmail())
             {
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
                 var user = new ApplicationUser() { UserName = inpUsernameRegister.Value, Email = inpEmailRegister.Value };
-                
+
                 IdentityResult result = manager.Create(user, inpPasswordRegister.Value);
 
                 //Check if it succeeded
@@ -144,9 +148,8 @@ namespace ChessKnockoff
                     //Only one error is ever shown even if there is multiple errors
                     string tempHolder = result.Errors.FirstOrDefault<string>();
 
-                    //Display the error message without escaping HTML enocoding
-                    fedPasswordHelpBlock.Visible = true;
-                    fedPasswordHelpBlock.InnerHtml = tempHolder;
+                    //Display that an error has occured
+                    altError.Visible = true;
                 }
             }
         }

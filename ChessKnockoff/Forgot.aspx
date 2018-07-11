@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm4" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm7" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
-    <form class="inputForm mx-auto" runat="server">
+    <form id="form4" class="inputForm mx-auto" runat="server">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
             <h2 class="signinheading mb-2">Reset password</h2>

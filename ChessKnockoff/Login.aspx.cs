@@ -1,21 +1,30 @@
-﻿using System;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security;
-using static ChessKnockoff.Utilities;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static ChessKnockoff.Utilities;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm1 : System.Web.UI.Page
+    public partial class WebForm4 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            //Make the current link in the navbar active
+            activateNav(this, "likLogin");
+
+            //Hide the messages when first entering the page and for other request as the viewstate is not saved
+            altAuthentication.Visible = false;
+            altRegistered.Visible = false;
+            altMustBeLoggedIn.Visible = false;
+            altVerify.Visible = false;
+            altEmailConfirm.Visible = false;
+
             //If user is already logged in
             if (User.Identity.IsAuthenticated)
             {
@@ -30,15 +39,23 @@ namespace ChessKnockoff
                 }
             }
 
-            //Make the current link in the navbar active
-            activateNav(this, "likLogin");
+            //Get the confirmation code and ID
+            string confirmationCode = IdentityHelper.GetCodeFromRequest(Request);
+            string confirmationUserId = IdentityHelper.GetUserIdFromRequest(Request);
 
-            //Hide the messages when first entering the page
-            altAuthentication.Visible = false;
-            altRegistered.Visible = false;
-            altMustBeLoggedIn.Visible = false;
-            altVerify.Visible = false;
-            altEmailConfirm.Visible = false;
+            //Check they both exist
+            if (confirmationCode != null && confirmationUserId != null)
+            {
+                //Try to confirm them
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                var result = manager.ConfirmEmail(confirmationUserId, confirmationCode);
+
+                //If it succeeded them confirm
+                if (result.Succeeded)
+                {
+                    altEmailConfirm.Visible = true;
+                }
+            }
 
             //If the user was redirected from another page that required to be logged in
             if (Request.QueryString["MustBeLoggedIn"] == "1")
@@ -54,6 +71,10 @@ namespace ChessKnockoff
                 altRegistered.Visible = true;
             }
 
+        }
+        protected void LoginClick2(object sender, EventArgs e)
+        {
+            altVerify.Visible = !altVerify.Visible;
         }
 
         protected void LoginClick(object sender, EventArgs e)

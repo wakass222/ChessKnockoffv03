@@ -10,7 +10,16 @@
 namespace ChessKnockoff {
     
     
-    public partial class WebForm2 {
+    public partial class WebForm1 {
+        
+        /// <summary>
+        /// form3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlForm form3;
         
         /// <summary>
         /// inpUsernameRegister control.
@@ -31,6 +40,15 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl fedUsername;
         
         /// <summary>
+        /// altUsernameTaken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altUsernameTaken;
+        
+        /// <summary>
         /// inpEmailRegister control.
         /// </summary>
         /// <remarks>
@@ -38,6 +56,15 @@ namespace ChessKnockoff {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlInputText inpEmailRegister;
+        
+        /// <summary>
+        /// altEmailTaken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailTaken;
         
         /// <summary>
         /// inpPasswordRegister control.
@@ -58,13 +85,13 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordRegister;
         
         /// <summary>
-        /// fedPasswordHelpBlock control.
+        /// altPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl fedPasswordHelpBlock;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altPassword;
         
         /// <summary>
         /// btnSubmitRegister control.
@@ -74,5 +101,14 @@ namespace ChessKnockoff {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlButton btnSubmitRegister;
+        
+        /// <summary>
+        /// altError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altError;
     }
 }

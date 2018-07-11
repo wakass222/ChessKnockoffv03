@@ -17,18 +17,28 @@ namespace ChessKnockoff
     {
         public async Task SendAsync(IdentityMessage message)
         {
+            //Create mail message object
             using (MailMessage mail = new MailMessage())
             {
+                //Set the sending email address
                 mail.From = new MailAddress(ConfigurationManager.AppSettings["emailServiceUserName"]);
+                //Set the destination address
                 mail.To.Add(message.Destination);
+                //Set the subject
                 mail.Subject = message.Subject;
+                //Set the body
                 mail.Body = message.Body;
+                //Make sure the body is rendered as HTML
                 mail.IsBodyHtml = true;
 
+                //Create a SmtpClient to gmail servers and the dispose when finished
                 using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
                 {
+                    //Credentials for verification
                     smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["emailServiceUserName"], ConfigurationManager.AppSettings["emailServicePassword"]);
+                    //SSL must be enabled
                     smtp.EnableSsl = true;
+                    //Send the email
                     await smtp.SendMailAsync(mail);
                 }
             }

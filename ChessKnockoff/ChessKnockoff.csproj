@@ -234,13 +234,13 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <Content Include="Login.aspx" />
-    <Content Include="Register.aspx" />
     <Content Include="BaseWithHeaderNavLogin.master" />
     <Content Include="BaseWithHeader.Master" />
     <Content Include="BaseWithHeaderNav.master" />
+    <Content Include="Register.aspx" />
     <Content Include="Forgot.aspx" />
-    <Content Include="Play.aspx" />
+    <Content Include="Login.aspx" />
+    <Content Include="Reset.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -317,13 +317,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="Login.aspx.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Register.aspx.cs">
       <DependentUpon>Register.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -338,12 +331,19 @@
     <Compile Include="Forgot.aspx.designer.cs">
       <DependentUpon>Forgot.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Play.aspx.cs">
-      <DependentUpon>Play.aspx</DependentUpon>
+    <Compile Include="Reset.aspx.cs">
+      <DependentUpon>Reset.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Play.aspx.designer.cs">
-      <DependentUpon>Play.aspx</DependentUpon>
+    <Compile Include="Reset.aspx.designer.cs">
+      <DependentUpon>Reset.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
