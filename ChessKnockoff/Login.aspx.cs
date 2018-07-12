@@ -115,7 +115,14 @@ namespace ChessKnockoff
                     switch (result)
                     {
                         case SignInStatus.Success:
-                            Response.Redirect(Request.QueryString["ReturnUrl"]);
+                            if (Request.QueryString["ReturnUrl"] == null)
+                            {
+                                Response.Redirect(Request.QueryString["ReturnUrl"]);
+                            }
+                            else
+                            {
+                                Response.Redirect("~/Play");
+                            }
                             break;
                         case SignInStatus.RequiresVerification:
                             //Show error message to verify

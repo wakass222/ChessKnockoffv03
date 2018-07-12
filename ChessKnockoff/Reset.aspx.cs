@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ChessKnockoff
         {
             //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
             //Check if password is valid
             var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordReset.Value).Result;
 
@@ -25,6 +27,7 @@ namespace ChessKnockoff
             {
                 if (!resultPassword.Succeeded)
                 {
+                    //Show the error
                     altError.Visible = true;
                     altError.InnerText = resultPassword.Errors.FirstOrDefault<string>();
                     return false;
@@ -49,19 +52,16 @@ namespace ChessKnockoff
             string code = IdentityHelper.GetCodeFromRequest(Request);
 
             //Get the user ID
-            string userID = this.Request.QueryString["userId"];
-
-            //Find the user by their ID
-            var user = manager.FindByIdAsync(userID);
+            string userID = IdentityHelper.GetUserIdFromRequest(Request);
 
             //Check if the user exists
-            if (user != null & checkPassword())
+            if (checkPassword())
             {
                 //Change their password
-                var result = manager.ResetPasswordAsync(userID, code, inpPasswordReset.Value);
+                var result = manager.ResetPassword(userID, code, inpPasswordReset.Value);
 
                 //Check if it was successful
-                if (result.Result.Succeeded)
+                if (result.Succeeded)
                 {
                     //Redirect to the login page and show the success message
                     Response.Redirect("~/Login?ResetPassword=1");
@@ -69,27 +69,28 @@ namespace ChessKnockoff
                 else
                 {
                     //Write to the debug log something has occured
-                    System.Diagnostics.Debug.WriteLine(result.Result.Errors.FirstOrDefault<string>());
+                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
                 }
             }
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Hide the error message
+            altError.Visible = false;
+
             //Get the reset code
-            //string code = IdentityHelper.GetCodeFromRequest(Request);
+            string code = IdentityHelper.GetCodeFromRequest(Request);
 
             //Get the user ID
-            string id = Request.QueryString["codes"];
-            System.Diagnostics.Debug.Print(id);
-            /*
+            string userID = IdentityHelper.GetUserIdFromRequest(Request);
+
             //Check if the code and userID is sent
             if (code == null && userID != "")
             {
                 //Redirect them to the play game but if they arent logged in, they are redirected to the login page
                 Response.Redirect("~/Play");
             }
-            */
         }
     }
 }

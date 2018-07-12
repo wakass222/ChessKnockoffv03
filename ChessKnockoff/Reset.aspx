@@ -8,12 +8,18 @@
                 var inpPasswordConfirm = $("[id$='inpRePasswordReset']");
 
                 //Check of they match
-                if (inpPassword.val() == inpPasswordConfirm.val()) {
+                if (inpPassword.val() == "") {
+                    //If there is nothing them show no extra styling
+                    //Each browser will will require it to be fiiled in anyway since all inputs are required
+                    inpPassword.add(inpPasswordConfirm).removeClass("is-valid is-invalid");
+                }
+                else if (inpPassword.val() == inpPasswordConfirm.val()) //Check if they match and are not empty
+                {
                     //Show success
                     inpPassword.add(inpPasswordConfirm).addClass("is-valid").removeClass("is-invalid");
                 }
                 else {
-                    //Show error
+                    //Show error if they are not empty
                     inpPassword.add(inpPasswordConfirm).removeClass("is-valid").addClass("is-invalid");
                 }
             }
@@ -40,7 +46,8 @@
         </div>
         <div class="form-group">
             <button id="btnSubmitReset" class="btn btn-lg btn-primary btn-block" type="submit" onserverclick="ResetPassword" runat="server">Change password</button>
-        <div id="altError" class="invalid-feedback" runat="server"></div>
+        </div>
+        <div id="altError" class="alert alert-danger" role="alert" runat="server">
         </div>
     </form>
 </asp:Content>

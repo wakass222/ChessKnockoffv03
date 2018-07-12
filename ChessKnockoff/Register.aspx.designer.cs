@@ -46,7 +46,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText inpEmailRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmailRegister;
         
         /// <summary>
         /// altEmailTaken control.

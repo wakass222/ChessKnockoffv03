@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,6 +11,12 @@ namespace ChessKnockoff
 {
     public partial class BaseWithHeaderNav : System.Web.UI.MasterPage
     {
+        protected void Logout_Click(object sender, EventArgs e)
+        {
+            Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Response.Redirect("~/Login");
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is authenticated

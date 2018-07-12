@@ -33,12 +33,13 @@ namespace ChessKnockoff
             //Look for user by that email
             var user = manager.FindByEmail(inpEmailReset.Value);
 
-            //Check if a user by that email exists
-            if (user != null)
+            //Check if a user by that email exists and has their email confirmed
+            if (user != null && user.EmailConfirmed)
             {
                 //Send reset link
                 string code = manager.GeneratePasswordResetToken(user.Id);
-                string callbackUrl = IdentityHelper.GetResetPasswordRedirectUrl(user.UserName, code, Request);
+
+                string callbackUrl = IdentityHelper.GetResetPasswordRedirectUrl(user.Id, code, Request);
                 manager.SendEmail(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.");
 
                 //Show that it was successful

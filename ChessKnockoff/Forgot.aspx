@@ -1,34 +1,34 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm7" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
-    <form class="inputForm mx-auto" runat="server">
-        <script type="text/javascript">
-            function checkEmailRule() {
-                //Get element
-                var inpEmail = $("[id$='inpEmailReset']");
+    <script type="text/javascript">
+        function checkEmailRule() {
+            //Get element
+            var inpEmail = $("[id$='inpEmailReset']");
 
-                //Create regex for email
-                var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
+            //Create regex for email
+            var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 
-                //Check it against the regex
-                if (emailRegex.test(inpEmail.val())) {
-                    //Show success
-                    inpEmail.addClass("is-valid");
-                    inpEmail.removeClass("is-invalid");
-                } else {
-                    //Show error
-                    inpEmail.removeClass("is-valid");
-                    inpEmail.addClass("is-invalid");
-                }
+            //Check it against the regex
+            if (emailRegex.test(inpEmail.val())) {
+                //Show success
+                inpEmail.addClass("is-valid");
+                inpEmail.removeClass("is-invalid");
+            } else {
+                //Show error
+                inpEmail.removeClass("is-valid");
+                inpEmail.addClass("is-invalid");
             }
+        }
 
-            //Assign the function to the key up event once the DOM has completely loaded
-            $(document).ready(function () {
-                //Evaluate the rules on page load once in case a post back occurs
-                checkEmailRule();
+        //Assign the function to the key up event once the DOM has completely loaded
+        $(document).ready(function () {
+            //Evaluate the rules on page load once in case a post back occurs
+            checkEmailRule();
 
-                $("[id$='inpEmailReset']").keyup(checkEmailRule);
-            });
-        </script>
+            $("[id$='inpEmailReset']").keyup(checkEmailRule);
+        });
+    </script>
+    <div class="inputForm mx-auto">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
             <h2 class="signinheading mb-2">Reset password</h2>
@@ -45,7 +45,7 @@
             Reset link was sent to that email.
         </div>
         <div id="altEmailFail" class="alert alert-warning" role="alert" runat="server">
-            That email was not found.
+            That email was not found or was not confirmed.
         </div>
-    </form>
+    </div>
 </asp:Content>

@@ -21,7 +21,7 @@ namespace ChessKnockoff
                 {
                     //Then redirect to the login page with reference to the current page
                     string OriginalUrl = HttpContext.Current.Request.RawUrl;
-                    string LoginPageUrl = "/Login";
+                    string LoginPageUrl = "/login";
                     HttpContext.Current.Response.Redirect(String.Format("{0}?ReturnUrl={1}", LoginPageUrl, OriginalUrl));
                 }
             }
