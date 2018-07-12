@@ -7,11 +7,17 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static ChessKnockoff.Utilities;
+using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
     public partial class WebForm7 : System.Web.UI.Page
     {
+        protected void wrappedEmail(object source, ServerValidateEventArgs args)
+        {
+            validateEmail(source, args);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Hide the success message as the viewstate is not saved
@@ -28,27 +34,32 @@ namespace ChessKnockoff
 
         protected void EmailClick(object sender, EventArgs e)
         {
-            //Create manager object
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            //Look for user by that email
-            var user = manager.FindByEmail(inpEmailReset.Value);
-
-            //Check if a user by that email exists and has their email confirmed
-            if (user != null && user.EmailConfirmed)
+            //Check if the inputs are valid
+            if (IsValid)
             {
-                //Send reset link
-                string code = manager.GeneratePasswordResetToken(user.Id);
+                //Create manager object
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                //Look for user by that email
+                var user = manager.FindByEmail(inpEmailForgot.Value);
 
-                string callbackUrl = IdentityHelper.GetResetPasswordRedirectUrl(user.Id, code, Request);
-                manager.SendEmail(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                //Check if a user by that email exists and has their email confirmed
+                if (user != null && user.EmailConfirmed)
+                {
+                    //Generate the reset code
+                    string code = manager.GeneratePasswordResetToken(user.Id);
 
-                //Show that it was successful
-                altEmailSent.Visible = true;
-            }
-            else
-            {
-                //Show that it was unsuccessful
-                altEmailFail.Visible = true;
+                    //Create the link with the reset code
+                    string callbackUrl = IdentityHelper.GetResetPasswordRedirectUrl(user.Id, code, Request);
+                    manager.SendEmail(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                    //Show that it was successful
+                    altEmailSent.Visible = true;
+                }
+                else
+                {
+                    //Show that it was unsuccessful
+                    altEmailFail.Visible = true;
+                }
             }
         }
     }

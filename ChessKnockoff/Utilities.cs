@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 namespace ChessKnockoff
 {
     /// <summary>
-    /// Contains any utilities
+    /// Contains any utilities that are helpful
     /// </summary>
     static public class Utilities
     {

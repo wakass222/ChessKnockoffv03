@@ -8,112 +8,31 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using static ChessKnockoff.Utilities;
+using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
     public partial class WebForm1 : System.Web.UI.Page
     {
-        /// <summary>
-        /// Check if the username is valid and not taken
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="args"></param>
         private void checkUsername(object source, ServerValidateEventArgs args)
         {
-            //Create username regex
-            Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
-            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Text);
-
-            //Create manager
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultUsername = manager.FindByName(inpUsernameRegister.Text);
-
-            //Will only return true if the username is valid and has not beent taken
-            if (regexUsernameResult)
-            {
-                if (resultUsername != null)
-                {
-                    //Only show the email is taken if the email passes the regex test since that is shown client side
-                    altUsernameTaken.Visible = true;
-                    args.IsValid = false;
-                }
-                else
-                {
-                    args.IsValid = true;
-                }
-            }
-            else
-            {
-                args.IsValid = false;
-            }
+            //Pass on validation to the username validation function
+            validateUsername(source, args);
         }
 
-        /// <summary>
-        /// Checks if the email is valid and not taken
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="args"></param>
         private void checkEmail(object source, ServerValidateEventArgs args)
         {
-            //Create manager
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultEmail = manager.FindByEmail(args.Value);
-
-            //Will only return true if the email has not been taken and is valid
-            if (IsValidEmail(inpEmailRegister.Text))
-            {
-                //Only show the email is taken if the email passes the regex check since that is shown clientside
-                if (resultEmail != null)
-                {
-                    altEmailTaken.Visible = true;
-                    args.IsValid = false;
-                }
-                else
-                {
-                    args.IsValid = true;
-                }
-            }
-            else
-            {
-                args.IsValid = false;
-            }
+            //Pass on the values to the email validation function
+            validateEmail(source, args);
         }
 
-        /// <summary>
-        /// Checks if the password is valid
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="args"></param>
         private void checkPassword(object source, ServerValidateEventArgs args)
         {
-            //Create manager
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            //Check if password is valid
-            var resultPassword = manager.PasswordValidator.ValidateAsync(args.Value).Result;
-
-            //Check if passwords match
-            bool matchResult = inpPasswordRegister.Text == inpRePasswordRegister.Text;
-
-            //Only returns true if the password is valid against password rules and they both match
-            if (matchResult)
-            {
-                if (!resultPassword.Succeeded)
-                {
-                    altPassword.Visible = true;
-                    altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
-                    args.IsValid = false;
-                }
-                else
-                {
-                    args.IsValid = true;
-                }
-            }
-            else
-            {
-                args.IsValid = false;
-            }
+            //Pass on validation to the password validation function
+            validatePassword(source, args, inpPasswordRegister.Value, inpRePasswordRegister.Value);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -135,32 +54,71 @@ namespace ChessKnockoff
             altError.Visible = false;
         }
 
-        protected void RegisterNewUser(object sender, EventArgs e)
+        protected void RegisterClick(object sender, EventArgs e)
         {
             //Check if controls in the group are all valid
             if (IsValid)
             {
+                //Create manager
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-                var user = new ApplicationUser() { UserName = inpUsernameRegister.Text, Email = inpEmailRegister.Text };
 
-                IdentityResult result = manager.Create(user, inpPasswordRegister.Text);
+                //Check if password is valid
+                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Value).Result;
 
-                //Check if it succeeded
-                if (result.Succeeded)
+                //Check if the password can be used
+                if (!resultPassword.Succeeded)
                 {
-                    //Send email confirmation link
-                    string code = manager.GenerateEmailConfirmationToken(user.Id);
-                    string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                    manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
-
-                    //Redirect them to the login page
-                    Response.Redirect("~/Login?Registered=1");
+                    //Show the error
+                    altPassword.Visible = true;
+                    //Also show the specific issue
+                    altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
                 }
-                else
+
+                //Check if username is not taken
+                var resultUsername = manager.FindByName(inpUsernameRegister.Value);
+
+                //Check if the user is not null
+                if (resultUsername != null)
                 {
-                    //Write to the debug log something has occured
-                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
+                    //Show the error
+                    altUsernameTaken.Visible = true;
+                }
+
+                //Check if email is valid
+                var resultEmail = manager.FindByEmail(inpEmailRegister.Value);
+
+                if (resultEmail != null)
+                {
+                    //Show the error
+                    altEmailTaken.Visible = true;
+                }
+
+                //If there are no errors
+                if (resultEmail == null && resultPassword.Succeeded && resultUsername == null)
+                {
+                    //Create sign in manager
+                    var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+
+                    var user = new ApplicationUser() { UserName = inpUsernameRegister.Value, Email = inpEmailRegister.Value };
+
+                    IdentityResult result = manager.Create(user, inpPasswordRegister.Value);
+
+                    //Check if it succeeded
+                    if (result.Succeeded)
+                    {
+                        //Send email confirmation link
+                        string code = manager.GenerateEmailConfirmationToken(user.Id);
+                        string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                        manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                        //Redirect them to the login page
+                        Response.Redirect("~/Login?Registered=1");
+                    }
+                    else
+                    {
+                        //Write to the debug log something has occured
+                        System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
+                    }
                 }
             }
         }

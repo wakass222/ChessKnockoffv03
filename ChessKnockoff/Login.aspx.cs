@@ -14,7 +14,6 @@ namespace ChessKnockoff
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             //Make the current link in the navbar active
             activateNav(this, "likLogin");
 
@@ -86,54 +85,57 @@ namespace ChessKnockoff
 
         protected void LoginClick(object sender, EventArgs e)
         {
-            //Validate the user password
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
-
-            //Require the user to have a confirmed email before they can log on.
-            var user = manager.FindByName(inpUsernameLogin.Value);
-
-            //Check if a user by that name exists
-            if (user != null)
+            if (IsValid)
             {
-                //Check if their email has been confirmed
-                if (!user.EmailConfirmed)
-                {
-                    //Send email confirmation link
-                    string code = manager.GenerateEmailConfirmationToken(user.Id);
-                    string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                    manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                //Validate the user password
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
 
-                    //If it has not been confirmed show an error message
-                    altVerify.Visible = true;
-                }
-                else
-                {
-                    //Try to log them in
-                    var result = signinManager.PasswordSignIn(inpUsernameLogin.Value, inpPasswordLogin.Value, boxRememberCheck.Checked, false);
+                //Require the user to have a confirmed email before they can log on.
+                var user = manager.FindByName(inpUsernameLogin.Value);
 
-                    switch (result)
+                //Check if a user by that name exists
+                if (user != null)
+                {
+                    //Check if their email has been confirmed
+                    if (!user.EmailConfirmed)
                     {
-                        case SignInStatus.Success:
-                            if (Request.QueryString["ReturnUrl"] == null)
-                            {
-                                Response.Redirect(Request.QueryString["ReturnUrl"]);
-                            }
-                            else
-                            {
-                                Response.Redirect("~/Play");
-                            }
-                            break;
-                        case SignInStatus.RequiresVerification:
-                            //Show error message to verify
-                            altVerify.Visible = true;
-                            break;
-                        case SignInStatus.Failure:
-                            //Show error message that password and username are not correct
-                            altAuthentication.Visible = true;
-                            break;
-                        default:
-                            break;
+                        //Send email confirmation link
+                        string code = manager.GenerateEmailConfirmationToken(user.Id);
+                        string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
+                        manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                        //If it has not been confirmed show an error message
+                        altVerify.Visible = true;
+                    }
+                    else
+                    {
+                        //Try to log them in
+                        var result = signinManager.PasswordSignIn(inpUsernameLogin.Value, inpPasswordLogin.Value, boxRememberCheck.Checked, false);
+
+                        switch (result)
+                        {
+                            case SignInStatus.Success:
+                                if (Request.QueryString["ReturnUrl"] != null)
+                                {
+                                    Response.Redirect(Request.QueryString["ReturnUrl"]);
+                                }
+                                else
+                                {
+                                    Response.Redirect("~/Play");
+                                }
+                                break;
+                            case SignInStatus.RequiresVerification:
+                                //Show error message to verify
+                                altVerify.Visible = true;
+                                break;
+                            case SignInStatus.Failure:
+                                //Show error message that password and username are not correct
+                                altAuthentication.Visible = true;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }

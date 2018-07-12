@@ -6,12 +6,37 @@
         var inpPassword = "#inpPasswordRegister";
         var inpRePassword = "#inpRePasswordRegister";
         var inpEmail = "#inpEmailRegister";
+        
+        //Create the wrapped functions
+        function wrappedUsername(sender, args) {
+            wrapperMatch(sender, args, checkUsernameRule, inpUsername);
+        }
 
-        //Assign the checks on keyup
+        function wrappedPassword(sender, args) {
+            wrapperMatch(sender, args, checkPasswordMatch, inpPassword, inpRePassword);
+        }
+
+        function wrappedEmail(sender, args) {
+            wrapperMatch(sender, args, checkEmailRule, inpEmail);
+        }
+
+        //Assign the checks on keyup once the DOM has completely loaded
         $(document).ready(function () {
-            $(inpEmail).keyup(checkEmailRule(inpEmail));
-            $(inpUsername).keyup(checkUsernameRule(inpUsername));
-            $(inpPassword).add(inpRePassword).keyup(checkPasswordMatch(inpPassword, inpRePassword));
+            checkEmailRule(inpEmail);
+            checkPasswordMatch(inpPassword, inpRePassword);
+            checkUsernameRule(inpUsername);
+
+            $(inpEmail).keyup(function () {
+                checkEmailRule(inpEmail)
+            });
+
+            $(inpUsername).keyup(function () {
+                checkUsernameRule(inpUsername);
+            });
+
+            $(inpPassword).add(inpRePassword).keyup(function () {
+                checkPasswordMatch(inpPassword, inpRePassword);
+            });
         });
     </script>
     <div class="inputForm mx-auto">
@@ -22,7 +47,7 @@
         <div class="form-group">
             <label for="username">Username</label>
             <asp:CustomValidator ID="valUsernameRegister" runat="server" ControlToValidate="inpUsernameRegister" ClientValidationFunction="wrappedUsername" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
-            <asp:TextBox id="inpUsernameRegister" required="" class="form-control" placeholder="Username" runat="server" causesvalidation="True" enableviewstate="False"></asp:TextBox>
+            <input id="inpUsernameRegister" required="" class="form-control" placeholder="Username" runat="server" />
             <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters.</div>
         </div>
         <div id="altUsernameTaken" class="alert alert-danger" runat="server">
@@ -31,7 +56,7 @@
         <div class="form-group">
             <label for="username">Email</label>
             <asp:CustomValidator ID="valEmailRegister" runat="server" ControlToValidate="inpEmailRegister" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
-            <asp:TextBox id="inpEmailRegister" required="" class="form-control" placeholder="Email" type="email" runat="server" causesvalidation="True" enableviewstate="False"></asp:TextBox>
+            <input id="inpEmailRegister" required="" class="form-control" placeholder="Email" type="email" runat="server" />
             <div class="invalid-feedback">Email is not valid.</div>
         </div>
         <div id="altEmailTaken" class="alert alert-danger" runat="server">
@@ -40,17 +65,17 @@
         <div class="form-group">
             <label for="inpPasswordRegister">Password</label>
             <asp:CustomValidator ID="valPasswordRegister" runat="server" ControlToValidate="inpPasswordRegister" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpRegister"></asp:CustomValidator>
-            <asp:TextBox id="inpPasswordRegister" required="" type="password" class="form-control" placeholder="Password" runat="server" causesvalidation="True" enableviewstate="False"></asp:TextBox>
+            <input id="inpPasswordRegister" required="" type="password" class="form-control" placeholder="Password" runat="server" />
         </div>
         <div class="form-group">
             <asp:CustomValidator ID="valRePasswordRegister" runat="server" ControlToValidate="inpRePasswordRegister" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
-            <asp:TextBox id="inpRePasswordRegister" required="" type="password" class="form-control" placeholder="Re-enter password" runat="server" causesvalidation="True"></asp:TextBox>
+            <input id="inpRePasswordRegister" required="" type="password" class="form-control" placeholder="Password" runat="server" />
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>
         <div id="altPassword" class="alert alert-danger" runat="server">
         </div>
         <div class="form-group">
-            <asp:Button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" enableviewstate="False" validationgroup="grpRegister" Text="Register" OnClick="RegisterNewUser" />
+            <asp:Button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" enableviewstate="False" validationgroup="grpRegister" Text="Register" OnClick="RegisterClick" />
             <div id="altError" class="invalid-feedback" runat="server"></div>
         </div>
         <div class="form-group text-center">

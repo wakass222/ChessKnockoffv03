@@ -354,6 +354,7 @@
     <Compile Include="Play.aspx.designer.cs">
       <DependentUpon>Play.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Validation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />

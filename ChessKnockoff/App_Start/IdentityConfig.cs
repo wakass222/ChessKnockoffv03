@@ -62,6 +62,10 @@ namespace ChessKnockoff
         {
         }
 
+        //Create easily accessible constants
+        public static readonly int maximumPasswordLength = 128;
+        public static readonly int maximumUsernameLength = 30;
+
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));

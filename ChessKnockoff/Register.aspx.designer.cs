@@ -28,7 +28,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpUsernameRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsernameRegister;
         
         /// <summary>
         /// fedUsername control.
@@ -64,7 +64,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpEmailRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmailRegister;
         
         /// <summary>
         /// altEmailTaken control.
@@ -91,7 +91,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpPasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordRegister;
         
         /// <summary>
         /// valRePasswordRegister control.
@@ -109,7 +109,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox inpRePasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordRegister;
         
         /// <summary>
         /// altPassword control.

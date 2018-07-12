@@ -6,70 +6,61 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
     public partial class WebForm2 : System.Web.UI.Page
     {
-        private bool checkPassword()
+        protected void checkPassword(object source, ServerValidateEventArgs args)
         {
-            //Create manager
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
-            //Check if password is valid
-            var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordReset.Value).Result;
-
-            //Check if passwords match
-            bool matchResult = inpPasswordReset.Value == inpRePasswordReset.Value;
-
-            //Only returns true if the password is valid against password rules and they both match
-            if (matchResult)
-            {
-                if (!resultPassword.Succeeded)
-                {
-                    //Show the error
-                    altError.Visible = true;
-                    altError.InnerText = resultPassword.Errors.FirstOrDefault<string>();
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
-            }
+            //Pass on password validation to another function
+            validatePassword(source, args, inpPasswordReset.Value, inpRePasswordReset.Value);
         }
 
         protected void ResetPassword(object sender, EventArgs e)
         {
-            //Create manager object
-            var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
-            //Get the reset code
-            string code = IdentityHelper.GetCodeFromRequest(Request);
-
-            //Get the user ID
-            string userID = IdentityHelper.GetUserIdFromRequest(Request);
-
-            //Check if the user exists
-            if (checkPassword())
+            //Check if the inputs are valid in this case if both passwords match
+            if (IsValid)
             {
-                //Change their password
-                var result = manager.ResetPassword(userID, code, inpPasswordReset.Value);
+                //Create manager object
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-                //Check if it was successful
-                if (result.Succeeded)
+                //Check if the password is valid
+                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordReset.Value).Result;
+
+                //Check if the password is valid
+                if (!resultPassword.Succeeded)
                 {
-                    //Redirect to the login page and show the success message
-                    Response.Redirect("~/Login?ResetPassword=1");
+                    //Show the error message
+                    altError.Visible = true;
+                    //Show the specific error
+                    altError.InnerText = resultPassword.Errors.FirstOrDefault<string>();
                 }
-                else
+
+                //Check if the password is valid
+                if (resultPassword.Succeeded)
                 {
-                    //Write to the debug log something has occured
-                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
+                    //Get the reset code
+                    string code = IdentityHelper.GetCodeFromRequest(Request);
+
+                    //Get the user ID
+                    string userID = IdentityHelper.GetUserIdFromRequest(Request);
+
+                    //Change their password
+                    var result = manager.ResetPassword(userID, code, inpPasswordReset.Value);
+
+                    //Check if it was successful
+                    if (result.Succeeded)
+                    {
+                        //Redirect to the login page and show the success message
+                        Response.Redirect("~/Login?ResetPassword=1");
+                    }
+                    else
+                    {
+                        //Write to the debug log something has occured
+                        System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
+                    }
                 }
             }
         }
