@@ -15,15 +15,20 @@ namespace ChessKnockoff
 {
     public partial class WebForm1 : System.Web.UI.Page
     {
-        private bool checkUsername()
+        /// <summary>
+        /// Check if the username is valid and not taken
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
+        private void checkUsername(object source, ServerValidateEventArgs args)
         {
             //Create username regex
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
-            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Value);
+            bool regexUsernameResult = regexUsername.IsMatch(inpUsernameRegister.Text);
 
             //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultUsername = manager.FindByName(inpUsernameRegister.Value);
+            var resultUsername = manager.FindByName(inpUsernameRegister.Text);
 
             //Will only return true if the username is valid and has not beent taken
             if (regexUsernameResult)
@@ -32,54 +37,64 @@ namespace ChessKnockoff
                 {
                     //Only show the email is taken if the email passes the regex test since that is shown client side
                     altUsernameTaken.Visible = true;
-                    return false;
+                    args.IsValid = false;
                 }
                 else
                 {
-                    return true;
+                    args.IsValid = true;
                 }
             }
             else
             {
-                return false;
+                args.IsValid = false;
             }
         }
 
-        private bool checkEmail()
+        /// <summary>
+        /// Checks if the email is valid and not taken
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
+        private void checkEmail(object source, ServerValidateEventArgs args)
         {
             //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            var resultEmail = manager.FindByEmail(inpEmailRegister.Value);
+            var resultEmail = manager.FindByEmail(args.Value);
 
             //Will only return true if the email has not been taken and is valid
-            if (IsValidEmail(inpEmailRegister.Value))
+            if (IsValidEmail(inpEmailRegister.Text))
             {
                 //Only show the email is taken if the email passes the regex check since that is shown clientside
                 if (resultEmail != null)
                 {
                     altEmailTaken.Visible = true;
-                    return false;
+                    args.IsValid = false;
                 }
                 else
                 {
-                    return true;
+                    args.IsValid = true;
                 }
             }
             else
             {
-                return false;
+                args.IsValid = false;
             }
         }
 
-        private bool checkPassword()
+        /// <summary>
+        /// Checks if the password is valid
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
+        private void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Create manager
             var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
             //Check if password is valid
-            var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Value).Result;
+            var resultPassword = manager.PasswordValidator.ValidateAsync(args.Value).Result;
 
             //Check if passwords match
-            bool matchResult = inpPasswordRegister.Value == inpRePasswordRegister.Value;
+            bool matchResult = inpPasswordRegister.Text == inpRePasswordRegister.Text;
 
             //Only returns true if the password is valid against password rules and they both match
             if (matchResult)
@@ -88,16 +103,16 @@ namespace ChessKnockoff
                 {
                     altPassword.Visible = true;
                     altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
-                    return false;
+                    args.IsValid = false;
                 }
                 else
                 {
-                    return true;
+                    args.IsValid = true;
                 }
             }
             else
             {
-                return false;
+                args.IsValid = false;
             }
         }
 
@@ -122,15 +137,14 @@ namespace ChessKnockoff
 
         protected void RegisterNewUser(object sender, EventArgs e)
         {
-            altError.Visible = true;
-            //Check they are all valid and show the appropiate messages
-            if (checkUsername() & checkPassword() & checkEmail())
+            //Check if controls in the group are all valid
+            if (IsValid)
             {
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-                var user = new ApplicationUser() { UserName = inpUsernameRegister.Value, Email = inpEmailRegister.Value };
+                var user = new ApplicationUser() { UserName = inpUsernameRegister.Text, Email = inpEmailRegister.Text };
 
-                IdentityResult result = manager.Create(user, inpPasswordRegister.Value);
+                IdentityResult result = manager.Create(user, inpPasswordRegister.Text);
 
                 //Check if it succeeded
                 if (result.Succeeded)

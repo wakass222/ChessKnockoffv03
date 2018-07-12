@@ -1,29 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Reset.aspx.cs" Inherits="ChessKnockoff.WebForm2" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
-    <form class="inputForm mx-auto" runat="server">
+    <div class="inputForm mx-auto">
         <script>
-            function checkPasswordMatch() {
-                //Get elements
-                var inpPassword = $("[id$='inpPasswordReset']");
-                var inpPasswordConfirm = $("[id$='inpRePasswordReset']");
-
-                //Check of they match
-                if (inpPassword.val() == "") {
-                    //If there is nothing them show no extra styling
-                    //Each browser will will require it to be fiiled in anyway since all inputs are required
-                    inpPassword.add(inpPasswordConfirm).removeClass("is-valid is-invalid");
-                }
-                else if (inpPassword.val() == inpPasswordConfirm.val()) //Check if they match and are not empty
-                {
-                    //Show success
-                    inpPassword.add(inpPasswordConfirm).addClass("is-valid").removeClass("is-invalid");
-                }
-                else {
-                    //Show error if they are not empty
-                    inpPassword.add(inpPasswordConfirm).removeClass("is-valid").addClass("is-invalid");
-                }
-            }
-
             //Assign the function to the key up event once the DOM has completely loaded
             $(document).ready(function () {
                 //Run check on load in case of postback
@@ -49,5 +27,5 @@
         </div>
         <div id="altError" class="alert alert-danger" role="alert" runat="server">
         </div>
-    </form>
+    </div>
 </asp:Content>

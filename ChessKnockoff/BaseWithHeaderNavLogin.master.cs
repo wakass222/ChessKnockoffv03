@@ -26,13 +26,5 @@ namespace ChessKnockoff
                 }
             }
         }
-
-        protected void Logout_Click(object sender, EventArgs e)
-        {
-            //When the logout button is pressed clear cookies
-            FormsAuthentication.SignOut();
-            //redirect to the login page
-            FormsAuthentication.RedirectToLoginPage();
-        }
     }
 }

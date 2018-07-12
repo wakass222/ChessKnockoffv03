@@ -13,13 +13,22 @@ namespace ChessKnockoff {
     public partial class WebForm1 {
         
         /// <summary>
+        /// valUsernameRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator valUsernameRegister;
+        
+        /// <summary>
         /// inpUsernameRegister control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsernameRegister;
+        protected global::System.Web.UI.WebControls.TextBox inpUsernameRegister;
         
         /// <summary>
         /// fedUsername control.
@@ -40,13 +49,22 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altUsernameTaken;
         
         /// <summary>
+        /// valEmailRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator valEmailRegister;
+        
+        /// <summary>
         /// inpEmailRegister control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmailRegister;
+        protected global::System.Web.UI.WebControls.TextBox inpEmailRegister;
         
         /// <summary>
         /// altEmailTaken control.
@@ -58,13 +76,31 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailTaken;
         
         /// <summary>
+        /// valPasswordRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator valPasswordRegister;
+        
+        /// <summary>
         /// inpPasswordRegister control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordRegister;
+        protected global::System.Web.UI.WebControls.TextBox inpPasswordRegister;
+        
+        /// <summary>
+        /// valRePasswordRegister control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator valRePasswordRegister;
         
         /// <summary>
         /// inpRePasswordRegister control.
@@ -73,7 +109,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordRegister;
+        protected global::System.Web.UI.WebControls.TextBox inpRePasswordRegister;
         
         /// <summary>
         /// altPassword control.
@@ -91,7 +127,7 @@ namespace ChessKnockoff {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlButton btnSubmitRegister;
+        protected global::System.Web.UI.WebControls.Button btnSubmitRegister;
         
         /// <summary>
         /// altError control.

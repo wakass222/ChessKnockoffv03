@@ -13,7 +13,9 @@ namespace ChessKnockoff
     {
         protected void Logout_Click(object sender, EventArgs e)
         {
+            //Remove the cookie
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            //Redirect to the login page
             Response.Redirect("~/Login");
         }
 

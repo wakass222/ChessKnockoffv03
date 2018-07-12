@@ -15,7 +15,7 @@
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>
 <body>
-    <asp:ContentPlaceHolder ID="BaseContentWithHeader" runat="server">
+    <asp:ContentPlaceHolder ID="BaseContentWithHeader" runat="server" ValidateRequestMode="Disabled" ClientIDMode="Static">
     </asp:ContentPlaceHolder>
 </body>
 </html>
