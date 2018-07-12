@@ -22,8 +22,9 @@ namespace ChessKnockoff
             //Check if passwords match
             bool matchResult = passwordValue == passwordValueConfirm;
 
-            //Only returns true if the password both match and is of the correct length
-            if (matchResult && passwordValue.Length)
+            //Only returns true if the password both match
+            //Additonal password check is implemented with the identity framework
+            if (matchResult)
             {
                 args.IsValid = true;
             }
@@ -40,8 +41,11 @@ namespace ChessKnockoff
         /// <param name="args">Arguments from the validation call</param>
         public static void validateEmail(object source, ServerValidateEventArgs args)
         {
-            //Will only return true if the email has not been taken and is valid
-            if (IsValidEmail(args.Value))
+            //Will only return true if the email has not been taken and is valid, also checks its length
+            Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", RegexOptions.IgnoreCase);
+            bool regexEmailResult = regexEmail.IsMatch(args.Value);
+
+            if (regexEmailResult)
             {
                 args.IsValid = true;
             }
@@ -62,8 +66,8 @@ namespace ChessKnockoff
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
             bool regexUsernameResult = regexUsername.IsMatch(args.Value);
 
-            //Will only return true if the username is valid and has not beent taken
-            if (regexUsernameResult)
+            //Check if the username only contains alphanumeric values and is 25 characters or less
+            if (regexUsernameResult && args.Value.Length <= 25)
             {
                 args.IsValid = true;
             }

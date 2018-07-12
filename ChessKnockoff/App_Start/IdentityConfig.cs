@@ -11,6 +11,7 @@ using System.Configuration;
 using Microsoft.Owin.Security;
 using Microsoft.Owin;
 using static ChessKnockoff.ApplicationUserManager;
+using System.Linq;
 
 namespace ChessKnockoff
 {
@@ -55,6 +56,35 @@ namespace ChessKnockoff
         }
     }
 
+    //Create a custom password validator to extend the identity validator
+    public class CustomPasswordValidator : PasswordValidator
+    {
+        //Create a property for the maximum length
+        public int MaxLength { get; set; }
+
+        //Override the method to validate passwords
+        public override async Task<IdentityResult> ValidateAsync(string item)
+        {
+            //Call the original validation method
+            IdentityResult result = await base.ValidateAsync(item);
+
+            //Get the errors
+            var errors = result.Errors.ToList();
+
+            //Check if it is null and if it is larger than the maximum length
+            if (string.IsNullOrEmpty(item) || item.Length > MaxLength)
+            {
+                //Add the error to the string since the errors only appear as one string
+                errors[0] += string.Format(" Password length can't exceed {0}.", MaxLength);
+            }
+            
+            //Return the result
+            return await Task.FromResult(!errors.Any()
+             ? IdentityResult.Success
+             : IdentityResult.Failed(errors.ToArray()));
+        }
+    }
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
@@ -74,8 +104,9 @@ namespace ChessKnockoff
             };
 
             // Configure validation logic for passwords
-            manager.PasswordValidator = new PasswordValidator
+            manager.PasswordValidator = new CustomPasswordValidator
             {
+                MaxLength = 256,
                 RequiredLength = 6,
                 RequireNonLetterOrDigit = true,
                 RequireDigit = true,

@@ -51,7 +51,7 @@ function checkUsernameRule(name, nameConfirm) {
         //If the field is empty show them no extra styling
         inpUsername.removeClass("is-valid is-invalid");
         return false;
-    } else if (usernameRegex.test(inpUsername.val())) {
+    } else if (usernameRegex.test(inpUsername.val()) && inpUsername.val().length <= 25) {
         //Show success
         inpUsername.addClass("is-valid");
         inpUsername.removeClass("is-invalid");

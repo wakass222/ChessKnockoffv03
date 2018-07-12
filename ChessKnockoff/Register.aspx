@@ -48,7 +48,7 @@
             <label for="username">Username</label>
             <asp:CustomValidator ID="valUsernameRegister" runat="server" ControlToValidate="inpUsernameRegister" ClientValidationFunction="wrappedUsername" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
             <input id="inpUsernameRegister" required="" class="form-control" placeholder="Username" runat="server" />
-            <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters and must be less than 30 characters.</div>
+            <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters.</div>
         </div>
         <div id="altUsernameTaken" class="alert alert-danger" runat="server">
             Username has been taken.
