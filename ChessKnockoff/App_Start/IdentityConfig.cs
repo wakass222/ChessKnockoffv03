@@ -10,6 +10,7 @@ using System.Net;
 using System.Configuration;
 using Microsoft.Owin.Security;
 using Microsoft.Owin;
+using static ChessKnockoff.ApplicationUserManager;
 
 namespace ChessKnockoff
 {
@@ -61,10 +62,6 @@ namespace ChessKnockoff
             : base(store)
         {
         }
-
-        //Create easily accessible constants
-        public static readonly int maximumPasswordLength = 128;
-        public static readonly int maximumUsernameLength = 30;
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {

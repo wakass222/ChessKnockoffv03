@@ -23,7 +23,7 @@ namespace ChessKnockoff
             bool matchResult = passwordValue == passwordValueConfirm;
 
             //Only returns true if the password both match and is of the correct length
-            if (matchResult && passwordValue.Length <= ApplicationUserManager.maximumPasswordLength)
+            if (matchResult && passwordValue.Length)
             {
                 args.IsValid = true;
             }
@@ -63,7 +63,7 @@ namespace ChessKnockoff
             bool regexUsernameResult = regexUsername.IsMatch(args.Value);
 
             //Will only return true if the username is valid and has not beent taken
-            if (regexUsernameResult && args.Value.Length <= ApplicationUserManager.maximumUsernameLength)
+            if (regexUsernameResult)
             {
                 args.IsValid = true;
             }
