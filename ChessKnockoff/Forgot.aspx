@@ -1,24 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm7" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
-    <script type="text/javascript">
-        //Define the ID's
-        var inpEmail = "#inpEmailForgot";
-
-        //Create the wrapped functions
-        function wrappedEmail(sender, args) {
-            wrapperMatch(sender, args, checkEmailRule, inpEmail);
-        }
-
-        //Assign the function to the key up event once the DOM has completely loaded
-        $(document).ready(function () {
-            //Evaluate the rules on page load once in case a post back occurs
-            checkEmailRule(inpEmail);
-
-            $(inpEmail).keyup(function () {
-                checkEmailRule(inpEmail);
-            });
-        });
-    </script>
     <div class="inputForm mx-auto">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
@@ -26,8 +7,8 @@
         </div>
         <div class="form-group">
         <label for="email">Email</label>
-            <asp:CustomValidator ID="valEmailForgot" runat="server" ControlToValidate="inpEmailForgot" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpForgot" ValidateEmptyText="True"></asp:CustomValidator>
-            <input type="email" id="inpEmailForgot" class="form-control" name="email" placeholder="Email" required autofocus="" runat="server"/>
+            <asp:CustomValidator ID="valEmail" runat="server" ControlToValidate="inpEmail" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpForgot" ValidateEmptyText="True"></asp:CustomValidator>
+            <input type="email" id="inpEmail" class="form-control" name="email" placeholder="Email" required autofocus="" runat="server"/>
             <div class="invalid-feedback">Email is not valid.</div>
         </div>
         <div class="form-group">

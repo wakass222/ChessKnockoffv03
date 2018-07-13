@@ -13,22 +13,22 @@ namespace ChessKnockoff {
     public partial class WebForm1 {
         
         /// <summary>
-        /// valUsernameRegister control.
+        /// valUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valUsernameRegister;
+        protected global::System.Web.UI.WebControls.CustomValidator valUsername;
         
         /// <summary>
-        /// inpUsernameRegister control.
+        /// inpUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsernameRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText inpUsername;
         
         /// <summary>
         /// fedUsername control.
@@ -49,22 +49,22 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altUsernameTaken;
         
         /// <summary>
-        /// valEmailRegister control.
+        /// valEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valEmailRegister;
+        protected global::System.Web.UI.WebControls.CustomValidator valEmail;
         
         /// <summary>
-        /// inpEmailRegister control.
+        /// inpEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmailRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmail;
         
         /// <summary>
         /// altEmailTaken control.
@@ -76,40 +76,40 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailTaken;
         
         /// <summary>
-        /// valPasswordRegister control.
+        /// valPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valPasswordRegister;
+        protected global::System.Web.UI.WebControls.CustomValidator valPassword;
         
         /// <summary>
-        /// inpPasswordRegister control.
+        /// inpPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPassword;
         
         /// <summary>
-        /// valRePasswordRegister control.
+        /// valRePassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valRePasswordRegister;
+        protected global::System.Web.UI.WebControls.CustomValidator valRePassword;
         
         /// <summary>
-        /// inpRePasswordRegister control.
+        /// inpRePassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordRegister;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePassword;
         
         /// <summary>
         /// altPassword control.

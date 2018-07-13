@@ -32,7 +32,7 @@ namespace ChessKnockoff
         private void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on validation to the password validation function
-            validatePassword(source, args, inpPasswordRegister.Value, inpRePasswordRegister.Value);
+            validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -63,7 +63,7 @@ namespace ChessKnockoff
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
                 //Check if password is valid
-                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordRegister.Value).Result;
+                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password can be used
                 if (!resultPassword.Succeeded)
@@ -75,7 +75,7 @@ namespace ChessKnockoff
                 }
 
                 //Check if username is not taken
-                var resultUsername = manager.FindByName(inpUsernameRegister.Value);
+                var resultUsername = manager.FindByName(inpUsername.Value);
 
                 //Check if the user is not null
                 if (resultUsername != null)
@@ -85,7 +85,7 @@ namespace ChessKnockoff
                 }
 
                 //Check if email is valid
-                var resultEmail = manager.FindByEmail(inpEmailRegister.Value);
+                var resultEmail = manager.FindByEmail(inpEmail.Value);
 
                 if (resultEmail != null)
                 {
@@ -99,9 +99,9 @@ namespace ChessKnockoff
                     //Create sign in manager
                     var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
 
-                    var user = new ApplicationUser() { UserName = inpUsernameRegister.Value, Email = inpEmailRegister.Value };
+                    var user = new ApplicationUser() { UserName = inpUsername.Value, Email = inpEmail.Value };
 
-                    IdentityResult result = manager.Create(user, inpPasswordRegister.Value);
+                    IdentityResult result = manager.Create(user, inpPassword.Value);
 
                     //Check if it succeeded
                     if (result.Succeeded)

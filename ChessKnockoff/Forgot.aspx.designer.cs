@@ -13,22 +13,22 @@ namespace ChessKnockoff {
     public partial class WebForm7 {
         
         /// <summary>
-        /// valEmailForgot control.
+        /// valEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CustomValidator valEmailForgot;
+        protected global::System.Web.UI.WebControls.CustomValidator valEmail;
         
         /// <summary>
-        /// inpEmailForgot control.
+        /// inpEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmailForgot;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmail;
         
         /// <summary>
         /// btnForgotSubmit control.

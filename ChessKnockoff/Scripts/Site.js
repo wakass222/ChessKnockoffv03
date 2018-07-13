@@ -1,18 +1,24 @@
-﻿//All functions have a nameconfirm however only the password uses it and it is optional
-function checkPasswordMatch(name, nameConfirm) {
+﻿//Define the ID's
+var inpUsernameID = "#inpUsername";
+var inpPasswordID = "#inpPassword";
+var inpRePasswordID = "#inpRePassword";
+var inpEmailID = "#inpEmail";
+
+//All functions have a nameconfirm however only the password uses it and it is optional
+function checkPasswordMatch() {
     //Get elements
-    var inpPassword = $(name);
-    var inpPasswordConfirm = $(nameConfirm);
+    var inpPassword = $(inpPasswordID);
+    var inpPasswordConfirm = $(inpRePasswordID);
     //Password validation is done serverside since it already has a function for that
     if (inpPassword.val() === "") {
         //If there is nothing them show no extra styling
-        inpPassword.add(inpPasswordConfirm).removeClass("is-valid is-invalid");
+        inpPassword.add(inpRePassword).removeClass("is-valid is-invalid");
         return false;
     }
     else if (inpPassword.val() === inpPasswordConfirm.val()) //Check if they match and are not empty
     {
         //Show success
-        inpPassword.add(inpPasswordConfirm).addClass("is-valid").removeClass("is-invalid");
+        inpPassword.add(inpRePassword).addClass("is-valid").removeClass("is-invalid");
         return true;
     }
     else {
@@ -21,16 +27,16 @@ function checkPasswordMatch(name, nameConfirm) {
         return false;
     }
 }
-function checkEmailRule(name, nameConfirm) {
+function checkEmailRule() {
     //Get element
-    var inpEmail = $(name);
+    var inpEmail = $(inpEmailID);
     //Create regex for email
     var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
     //Check it against the regex
     if (inpEmail.val() === "") {
         inpEmail.removeClass("is-valid is-invalid");
         return false;
-    } else if (emailRegex.test(inpEmail.val())) {
+    } else if (emailRegex.test(inpEmail.val()) && inpEmail.val().length <= 320) {
         //Show success
         inpEmail.addClass("is-valid");
         inpEmail.removeClass("is-invalid");
@@ -42,9 +48,9 @@ function checkEmailRule(name, nameConfirm) {
         return false;
     }
 }
-function checkUsernameRule(name, nameConfirm) {
+function checkUsernameRule() {
     //Get element
-    var inpUsername = $(name);
+    var inpUsername = $(inpUsernameID);
     //Create regex for alphanumeric characters only
     var usernameRegex = /^[a-z0-9]+$/i;
     if (inpUsername.val() === "") {
@@ -72,3 +78,34 @@ function wrapperMatch(sender, args, rule, name, nameConfirm = null) {
         args.IsValid = false;
     }
 }
+
+//Create the wrapped functions that interface with the client validators
+function wrappedUsername(sender, args) {
+    wrapperMatch(sender, args, checkUsernameRule, inpUsername);
+}
+
+function wrappedPassword(sender, args) {
+    wrapperMatch(sender, args, checkPasswordMatch, inpPassword, inpRePassword);
+}
+
+function wrappedEmail(sender, args) {
+    wrapperMatch(sender, args, checkEmailRule, inpEmail);
+}
+
+//Create function to add the validation check if it exists
+function addValidation(control, validationFunction) {
+    if (control.length > 0) {
+        validationFunction();
+
+        control.keyup(function () {
+            validationFunction();
+        });
+    }
+}
+
+//Assign the events once the DOM has loaded
+$(document).ready(function () {
+    addValidation($(inpPasswordID).add(inpRePasswordID), checkPasswordMatch);
+    addValidation($(inpUsernameID), checkUsernameRule);
+    addValidation($(inpEmailID), checkEmailRule);
+});

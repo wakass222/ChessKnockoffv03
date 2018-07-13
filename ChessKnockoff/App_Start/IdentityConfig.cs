@@ -86,7 +86,7 @@ namespace ChessKnockoff
                 }
             }
             
-            //Return the result
+            //Wait for the result then return it
             return await Task.FromResult(!errors.Any()
              ? IdentityResult.Success
              : IdentityResult.Failed(errors.ToArray()));

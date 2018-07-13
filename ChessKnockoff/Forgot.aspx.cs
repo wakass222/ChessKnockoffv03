@@ -40,7 +40,7 @@ namespace ChessKnockoff
                 //Create manager object
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 //Look for user by that email
-                var user = manager.FindByEmail(inpEmailForgot.Value);
+                var user = manager.FindByEmail(inpEmail.Value);
 
                 //Check if a user by that email exists and has their email confirmed
                 if (user != null && user.EmailConfirmed)
