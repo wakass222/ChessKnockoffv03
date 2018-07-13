@@ -109,15 +109,20 @@ namespace ChessKnockoff
                         //Send email confirmation link
                         string code = manager.GenerateEmailConfirmationToken(user.Id);
                         string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                        manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+
+                        try
+                        {
+                            //Try to send the email
+                            manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                        }
+                        catch (Exception)
+                        {
+                            //Email did not send so show error
+                            altError.Visible = true;
+                        }
 
                         //Redirect them to the login page
                         Response.Redirect("~/Login?Registered=1");
-                    }
-                    else
-                    {
-                        //Write to the debug log something has occured
-                        System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
                     }
                 }
             }

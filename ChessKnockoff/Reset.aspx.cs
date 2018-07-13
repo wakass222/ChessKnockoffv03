@@ -56,11 +56,6 @@ namespace ChessKnockoff
                         //Redirect to the login page and show the success message
                         Response.Redirect("~/Login?ResetPassword=1");
                     }
-                    else
-                    {
-                        //Write to the debug log something has occured
-                        System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
-                    }
                 }
             }
         }

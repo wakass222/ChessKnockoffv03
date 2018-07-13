@@ -55,11 +55,6 @@ namespace ChessKnockoff
                 {
                     altEmailConfirm.Visible = true;
                 }
-                else
-                {
-                    //Write to the debug log something has occured
-                    System.Diagnostics.Debug.WriteLine(result.Errors.FirstOrDefault<string>());
-                }
             }
 
             //If the user was redirected from another page that required to be logged in

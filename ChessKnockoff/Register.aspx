@@ -37,7 +37,7 @@
         </div>
         <div class="form-group">
             <asp:Button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" enableviewstate="False" validationgroup="grpRegister" Text="Register" OnClick="RegisterClick" />
-            <div id="altError" class="invalid-feedback" runat="server"></div>
+            <div id="altError" class="invalid-feedback" runat="server">Your account could not be created at this time. Please try again later.</div>
         </div>
         <div class="form-group text-center">
             Have an account? <a href="Login">Login here</a>

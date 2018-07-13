@@ -4,6 +4,7 @@ namespace ChessKnockoff.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using ChessKnockoff.Models;
 
     internal sealed class Configuration : DbMigrationsConfiguration<ChessKnockoff.Models.ApplicationDbContext>
     {
@@ -15,7 +16,7 @@ namespace ChessKnockoff.Migrations
         protected override void Seed(ChessKnockoff.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
-
+            
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
         }
