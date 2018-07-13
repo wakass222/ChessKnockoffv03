@@ -14,17 +14,6 @@ namespace ChessKnockoff
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Make the current link in the navbar active
-            activateNav(this, "likLogin");
-
-            //Hide the messages when first entering the page and for other request as the viewstate is not saved
-            altAuthentication.Visible = false;
-            altRegistered.Visible = false;
-            altMustBeLoggedIn.Visible = false;
-            altVerify.Visible = false;
-            altEmailConfirm.Visible = false;
-            altResetPassword.Visible = false;
-
             //If user is already logged in
             if (User.Identity.IsAuthenticated)
             {
@@ -39,6 +28,17 @@ namespace ChessKnockoff
                 }
             }
 
+            //Make the current link in the navbar active
+            activateNav(this, "likLogin");
+
+            //Hide the messages when first entering the page and for other request as the viewstate is not saved
+            altAuthentication.Visible = false;
+            altRegistered.Visible = false;
+            altMustBeLoggedIn.Visible = false;
+            altVerify.Visible = false;
+            altEmailConfirm.Visible = false;
+            altResetPassword.Visible = false;
+
             //Get the confirmation code and ID
             string confirmationCode = IdentityHelper.GetCodeFromRequest(Request);
             string confirmationUserId = IdentityHelper.GetUserIdFromRequest(Request);
@@ -49,7 +49,7 @@ namespace ChessKnockoff
                 //Try to confirm them
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 var result = manager.ConfirmEmail(confirmationUserId, confirmationCode);
-
+               
                 //If it succeeded them confirm
                 if (result.Succeeded)
                 {
@@ -63,7 +63,7 @@ namespace ChessKnockoff
             }
 
             //If the user was redirected from another page that required to be logged in
-            if (Request.QueryString["MustBeLoggedIn"] == "1")
+            if (Request.QueryString["ReturnUrl"] != null)
             {
                 //Display the message
                 altMustBeLoggedIn.Visible = true;

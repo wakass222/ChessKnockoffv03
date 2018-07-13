@@ -15,7 +15,7 @@ namespace ChessKnockoff
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on password validation to another function
-            validatePassword(source, args, inpPasswordReset.Value, inpRePasswordReset.Value);
+            validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
         protected void ResetPassword(object sender, EventArgs e)
@@ -27,7 +27,7 @@ namespace ChessKnockoff
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
                 //Check if the password is valid
-                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPasswordReset.Value).Result;
+                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password is valid
                 if (!resultPassword.Succeeded)
@@ -48,7 +48,7 @@ namespace ChessKnockoff
                     string userID = IdentityHelper.GetUserIdFromRequest(Request);
 
                     //Change their password
-                    var result = manager.ResetPassword(userID, code, inpPasswordReset.Value);
+                    var result = manager.ResetPassword(userID, code, inpPassword.Value);
 
                     //Check if it was successful
                     if (result.Succeeded)

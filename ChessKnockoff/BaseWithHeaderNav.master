@@ -1,5 +1,5 @@
 ﻿<%@ Master Language="C#" MasterPageFile="~/BaseWithHeader.Master" AutoEventWireup="true" CodeBehind="BaseWithHeaderNav.master.cs" Inherits="ChessKnockoff.BaseWithHeaderNav" %>
-<asp:Content ID="Content1" ContentPlaceHolderID="BaseContentWithHeader" runat="server">
+<asp:Content ContentPlaceHolderID="BaseContentWithHeader" runat="server">
     <form runat="server">
         <nav class="navbar navbar-expand-md navbar-dark bg-primary">
             <span class="navbar-brand mb-0">Chess 2.0</span>
@@ -13,6 +13,7 @@
                     <li class="nav-item" id="likPLay" runat="server"><a class="nav-link" href="/Play">Play</a></li>
                     <li class="nav-item" id="likLeaderboard" runat="server"><a class="nav-link" href="/Leaderboard">Leaderboard</a></li>
                     <li class="nav-item" id="likHowToPlay" runat="server"><a class="nav-link" href="/HowToPlay">How to play</a></li>
+                    <li class="nav-item" id="likAccount" runat="server"><a class="nav-link" href="/Account">Account</a></li>
                 </ul>
                 <span class="navbar-text ml-auto" id="txtName" runat="server"></span>
                 <ul class="navbar-nav" id="navLogin" runat="server">
@@ -24,8 +25,6 @@
                 </ul>
             </div>
         </nav>
-        <div class="container-fluid">
-                <asp:ContentPlaceHolder ID="BaseContentWithHeaderNav" runat="server"></asp:ContentPlaceHolder>
-        </div>
+        <asp:ContentPlaceHolder ID="BaseContentWithHeaderNav" runat="server"></asp:ContentPlaceHolder>
     </form>
 </asp:Content>

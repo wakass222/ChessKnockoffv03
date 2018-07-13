@@ -4,6 +4,24 @@ body {
     background-color: #f5f5f5;
 }
 
+.doge {
+    background-image: url(/Content/Doge.jpg);
+    background-repeat: repeat;
+}
+
+/* Centered text */
+.overlayText {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.infoBox {
+    max-width: 530px;
+}
+
 .inputForm {
     max-width: 330px;
 }
@@ -13,17 +31,6 @@ body {
 .dl-horizontal dt {
     white-space: normal;
 }
-
-/* Set widths on the form inputs since otherwise they're 100% wide */
-/*
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="tel"],
-input[type="select"] {
-    max-width: 280px;
-}
-*/
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {

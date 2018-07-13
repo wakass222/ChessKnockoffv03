@@ -3,16 +3,16 @@
     <div class="inputForm mx-auto">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-        <h2 class="signinheading mb-2">Reset password</h2>
+        </div>
+        <h2 class="mb-2">Reset password</h2>
+        <div class="form-group">
+            <label for="inpPassword">New password</label>
+            <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
+            <input id="inpPassword" required="" type="password" class="form-control" placeholder="Password" runat="server"/>
         </div>
         <div class="form-group">
-            <label for="username">New password</label>
-            <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPasswordReset" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
-            <input id="inpPasswordReset" required="" type="password" class="form-control" placeholder="Password" runat="server"/>
-        </div>
-        <div class="form-group">
-            <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePasswordReset" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
-            <input id="inpRePasswordReset" required="" type="password" class="form-control" placeholder="Re-enter password" runat="server"/>
+            <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
+            <input id="inpRePassword" required="" type="password" class="form-control" placeholder="Re-enter password" runat="server"/>
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>
         <div class="form-group">

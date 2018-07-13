@@ -1,3 +1,5 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/BaseWithHeaderNav.Master" AutoEventWireup="true" CodeBehind="BaseWithHeaderNavlogin.master.cs" Inherits="ChessKnockoff.BaseWithScripts_MustBeLoggedIn" %>
-<asp:Content ID="BaseContentWithNavLogin" ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
+﻿<%@ Master Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="BaseWithHeaderNavLogin.master.cs" Inherits="ChessKnockoff.BaseWithHeaderNavLogin" %>
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
+    <asp:ContentPlaceHolder ID="BaseContentHeaderNavLogin" runat="server">
+    </asp:ContentPlaceHolder>
 </asp:Content>

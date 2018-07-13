@@ -741,8 +741,14 @@ C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\C
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AI.WindowsServer.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AI.Web.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csprojResolveAssemblyReference.cache
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.CoreCompileInputs.cache
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.CopyComplete
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.pdb
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.GenerateResource.cache
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.initial.resources
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.GenerateResource.cache
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.add_ELO.resources
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csprojResolveAssemblyReference.cache
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.initial.resources
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.add_ELO.resources

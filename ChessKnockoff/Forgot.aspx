@@ -3,7 +3,7 @@
     <div class="inputForm mx-auto">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="signinheading mb-2">Reset password</h2>
+            <h2 class="mb-2">Reset password</h2>
         </div>
         <div class="form-group">
         <label for="email">Email</label>

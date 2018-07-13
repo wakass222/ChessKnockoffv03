@@ -3,7 +3,7 @@
     <div class="inputForm mx-auto">
         <div class="text-center">
             <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="signinheading mb-2">Login</h2>
+            <h2 class="mb-2">Login</h2>
             <div id="altRegistered" class="alert alert-success" runat="server">
                 Account successfully created. Please also check your email inbox to verify your email.
             </div>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button id="btnSubmitRLogin" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" onserverclick="LoginClick">Login</button>
+            <button id="btnSubmitLogin" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" onserverclick="LoginClick">Login</button>
         </div>
         <div class="form-group text-center">
             Don't have an account? <a href="Register.aspx">Register here</a>

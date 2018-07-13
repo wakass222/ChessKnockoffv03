@@ -22,13 +22,13 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.WebControls.CustomValidator valPassword;
         
         /// <summary>
-        /// inpPasswordReset control.
+        /// inpPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPasswordReset;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpPassword;
         
         /// <summary>
         /// valRePassword control.
@@ -40,13 +40,13 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.WebControls.CustomValidator valRePassword;
         
         /// <summary>
-        /// inpRePasswordReset control.
+        /// inpRePassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePasswordReset;
+        protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePassword;
         
         /// <summary>
         /// btnSubmitReset control.
