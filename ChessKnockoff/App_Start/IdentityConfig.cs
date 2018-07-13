@@ -65,17 +65,25 @@ namespace ChessKnockoff
         //Override the method to validate passwords
         public override async Task<IdentityResult> ValidateAsync(string item)
         {
-            //Call the original validation method
+            //Call the original validation method and wait for its result
             IdentityResult result = await base.ValidateAsync(item);
 
-            //Get the errors
+            //Get the errors from the original validation method
             var errors = result.Errors.ToList();
 
             //Check if it is null and if it is larger than the maximum length
             if (string.IsNullOrEmpty(item) || item.Length > MaxLength)
             {
-                //Add the error to the string since the errors only appear as one string
-                errors[0] += string.Format(" Password length can't exceed {0}.", MaxLength);
+                //Check if there is already an error
+                if (errors.FirstOrDefault<string>() != null)
+                {
+                    //Add the error to the string since the errors only appear as one string
+                    errors[0] += string.Format(" Password length can't exceed {0}.", MaxLength);
+                } else
+                {
+                    //Else create a new element using the string format to also write the maximum length
+                    errors.Add(string.Format("Password length can't exceed {0}.", MaxLength));
+                }
             }
             
             //Return the result
@@ -96,14 +104,16 @@ namespace ChessKnockoff
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
-            // Configure validation logic for usernames
+
+            // Configure validation setting for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
             {
                 AllowOnlyAlphanumericUserNames = true,
                 RequireUniqueEmail = true
+                //Username length is done as a custom validation so it can be done client side
             };
 
-            // Configure validation logic for passwords
+            // Configure validation settings for password
             manager.PasswordValidator = new CustomPasswordValidator
             {
                 MaxLength = 256,
