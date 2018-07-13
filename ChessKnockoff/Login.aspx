@@ -25,11 +25,11 @@
         </div>
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="inpUsernameLogin" class="form-control" name="username" placeholder="Username" required autofocus="" runat="server"/>
+            <input type="text" id="inpUsernameLogin" class="form-control" name="username" placeholder="Username" required autofocus="" runat="server" autocomplete="on"/>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="inpPasswordLogin" class="form-control" name="password" placeholder="Password" required runat="server"/>
+            <input type="password" id="inpPasswordLogin" class="form-control" name="password" placeholder="Password" required runat="server" autocomplete="on"/>
             <div class="ml-auto">
                 <small id="emailHelp" class="form-text text-muted">Forgot your password? <a href="Forgot">Reset here</a></small>
             </div>

@@ -8,7 +8,7 @@
         <div class="form-group">
         <label for="email">Email</label>
             <asp:CustomValidator ID="valEmail" runat="server" ControlToValidate="inpEmail" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpForgot" ValidateEmptyText="True"></asp:CustomValidator>
-            <input type="email" id="inpEmail" class="form-control" name="email" placeholder="Email" required autofocus="" runat="server"/>
+            <input type="email" id="inpEmail" class="form-control" name="email" placeholder="Email" required autofocus="" runat="server" autocomplete="on"/>
             <div class="invalid-feedback">Email is not valid.</div>
         </div>
         <div class="form-group">

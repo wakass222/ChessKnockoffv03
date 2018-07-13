@@ -8,7 +8,7 @@
         <div class="form-group">
             <label for="username">Username</label>
             <asp:CustomValidator ID="valUsername" runat="server" ControlToValidate="inpUsername" ClientValidationFunction="wrappedUsername" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
-            <input id="inpUsername" required="" class="form-control" placeholder="Username" runat="server" />
+            <input id="inpUsername" required="" class="form-control" placeholder="Username" runat="server" autocomplete="on" name="username"/>
             <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters.</div>
         </div>
         <div id="altUsernameTaken" class="alert alert-danger" runat="server">
@@ -17,7 +17,7 @@
         <div class="form-group">
             <label for="username">Email</label>
             <asp:CustomValidator ID="valEmail" runat="server" ControlToValidate="inpEmail" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True"></asp:CustomValidator>
-            <input id="inpEmail" required="" class="form-control" placeholder="Email" type="email" runat="server" />
+            <input id="inpEmail" required="" class="form-control" placeholder="Email" type="email" runat="server" autocomplete="on"/>
             <div class="invalid-feedback">Email is not valid.</div>
         </div>
         <div id="altEmailTaken" class="alert alert-danger" runat="server">
