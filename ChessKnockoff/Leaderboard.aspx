@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Leaderboard.aspx.cs" Inherits="ChessKnockoff.WebForm8" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="text-center">
-        <h2 class="mb-2">Leaderboard</h2>
+        <h2 class="mb-2 mt-4">Leaderboard</h2>
     </div>
     <div class="table-responsive container">
         <asp:Table ID="tblLeaderboard" runat="server" CssClass="table table-bordered">

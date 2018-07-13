@@ -119,6 +119,11 @@ namespace ChessKnockoff
                         {
                             //Email did not send so show error
                             altError.Visible = true;
+                            //Delete the account since the email will never be able to get confirmed and play if the email never gets sent
+                            manager.Delete(user);
+
+                            //Don't redirect
+                            return;
                         }
 
                         //Redirect them to the login page
