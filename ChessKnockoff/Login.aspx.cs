@@ -92,7 +92,7 @@ namespace ChessKnockoff
                 var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
 
                 //Require the user to have a confirmed email before they can log on.
-                var user = manager.FindByName(inpUsernameLogin.Value);
+                var user = manager.FindByName(inpUsername.Value);
 
                 //Check if a user by that name exists
                 if (user != null)
@@ -111,7 +111,7 @@ namespace ChessKnockoff
                     else
                     {
                         //Try to log them in
-                        var result = signinManager.PasswordSignIn(inpUsernameLogin.Value, inpPasswordLogin.Value, boxRememberCheck.Checked, false);
+                        var result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, false);
 
                         switch (result)
                         {
