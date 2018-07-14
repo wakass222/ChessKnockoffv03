@@ -65,7 +65,7 @@ namespace ChessKnockoff
         /// <summary>
         /// Retrieves the control that caused the postback.
         /// </summary>
-        /// <param name="page"></param>
+        /// <param name="page">The current page</param>
         /// <returns></returns>
         static public Control GetControlThatCausedPostBack(Page page)
         {

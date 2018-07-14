@@ -53,7 +53,6 @@
     <Compile Include="ChessUtilities.cs" />
     <Compile Include="DetailedMove.cs" />
     <Compile Include="GameCreationData.cs" />
-    <Compile Include="HordeChessGame.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="MoveType.cs" />
     <Compile Include="PgnException.cs" />
