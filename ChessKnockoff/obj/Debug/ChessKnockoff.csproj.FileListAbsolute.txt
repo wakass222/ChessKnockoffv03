@@ -756,3 +756,11 @@ C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\C
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\ChessDotNet.dll
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\ChessDotNet.pdb
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\ChessDotNet.dll
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\ChessDotNet.pdb
