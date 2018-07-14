@@ -16,6 +16,9 @@
             <div id="altAuthentication" class="alert alert-danger" runat="server">
                 Username or password is incorrect.
             </div>
+            <div id="altLockout" class="alert alert-danger" runat="server">
+                Your account has been lockout. Try again in 20 minutes or reset your password to end the lockout.
+            </div>
             <div id="altEmailConfirm" class="alert alert-success" runat="server">
                 Your email has been confirmed.
             </div>

@@ -22,10 +22,10 @@ namespace ChessKnockoff
             if (IsValid)
             {
                 //Create the Owin object
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 //Create the user manager object
-                var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-                var result = manager.ChangePassword(User.Identity.GetUserId(), inpCurrentPassword.Value, inpPassword.Value);
+                ApplicationSignInManager signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+                IdentityResult result = manager.ChangePassword(User.Identity.GetUserId(), inpCurrentPassword.Value, inpPassword.Value);
 
                 //Check if it was successful
                 if (result.Succeeded)

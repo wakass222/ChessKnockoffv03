@@ -49,6 +49,15 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altAuthentication;
         
         /// <summary>
+        /// altLockout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altLockout;
+        
+        /// <summary>
         /// altEmailConfirm control.
         /// </summary>
         /// <remarks>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using ChessKnockoff.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,9 @@ namespace ChessKnockoff
             if (IsValid)
             {
                 //Create manager object
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
                 //Look for user by that email
-                var user = manager.FindByEmail(inpEmail.Value);
+                ApplicationUser user = manager.FindByEmail(inpEmail.Value);
 
                 //Check if a user by that email exists and has their email confirmed
                 if (user != null && user.EmailConfirmed)

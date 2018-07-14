@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Threading.Tasks;
 
 namespace ChessKnockoff
 {
@@ -17,16 +18,16 @@ namespace ChessKnockoff
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
-        protected void ResetPassword(object sender, EventArgs e)
+        protected async Task ResetPassword(object sender, EventArgs e)
         {
             //Check if the inputs are valid in this case if both passwords match
             if (IsValid)
             {
                 //Create manager object
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
                 //Check if the password is valid
-                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
+                IdentityResult resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password is valid
                 if (!resultPassword.Succeeded)
@@ -47,11 +48,13 @@ namespace ChessKnockoff
                     string userID = IdentityHelper.GetUserIdFromRequest(Request);
 
                     //Change their password
-                    var result = manager.ResetPassword(userID, code, inpPassword.Value);
+                    IdentityResult result = manager.ResetPassword(userID, code, inpPassword.Value);
 
                     //Check if it was successful
                     if (result.Succeeded)
                     {
+                        //Also end the lockout if there was one
+                        await manager.SetLockoutEndDateAsync(userID, new DateTimeOffset(DateTime.UtcNow));
                         //Redirect to the login page and show the success message
                         Response.Redirect("~/Login?ResetPassword=1");
                     }

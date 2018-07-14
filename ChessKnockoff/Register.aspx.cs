@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -42,16 +43,26 @@ namespace ChessKnockoff
             altError.Visible = false;
         }
 
-        protected void RegisterClick(object sender, EventArgs e)
+        protected async Task RegisterClick(object sender, EventArgs e)
         {
             //Check if controls in the group are all valid
             if (IsValid)
             {
                 //Create manager
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
+                //Start the async task
                 //Check if password is valid
-                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
+                Task<IdentityResult> taskPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value);
+
+                //Check if username is not taken
+                Task<ApplicationUser> taskUsername = manager.FindByNameAsync(inpUsername.Value);
+
+                //Check if email is valid
+                Task<ApplicationUser> taskEmail = manager.FindByEmailAsync(inpEmail.Value);
+
+                //Await each task before each check
+                IdentityResult resultPassword = await taskPassword;
 
                 //Check if the password can be used
                 if (!resultPassword.Succeeded)
@@ -62,8 +73,7 @@ namespace ChessKnockoff
                     altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
                 }
 
-                //Check if username is not taken
-                var resultUsername = manager.FindByName(inpUsername.Value);
+                ApplicationUser resultUsername = await taskUsername;
 
                 //Check if the user is not null
                 if (resultUsername != null)
@@ -72,8 +82,7 @@ namespace ChessKnockoff
                     altUsernameTaken.Visible = true;
                 }
 
-                //Check if email is valid
-                var resultEmail = manager.FindByEmail(inpEmail.Value);
+                ApplicationUser resultEmail = await taskEmail;
 
                 if (resultEmail != null)
                 {
@@ -85,9 +94,9 @@ namespace ChessKnockoff
                 if (resultEmail == null && resultPassword.Succeeded && resultUsername == null)
                 {
                     //Create sign in manager
-                    var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
+                    ApplicationSignInManager signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
 
-                    var user = new ApplicationUser() { UserName = inpUsername.Value, Email = inpEmail.Value };
+                    ApplicationUser user = new ApplicationUser() { UserName = inpUsername.Value, Email = inpEmail.Value };
 
                     IdentityResult result = manager.Create(user, inpPassword.Value);
 

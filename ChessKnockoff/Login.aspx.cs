@@ -7,6 +7,7 @@ using System.Web;
 using static ChessKnockoff.Utilities;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ChessKnockoff.Models;
 
 namespace ChessKnockoff
 {
@@ -38,6 +39,7 @@ namespace ChessKnockoff
             altVerify.Visible = false;
             altEmailConfirm.Visible = false;
             altResetPassword.Visible = false;
+            altLockout.Visible = false;
 
             //Get the confirmation code and ID
             string confirmationCode = IdentityHelper.GetCodeFromRequest(Request);
@@ -47,8 +49,8 @@ namespace ChessKnockoff
             if (confirmationCode != null && confirmationUserId != null)
             {
                 //Try to confirm them
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                var result = manager.ConfirmEmail(confirmationUserId, confirmationCode);
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                IdentityResult result = manager.ConfirmEmail(confirmationUserId, confirmationCode);
                
                 //If it succeeded them confirm
                 if (result.Succeeded)
@@ -83,11 +85,11 @@ namespace ChessKnockoff
             if (IsValid)
             {
                 //Validate the user password
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                var signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
+                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                ApplicationSignInManager signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
 
                 //Require the user to have a confirmed email before they can log on.
-                var user = manager.FindByName(inpUsername.Value);
+                ApplicationUser user = manager.FindByName(inpUsername.Value);
 
                 //Check if a user by that name exists
                 if (user != null)
@@ -106,7 +108,7 @@ namespace ChessKnockoff
                     else
                     {
                         //Try to log them in
-                        var result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, false);
+                        IdentityResult result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, true);
 
                         switch (result)
                         {
@@ -127,6 +129,9 @@ namespace ChessKnockoff
                             case SignInStatus.Failure:
                                 //Show error message that password and username are not correct
                                 altAuthentication.Visible = true;
+                                break;
+                            case SignInStatus.LockedOut:
+                                altLockout.Visible = true;
                                 break;
                             default:
                                 break;

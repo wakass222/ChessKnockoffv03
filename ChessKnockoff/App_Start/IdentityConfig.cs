@@ -12,6 +12,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin;
 using static ChessKnockoff.ApplicationUserManager;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace ChessKnockoff
 {
@@ -69,7 +70,7 @@ namespace ChessKnockoff
             IdentityResult result = await base.ValidateAsync(item);
 
             //Get the errors from the original validation method
-            var errors = result.Errors.ToList();
+            List<string> errors = result.Errors.ToList();
 
             //Check if it is null and if it is larger than the maximum length
             if (string.IsNullOrEmpty(item) || item.Length > MaxLength)
@@ -103,7 +104,7 @@ namespace ChessKnockoff
 
         public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
         {
-            var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
+            ApplicationUserManager manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context.Get<ApplicationDbContext>()));
 
             // Configure validation setting for usernames
             manager.UserValidator = new UserValidator<ApplicationUser>(manager)
@@ -137,8 +138,11 @@ namespace ChessKnockoff
             });
 
             // Configure user lockout defaults
-            manager.UserLockoutEnabledByDefault = false;
-            manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            //Allow the user to be locked out
+            manager.UserLockoutEnabledByDefault = true;
+            //Set a lockout time
+            manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(20);
+            //Set the amount of attempts before a lockout is set
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
             manager.EmailService = new ChessKnockoff.EmailService();
