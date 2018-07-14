@@ -36,12 +36,12 @@ namespace ChessKnockoff
                 tableRow.Cells.Add(tableCellRank);
 
                 TableCell tableCellUsername = new TableCell();
-                //Make the first column the rank
-                tableCellUsername.Text = user.UserName;
+                //Make the second column the username and escape any tags
+                tableCellUsername.Text = HttpUtility.HtmlEncode(user.UserName);
                 tableRow.Cells.Add(tableCellUsername);
 
                 TableCell tableCellELO = new TableCell();
-                //Make the first column the rank
+                //Make the third column the ELO
                 tableCellELO.Text = user.ELO.ToString();
                 tableRow.Cells.Add(tableCellELO);
 

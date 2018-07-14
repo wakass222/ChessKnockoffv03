@@ -28,8 +28,8 @@ namespace ChessKnockoff
                 navLogin.Visible = false;
                 navLogout.Visible = true;
 
-                //Display the name of the logged in user
-                txtName.InnerText = HttpContext.Current.User.Identity.Name;
+                //Display the name of the logged in user and escaping any tags
+                txtName.InnerText = HttpUtility.HtmlEncode(HttpContext.Current.User.Identity.Name);
             }
             else
             {

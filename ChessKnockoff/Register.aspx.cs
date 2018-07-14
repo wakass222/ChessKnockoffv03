@@ -11,23 +11,11 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using static ChessKnockoff.Utilities;
-using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm1 : System.Web.UI.Page
+    public partial class WebForm1 : ValidationPage
     {
-        private void checkUsername(object source, ServerValidateEventArgs args)
-        {
-            //Pass on validation to the username validation function
-            validateUsername(source, args);
-        }
-
-        private void checkEmail(object source, ServerValidateEventArgs args)
-        {
-            //Pass on the values to the email validation function
-            validateEmail(source, args);
-        }
 
         private void checkPassword(object source, ServerValidateEventArgs args)
         {

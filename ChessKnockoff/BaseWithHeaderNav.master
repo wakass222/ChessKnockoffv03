@@ -2,7 +2,7 @@
 <asp:Content ContentPlaceHolderID="BaseContentWithHeader" runat="server">
     <form runat="server">
         <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-            <span class="navbar-brand mb-0">Chess 2.0</span>
+            <a class="navbar-brand mb-0" href="/">Chess 2.0</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -12,7 +12,6 @@
                 <ul class="navbar-nav">
                     <li class="nav-item" id="likPLay" runat="server"><a class="nav-link" href="/Play">Play</a></li>
                     <li class="nav-item" id="likLeaderboard" runat="server"><a class="nav-link" href="/Leaderboard">Leaderboard</a></li>
-                    <li class="nav-item" id="likHowToPlay" runat="server"><a class="nav-link" href="/HowToPlay">How to play</a></li>
                     <li class="nav-item" id="likAccount" runat="server"><a class="nav-link" href="/Account">Account</a></li>
                 </ul>
                 <span class="navbar-text ml-auto" id="txtName" runat="server"></span>

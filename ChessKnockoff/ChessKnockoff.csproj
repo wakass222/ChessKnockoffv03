@@ -242,7 +242,7 @@
     <Content Include="Reset.aspx" />
     <Content Include="BaseWithHeaderNavLogin.master" />
     <Content Include="Account.aspx" />
-    <Content Include="HowToPlay.aspx" />
+    <Content Include="Default.aspx" />
     <Content Include="Content\Doge.jpg" />
     <Content Include="Leaderboard.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -359,7 +359,9 @@
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Validation.cs" />
+    <Compile Include="Validation.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Account.aspx.cs">
       <DependentUpon>Account.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -367,12 +369,12 @@
     <Compile Include="Account.aspx.designer.cs">
       <DependentUpon>Account.aspx</DependentUpon>
     </Compile>
-    <Compile Include="HowToPlay.aspx.cs">
-      <DependentUpon>HowToPlay.aspx</DependentUpon>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HowToPlay.aspx.designer.cs">
-      <DependentUpon>HowToPlay.aspx</DependentUpon>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Leaderboard.aspx.cs">
       <DependentUpon>Leaderboard.aspx</DependentUpon>
