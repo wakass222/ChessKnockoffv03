@@ -108,7 +108,7 @@ namespace ChessKnockoff
                     else
                     {
                         //Try to log them in
-                        IdentityResult result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, true);
+                        SignInStatus result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, true);
 
                         switch (result)
                         {
@@ -132,6 +132,8 @@ namespace ChessKnockoff
                                 break;
                             case SignInStatus.LockedOut:
                                 altLockout.Visible = true;
+                                altLockout.InnerText = string.Format("Your account has been locked for {} for {} failed attempts. " +
+                                    "Please reset your password to prematurely end the lockout.", manager.DefaultAccountLockoutTimeSpan.Minutes, manager.MaxFailedAccessAttemptsBeforeLockout);
                                 break;
                             default:
                                 break;
