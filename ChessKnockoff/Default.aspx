@@ -1,8 +1,10 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ChessKnockoff.WebForm6" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <script type="text/javascript">
+        //Once the DOM has fully loaded
         $(document).ready(
-            $("body").addClass("doge")
+            //Add the doge class to the body which will add the background
+            //$("body").addClass("doge")
         );
     </script>
     <div class="overlayContainer">

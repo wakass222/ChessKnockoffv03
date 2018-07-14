@@ -7,17 +7,11 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using static ChessKnockoff.Utilities;
-using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm7 : System.Web.UI.Page
+    public partial class WebForm7 : ValidationPage
     {
-        protected void wrappedEmail(object source, ServerValidateEventArgs args)
-        {
-            validateEmail(source, args);
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //Hide the success message as the viewstate is not saved

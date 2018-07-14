@@ -6,11 +6,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using static ChessKnockoff.Validation;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm3 : System.Web.UI.Page
+    public partial class WebForm3 : ValidationPage
     {
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {

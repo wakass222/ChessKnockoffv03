@@ -43,7 +43,7 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="source">The source object from the validation call</param>
         /// <param name="args">Arguments from the validation call</param>
-        protected void validateEmail(object source, ServerValidateEventArgs args)
+        protected void checkEmail(object source, ServerValidateEventArgs args)
         {
             //Will only return true if the email has not been taken and is valid, also checks its length
             Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", RegexOptions.IgnoreCase);
@@ -64,7 +64,7 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="source">The source object from the validation call</param>
         /// <param name="args">Arguments from the validation call</param>
-        protected void validateUsername(object source, ServerValidateEventArgs args)
+        protected void checkUsername(object source, ServerValidateEventArgs args)
         {
             //Create username regex
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
