@@ -4,14 +4,14 @@
         //Once the DOM has fully loaded
         $(document).ready(
             //Add the doge class to the body which will add the background
-            //$("body").addClass("doge")
+            $("body").addClass("doge")
         );
     </script>
     <div class="overlayContainer">
         <div class="row">
             <div class="overlayText mx-auto text-center">
                 <h1 class="display-2">Such pawns.</h1>
-                <h1>Many suprise...</h1>
+                <h1>Many surprise...</h1>
             </div>
         </div>
     </div>
