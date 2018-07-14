@@ -5,12 +5,13 @@ body {
 }
 
 .doge {
-    background-image: url(/Content/Doge.jpg);
+    background-image: url(/Content/Images/Doge.jpg);
     background-repeat: repeat;
 }
 
 /* Centered text */
 .overlayText {
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     color: white;
     position: absolute;
     top: 50%;

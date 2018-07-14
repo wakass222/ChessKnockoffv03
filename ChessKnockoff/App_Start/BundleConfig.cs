@@ -13,9 +13,9 @@ namespace ChessKnockoff
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/js").Include(
-                    "~/Scripts/jquery-3.3.1.js",
-                    "~/Scripts/popper.js",
-                    "~/Scripts/bootstrap.js",
+                    "~/Scripts/jquery-3.3.1.min.js",
+                    "~/Scripts/popper.min.js",
+                    "~/Scripts/bootstrap.min.js",
                     "~/Scripts/Site.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/WebFormsJs").Include(

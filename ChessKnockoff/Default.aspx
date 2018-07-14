@@ -7,12 +7,8 @@
             $("body").addClass("doge")
         );
     </script>
-    <div class="overlayContainer">
-        <div class="row">
             <div class="overlayText mx-auto text-center">
                 <h1 class="display-2">Such pawns.</h1>
                 <h1>Many surprise...</h1>
             </div>
-        </div>
-    </div>
 </asp:Content>

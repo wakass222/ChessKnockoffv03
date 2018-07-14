@@ -752,3 +752,7 @@ C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\Ch
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csprojResolveAssemblyReference.cache
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.initial.resources
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.add_ELO.resources
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.xml

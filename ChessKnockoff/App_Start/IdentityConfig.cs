@@ -141,7 +141,7 @@ namespace ChessKnockoff
             //Allow the user to be locked out
             manager.UserLockoutEnabledByDefault = true;
             //Set a lockout time
-            manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(20);
+            manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(30);
             //Set the amount of attempts before a lockout is set
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 

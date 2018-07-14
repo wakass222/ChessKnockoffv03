@@ -18,7 +18,7 @@ namespace ChessKnockoff
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
-        protected async Task ResetPassword(object sender, EventArgs e)
+        protected void ResetPassword(object sender, EventArgs e)
         {
             //Check if the inputs are valid in this case if both passwords match
             if (IsValid)
@@ -26,7 +26,7 @@ namespace ChessKnockoff
                 //Create manager object
                 ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-                //Check if the password is valid
+                //Check if the password is valid and block until it gets a result
                 IdentityResult resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password is valid
@@ -54,7 +54,7 @@ namespace ChessKnockoff
                     if (result.Succeeded)
                     {
                         //Also end the lockout if there was one
-                        await manager.SetLockoutEndDateAsync(userID, new DateTimeOffset(DateTime.UtcNow));
+                        manager.SetLockoutEndDate(userID, new DateTimeOffset(DateTime.UtcNow));
                         //Redirect to the login page and show the success message
                         Response.Redirect("~/Login?ResetPassword=1");
                     }

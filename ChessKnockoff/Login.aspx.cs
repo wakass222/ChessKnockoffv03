@@ -110,35 +110,44 @@ namespace ChessKnockoff
                         //Try to log them in
                         SignInStatus result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, true);
 
-                        switch (result)
+                        //Check the result of sign in status to the possible errors
+                        if (result == SignInStatus.Success)
                         {
-                            case SignInStatus.Success:
-                                if (Request.QueryString["ReturnUrl"] != null)
-                                {
-                                    Response.Redirect(Request.QueryString["ReturnUrl"]);
-                                }
-                                else
-                                {
-                                    Response.Redirect("~/Play");
-                                }
-                                break;
-                            case SignInStatus.RequiresVerification:
-                                //Show error message to verify
-                                altVerify.Visible = true;
-                                break;
-                            case SignInStatus.Failure:
-                                //Show error message that password and username are not correct
-                                altAuthentication.Visible = true;
-                                break;
-                            case SignInStatus.LockedOut:
-                                altLockout.Visible = true;
-                                altLockout.InnerText = string.Format("Your account has been locked for {} for {} failed attempts. " +
-                                    "Please reset your password to prematurely end the lockout.", manager.DefaultAccountLockoutTimeSpan.Minutes, manager.MaxFailedAccessAttemptsBeforeLockout);
-                                break;
-                            default:
-                                break;
+                            //If there is return url then redirect them to it
+                            if (Request.QueryString["ReturnUrl"] != null)
+                            {
+                                Response.Redirect(Request.QueryString["ReturnUrl"]);
+                            }
+                            else
+                            {
+                                //If it does not exist redirect them to the play page
+                                Response.Redirect("~/Play");
+                            }
+                        }
+                        else if(result == SignInStatus.RequiresVerification)
+                        {
+                            //Show that they need to verify their email
+                            altVerify.Visible = true;
+                        }
+                        else if(result == SignInStatus.Failure)
+                        {
+                            //Show that the password/username combination was incorrect
+                            altAuthentication.Visible = true;
+                        }
+                        else if(result == SignInStatus.LockedOut)
+                        {
+                            //Show that they have been locked out
+                            altLockout.Visible = true;
+                            altLockout.InnerText = string.Format("Your account has been locked for {0} minutes after {1} failed attempts. Please reset your password to prematurely end the lockout.",
+                                manager.DefaultAccountLockoutTimeSpan.Minutes, manager.MaxFailedAccessAttemptsBeforeLockout);
                         }
                     }
+                }
+                else
+                {
+                    //Show error message even if the username does not exist
+                    //Does not reveal whether that username exists
+                    altAuthentication.Visible = true;
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Account.aspx.cs" Inherits="ChessKnockoff.WebForm3" %>
+﻿<%@ Page Title="Account" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Account.aspx.cs" Inherits="ChessKnockoff.WebForm3" %>
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLogin" runat="server">
     <div class="inputForm mx-auto">
         <div class="text-center">
@@ -14,11 +14,11 @@
         </div>
         <div class="form-group">
             <label for="inpPasswordReset">New password</label>
-            <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="CheckPassword"></asp:CustomValidator>
+            <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
             <input id="inpPassword" required="" type="password" class="form-control" placeholder="Password" runat="server"/>
         </div>
         <div class="form-group">
-            <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="CheckPassword"></asp:CustomValidator>
+            <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
             <input id="inpRePassword" required="" type="password" class="form-control" placeholder="Re-enter password" runat="server"/>
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>

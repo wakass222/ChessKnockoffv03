@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Leaderboard.aspx.cs" Inherits="ChessKnockoff.WebForm8" %>
+﻿<%@ Page Title="Leaderboard" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Leaderboard.aspx.cs" Inherits="ChessKnockoff.WebForm8" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="text-center">
         <h2 class="mb-2 mt-4">Leaderboard</h2>

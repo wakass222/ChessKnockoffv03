@@ -31,15 +31,6 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl inpEmail;
         
         /// <summary>
-        /// btnForgotSubmit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnForgotSubmit;
-        
-        /// <summary>
         /// altEmailSent control.
         /// </summary>
         /// <remarks>
@@ -56,5 +47,14 @@ namespace ChessKnockoff {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl altEmailFail;
+        
+        /// <summary>
+        /// btnForgotSubmit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnForgotSubmit;
     }
 }

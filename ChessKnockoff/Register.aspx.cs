@@ -17,7 +17,7 @@ namespace ChessKnockoff
     public partial class WebForm1 : ValidationPage
     {
 
-        public void CheckPassword(object source, ServerValidateEventArgs args)
+        public void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on validation to the password validation function
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
@@ -50,7 +50,7 @@ namespace ChessKnockoff
                 //Create manager
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
-                //Check if password is valid
+                //Check if password is valid and block until the a result is returned
                 var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password can be used
