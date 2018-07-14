@@ -17,7 +17,7 @@ namespace ChessKnockoff
     public partial class WebForm1 : ValidationPage
     {
 
-        public void checkPassword(object source, ServerValidateEventArgs args)
+        public void CheckPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on validation to the password validation function
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
