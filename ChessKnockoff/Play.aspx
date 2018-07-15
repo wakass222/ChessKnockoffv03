@@ -94,10 +94,12 @@
     </script>
     <div class="container mt-2 mx-auto">
         <div class="row justify-content-center" style="margin: 0 auto;">
-            <h3 id="hedOpponentName" runat="server"></h3>
+            <h3 id="hedOpponentName" runat="server">Hello</h3>
         </div>
         <div class="row mt-1 justify-content-center">
-            <div id="board" style="width: 550px">
+            <div class="wrap">
+                <div id="board" style="width: 425px">
+                </div>
             </div>
         </div>
     </div>

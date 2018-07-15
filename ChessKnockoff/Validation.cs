@@ -12,7 +12,7 @@ using System.Web.UI;
 namespace ChessKnockoff
 {
     /// <summary>
-    /// Adds validation functions to the Page class
+    /// Adds validation functions to the Page class and additional functions
     /// </summary>
     public class ValidationPage: System.Web.UI.Page
     {
