@@ -10,6 +10,9 @@
             //Code references board before it has been configured
             var board;
 
+            //Make an empty board
+            var board = ChessBoard('board', "");
+
             //The start button
             var btnPlay = $("#btnPlay");
 
@@ -36,6 +39,9 @@
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
                 console.log(fenString + " " + opponentUsername + " " + side);
 
+                //Hide the search for game button
+                btnPlay.hide();
+
                 //Display the opponent's username
                 hedOpponent.html(opponentUsername);
 
@@ -48,7 +54,7 @@
                 };
 
                 //Create the actualy HTML board in the div with the id, board
-                board = ChessBoard('board');
+                board = ChessBoard('board', cfg);
             }
 
             //Any functions that the server can call
@@ -100,8 +106,8 @@
             //Start the connection to the hub
             $.connection.hub.start()
                 .done(function () {
-                    //Hide the play button once the connection has been made
-                    btnPlay.toggle();
+                    //Show the game
+                    btnPlay.show();
                 })
                 .fail(function () {
                     //Show the error if a connection could not be made
@@ -129,7 +135,7 @@
                 <div id="altFail" class="alert alert-danger" role="alert">
                     Sorry but a connection to the game server could not be created. Please try again at a later time.
                 </div>
-                <button id="btnPlay" class="btn btn-lg btn-primary" type="submit"  data-toggle="button" aria-pressed="false"">Find game</button>
+                <button id="btnPlay" class="btn btn-lg btn-primary" type="submit" data-toggle="button" aria-pressed="false"">Find game</button>
             </div>
         </div>
     </div>

@@ -43,6 +43,9 @@ namespace ChessKnockoff
                 string opponentUsername = HttpUtility.HtmlEncode(opponent.userInformation.UserName);
                 string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.userInformation.UserName);
 
+                //Hold the fen string for the new game
+                string fenString = newGame.Board.GetFen();
+
                 //Randomly assign the side the player is playing on
                 if (randomBool)
                 {
@@ -51,19 +54,20 @@ namespace ChessKnockoff
                     opponent.side = Player.White;
 
                     //The joining client
-                    Clients.Client(this.Context.ConnectionId).start(newGame.fenString, opponentUsername, "Black");
+                    Clients.Client(this.Context.ConnectionId).start(fenString, opponentUsername, "black");
                     //The opponent client
-                    Clients.Client(opponent.connectionString).start(newGame.fenString, joiningPlayerUsername, "White");
-                } else
+                    Clients.Client(opponent.connectionString).start(fenString, joiningPlayerUsername, "white");
+                }
+                else
                 {
                     //Set the respective players side
                     joiningPlayer.side = Player.White;
                     opponent.side = Player.Black;
 
                     //The joining client
-                    Clients.Client(this.Context.ConnectionId).start(newGame.fenString, opponentUsername, "White");
+                    Clients.Client(this.Context.ConnectionId).start(fenString, opponentUsername, "white");
                     //The opponent client
-                    Clients.Client(opponent.connectionString).start(newGame.fenString, joiningPlayerUsername, "Black");
+                    Clients.Client(opponent.connectionString).start(fenString, joiningPlayerUsername, "black");
                 }
             }
         }
@@ -74,7 +78,7 @@ namespace ChessKnockoff
         /// <param name="row">The row part of the position.</param>
         /// <param name="col">The column part of the position.</param>
         /// <returns>A Task to track the asynchronous method execution.<</returns>
-        public void MakeTurn(string sourcePosition, string destinationPosition)
+        public string MakeTurn(string sourcePosition, string destinationPosition)
         {
             playerConnection playerMakingTurn = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
             playerConnection opponent;
@@ -87,7 +91,11 @@ namespace ChessKnockoff
             if (game.Board.IsValidMove(move))
             {
                 game.Board.ApplyMove(move, true);
+                return game.Board.GetFen();
+            } else
+            {
                 this.Clients.Group(game.Id).updatePosition(game.Board.GetFen());
+                return "snapback";
             }
         }
 

@@ -10,6 +10,10 @@ body {
     background-repeat: repeat;
 }
 
+p {
+    max-width: 550px;
+}
+
 /* Centered text */
 .overlayText {
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

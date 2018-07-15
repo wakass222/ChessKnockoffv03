@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChessDotNet;
-using ChessDotNet.Variants.Horde;
 using Microsoft.AspNet.SignalR;
+using ChessDotNet.Variants.Horde;
 
 namespace ChessKnockoff.Models
 {
@@ -14,21 +14,18 @@ namespace ChessKnockoff.Models
         /// <summary>
         /// Creates a new game object.
         /// </summary>
-        /// <param name="playerWhite">The first player to join the game.</param>
-        /// <param name="playerBlack">The second player to join the game.</param>
-        public Game(playerConnection playerWhite, playerConnection playerBlack)
+        /// <param name="firstPlayer">The first player to join the game.</param>
+        /// <param name="secondPlayer">The second player to join the game.</param>
+        public Game(playerConnection firstPlayer, playerConnection secondPlayer)
         {
-            //Set the object properties
-            this.playerWhite = playerWhite;
-            this.playerBlack = playerBlack;
+            this.firstPlayer = firstPlayer;
+            this.secondPlayer = secondPlayer;
             this.Id = Guid.NewGuid().ToString("d");
             this.Board = new HordeChessGame();
-            this.fenString = Board.GetFen();
 
             // Link the players to the game as well
-            this.playerWhite.GameId = this.Id;
-            this.playerBlack.GameId = this.Id;
-
+            this.firstPlayer.GameId = this.Id;
+            this.secondPlayer.GameId = this.Id;
         }
 
         /// <summary>
@@ -39,21 +36,16 @@ namespace ChessKnockoff.Models
         /// <summary>
         /// The black player
         /// </summary>
-        public playerConnection playerBlack { get; set; }
+        public playerConnection firstPlayer { get; set; }
 
         /// <summary>
         /// The white player
         /// </summary>
-        public playerConnection playerWhite { get; set; }
+        public playerConnection secondPlayer { get; set; }
 
         /// <summary>
         /// Create a ChessGame object to store the chess game
         /// </summary>
         public ChessGame Board { get; set; }
-
-        /// <summary>
-        /// Holds the board state
-        /// </summary>
-        public string fenString { get; set; }
     }
 }

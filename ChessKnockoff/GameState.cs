@@ -128,9 +128,9 @@ namespace ChessKnockoff
                 return null;
             }
 
-            opponent = (player == foundGame.playerWhite) ?
-                foundGame.playerBlack :
-                foundGame.playerWhite;
+            opponent = (player == foundGame.firstPlayer) ?
+                foundGame.secondPlayer :
+                foundGame.firstPlayer;
 
             return foundGame;
         }
@@ -167,8 +167,8 @@ namespace ChessKnockoff
 
             // Remove the players, best effort
             playerConnection foundPlayer;
-            this.players.TryRemove(foundGame.playerWhite.connectionString, out foundPlayer);
-            this.players.TryRemove(foundGame.playerBlack.connectionString, out foundPlayer);
+            this.players.TryRemove(foundGame.firstPlayer.connectionString, out foundPlayer);
+            this.players.TryRemove(foundGame.secondPlayer.connectionString, out foundPlayer);
         }
 
         /// <summary>
@@ -185,15 +185,15 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="joiningPlayer">The first player to enter the game.</param>
         /// <returns>The newly created game in a pending state.</returns>
-        public async Task<Game> CreateGame(playerConnection whitePlayer, playerConnection blackPlayer)
+        public async Task<Game> CreateGame(playerConnection firstPlayer, playerConnection secondPlayer)
         {
             // Define the new game and add to waiting pool
-            Game game = new Game(whitePlayer, blackPlayer);
+            Game game = new Game(firstPlayer, secondPlayer);
             this.games[game.Id] = game;
             
             // Create a new group to manage communication using ID as group name
-            await this.Groups.Add(whitePlayer.connectionString, groupName: game.Id);
-            await this.Groups.Add(blackPlayer.connectionString, groupName: game.Id);
+            await this.Groups.Add(firstPlayer.connectionString, groupName: game.Id);
+            await this.Groups.Add(secondPlayer.connectionString, groupName: game.Id);
 
             return game;
         }

@@ -10,43 +10,98 @@ namespace ChessKnockoff
 {
     public partial class WebForm8 : System.Web.UI.Page
     {
+        private void addCellsForRow(int rank, string name, int elo, string css)
+        {
+            //Create a new row
+            TableRow tableRow = new TableRow();
+
+            //Set the styling on the row
+            tableRow.CssClass = css;
+
+            //Add the row to the table
+            tblLeaderboard.Rows.Add(tableRow);
+
+            //Create a new cell
+            TableCell tableCellRank = new TableCell();
+            //Make the first column the rank
+            tableCellRank.Text = rank.ToString();
+            tableRow.Cells.Add(tableCellRank);
+
+            TableCell tableCellUsername = new TableCell();
+            //Make the second column the username and escape any tags
+            tableCellUsername.Text = HttpUtility.HtmlEncode(name);
+            tableRow.Cells.Add(tableCellUsername);
+
+            TableCell tableCellELO = new TableCell();
+            //Make the third column the ELO
+            tableCellELO.Text = elo.ToString();
+            tableRow.Cells.Add(tableCellELO);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Get all the users
             var UsersContext = new ApplicationDbContext();
+
             //Order them by their ELO in descending order and take the top 10
-            var orderedUsers = UsersContext.Users.ToList().OrderByDescending(i => i.ELO).Take(10);
+            ApplicationUser[] orderedUsers = UsersContext.Users.OrderByDescending(appUser => appUser.ELO).ToArray();
 
-            //Store the rank counter
-            int rankCounter = 1;
-
-            //Loop through each of the top 10 users
-            //Will also not add empty cells if there is not enough users
-            foreach (ApplicationUser user in orderedUsers)
+            //Check if the user is authenticated, if so search for them
+            if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                //Create a new row
-                TableRow tableRow = new TableRow();
-                //Add the row to the table
-                tblLeaderboard.Rows.Add(tableRow);
+                //Get the username
+                string currentUsername = HttpContext.Current.User.Identity.Name;
 
-                //Create a new cell
-                TableCell tableCellRank = new TableCell();
-                //Make the first column the rank
-                tableCellRank.Text = rankCounter.ToString();
-                tableRow.Cells.Add(tableCellRank);
+                //Store the rank counter
+                int rankCounter = 1;
 
-                TableCell tableCellUsername = new TableCell();
-                //Make the second column the username and escape any tags
-                tableCellUsername.Text = HttpUtility.HtmlEncode(user.UserName);
-                tableRow.Cells.Add(tableCellUsername);
+                bool playerInTopTen = false;
+                //Loop through each of the top 10 users
+                //Will also not add empty cells if there is not enough users
+                foreach (ApplicationUser user in orderedUsers.Take(10))
+                {
+                    //If it is the same person
+                    if (user.UserName == currentUsername)
+                    {
+                        //Show speacial css
+                        playerInTopTen = true;
+                        addCellsForRow(rankCounter, user.UserName, user.ELO, "table-primary");
+                    }
+                    else
+                    {
+                        //Show no extra styling
+                        addCellsForRow(rankCounter, user.UserName, user.ELO, "");
+                    }
 
-                TableCell tableCellELO = new TableCell();
-                //Make the third column the ELO
-                tableCellELO.Text = user.ELO.ToString();
-                tableRow.Cells.Add(tableCellELO);
+                    //Increment the rank counter
+                    rankCounter++;
+                }
 
-                //Increment the rank counter
-                rankCounter++;
+                //Check if the player is into the top ten
+                if (!playerInTopTen)
+                {
+                    //Find the position of the current player in the ELO rankings
+                    int positionOfPlayer = Array.FindIndex(orderedUsers, appUser => appUser.UserName == currentUsername);
+                    //Add the user to the end of the table
+                    addCellsForRow(positionOfPlayer + 1, currentUsername, orderedUsers[positionOfPlayer].ELO, "table-primary");
+                }
+            }
+            else
+            {   
+                //Store the rank counter
+                int rankCounter = 1;
+
+                //Loop through each of the top 10 users
+                //Will also not add empty cells if there is not enough users
+                foreach (ApplicationUser user in orderedUsers.Take(10))
+                {
+                    //Show no extra styling
+                    addCellsForRow(rankCounter, user.UserName, user.ELO, "");
+
+                    //Increment the rank counter
+                    rankCounter++;
+                }
+
             }
         }
     }

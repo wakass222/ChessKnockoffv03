@@ -36,8 +36,7 @@ namespace ChessKnockoff
                 var user = manager.FindById(HttpContext.Current.User.Identity.GetUserId());
 
                 //Display the name of the logged in user and escaping any tags
-                //Also display their ELO
-                txtInfo.InnerText = string.Format("ELO: {1}, {0}", HttpUtility.HtmlEncode(HttpContext.Current.User.Identity.Name), user.ELO);
+                txtInfo.InnerText = string.Format(HttpUtility.HtmlEncode(HttpContext.Current.User.Identity.Name));
             }
             else
             {
