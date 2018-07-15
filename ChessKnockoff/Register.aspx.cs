@@ -51,7 +51,7 @@ namespace ChessKnockoff
                 var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
                 //Check if password is valid and block until the a result is returned
-                var resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
+                IdentityResult resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
 
                 //Check if the password can be used
                 if (!resultPassword.Succeeded)
@@ -63,7 +63,7 @@ namespace ChessKnockoff
                 }
 
                 //Check if username is not taken
-                var resultUsername = manager.FindByName(inpUsername.Value);
+                ApplicationUser resultUsername = manager.FindByName(inpUsername.Value);
 
                 //Check if the user is not null
                 if (resultUsername != null)
@@ -73,7 +73,7 @@ namespace ChessKnockoff
                 }
 
                 //Check if email is valid
-                var resultEmail = manager.FindByEmail(inpEmail.Value);
+                ApplicationUser resultEmail = manager.FindByEmail(inpEmail.Value);
 
                 if (resultEmail != null)
                 {

@@ -29,5 +29,10 @@ namespace ChessKnockoff.Models
         /// Create a ChessGame object to store the chess game
         /// </summary>
         public ChessGame Board { get; set; }
+
+        /// <summary>
+        /// Holds the board state
+        /// </summary>
+        public string fenString { get; set; }
     }
 }

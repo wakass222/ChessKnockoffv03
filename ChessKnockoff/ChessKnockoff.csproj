@@ -342,8 +342,8 @@
     <Compile Include="BaseWithHeaderNavLogin.master.designer.cs">
       <DependentUpon>BaseWithHeaderNavLogin.master</DependentUpon>
     </Compile>
-    <Compile Include="GameHub.cs" />
-    <Compile Include="GameState.cs" />
+    <None Include="GameHub.cs" />
+    <None Include="GameState.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
