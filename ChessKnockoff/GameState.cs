@@ -172,6 +172,15 @@ namespace ChessKnockoff
         }
 
         /// <summary>
+        /// Removes specified player from the waiting pool.
+        /// </summary>
+        /// <param name="player">The player to remove from the waiting pool.</param>
+        public void RemoveFromWaitingPool(playerConnection player)
+        {
+            this.waitingPlayers.TryDequeue(out player);
+        }
+
+        /// <summary>
         /// Adds specified player to the waiting pool.
         /// </summary>
         /// <param name="player">The player to add to waiting pool.</param>

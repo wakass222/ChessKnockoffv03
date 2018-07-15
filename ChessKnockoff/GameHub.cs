@@ -13,9 +13,20 @@ namespace ChessKnockoff
     public class GameHub : Hub
     {
         /// <summary>
+        /// Stops the search for a game
+        /// </summary>
+        /// <returns>A Task to track the asynchronous method execution.</returns>
+        public void QuitFindGame()
+        {
+            //Create a player connection object to store related connection data
+            playerConnection quittingPlayer = new playerConnection(Context.User.Identity, this.Context.ConnectionId);
+            GameState.Instance.RemoveFromWaitingPool(quittingPlayer);
+
+        }
+
+        /// <summary>
         /// Matches the player with another opponent
         /// </summary>
-        /// <param name="username">The friendly name that the user has chosen.</param>
         /// <returns>A Task to track the asynchronous method execution.</returns>
         public async Task FindGame()
         {
@@ -78,7 +89,7 @@ namespace ChessKnockoff
         /// <param name="row">The row part of the position.</param>
         /// <param name="col">The column part of the position.</param>
         /// <returns>A Task to track the asynchronous method execution.<</returns>
-        public string MakeTurn(string sourcePosition, string destinationPosition)
+        public void MakeTurn(string sourcePosition, string destinationPosition)
         {
             playerConnection playerMakingTurn = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
             playerConnection opponent;
@@ -90,13 +101,12 @@ namespace ChessKnockoff
             //Check if the move valid, if is not valid then do nothing since there is client side validation
             if (game.Board.IsValidMove(move))
             {
+                //Apply that move
                 game.Board.ApplyMove(move, true);
-                return game.Board.GetFen();
-            } else
-            {
-                this.Clients.Group(game.Id).updatePosition(game.Board.GetFen());
-                return "snapback";
             }
+
+            //Else just return the current board state
+            this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen());
         }
 
         /// <summary>
@@ -111,11 +121,16 @@ namespace ChessKnockoff
             // Only handle cases where user was a player in a game or waiting for an opponent
             if (leavingPlayer != null)
             {
+                //Get the game of the leaving player
                 playerConnection opponent;
                 Game ongoingGame = GameState.Instance.GetGame(leavingPlayer, out opponent);
+
+                //If there was a game
                 if (ongoingGame != null)
                 {
+                    //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
+                    //Remove them from the collection of games
                     GameState.Instance.RemoveGame(ongoingGame.Id);
                 }
             }

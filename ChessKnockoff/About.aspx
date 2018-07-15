@@ -12,8 +12,10 @@
             var cfg = {
                 //Disable dragging of pieces
                 draggable: false,
+                //Set the image files
                 pieceTheme: 'Content/Images/{piece}.png',
-                position: "nnnnknnn/pppppppp/2p2p2/1pppppp1/8/8/PPPPPPPP/RNBQKBNR"
+                //Set the pieces up
+                position: "rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP"
             };
 
             //Create the actualy HTML board in the div with the id, board
