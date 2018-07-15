@@ -3,3 +3,8 @@
     <asp:ContentPlaceHolder ID="BaseContentHeaderNavLogin" runat="server">
     </asp:ContentPlaceHolder>
 </asp:Content>
+
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
+    <asp:ContentPlaceHolder ID="BaseContentHeaderNavLoginTitle" runat="server">
+    </asp:ContentPlaceHolder>
+</asp:Content>

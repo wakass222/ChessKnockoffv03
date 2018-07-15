@@ -1,9 +1,11 @@
 ﻿<%@ Page Title="Login" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="ChessKnockoff.WebForm4" EnableSessionState="True" EnableViewState="False" %>
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
+    Login
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="inputForm mx-auto">
         <div class="text-center">
-            <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2">Login</h2>
             <div id="altRegistered" class="alert alert-success" runat="server">
                 Account successfully created. Please also check your email inbox to verify your email.
             </div>

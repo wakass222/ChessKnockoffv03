@@ -1,4 +1,7 @@
 ﻿<%@ Page Title="Play" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Play.aspx.cs" Inherits="ChessKnockoff.WebForm9" %>
+<asp:Content ContentPlaceHolderID="BaseContentHeaderNavLoginTitle" runat="server">
+    Play
+</asp:Content>
 
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLogin" runat="server">
     <script type="text/javascript">
@@ -87,12 +90,6 @@
         //Call init once the DOM fully loads
         $(document).ready(init);
     </script>
-    <div class="inputForm mx-auto">
-        <div class="text-center">
-            <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2">Play</h2>
-        </div>
-    </div>
     <div class="container mt-2">
         <div class="row justify-content-center" style="margin: 0 auto;">
             <h3 id="hedOpponentName"></h3>

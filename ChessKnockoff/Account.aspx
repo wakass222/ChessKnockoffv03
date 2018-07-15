@@ -1,10 +1,10 @@
 ﻿<%@ Page Title="Account" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Account.aspx.cs" Inherits="ChessKnockoff.WebForm3" %>
+<asp:Content ContentPlaceHolderID="BaseContentHeaderNavLoginTitle" runat="server">
+    Account
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLogin" runat="server">
     <div class="inputForm mx-auto">
-        <div class="text-center">
-            <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2">Change your password</h2>
-        </div>
         <div id="altSuccess" class="alert alert-success" role="alert" runat="server">
             Your password was succesfully changed.
         </div>

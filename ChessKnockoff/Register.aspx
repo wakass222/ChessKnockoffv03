@@ -1,10 +1,10 @@
 ﻿<%@ Page Title="Register" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="ChessKnockoff.WebForm1" %>
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
+    Register
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="inputForm mx-auto">
-        <div class="text-center">
-            <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2">Register</h2>
-        </div>
         <div class="form-group">
             <label for="username">Username</label>
             <asp:CustomValidator ID="valUsername" runat="server" ControlToValidate="inpUsername" ClientValidationFunction="wrappedUsername" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True" OnServerValidate="validateUsername"></asp:CustomValidator>

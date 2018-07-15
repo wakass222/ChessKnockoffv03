@@ -1,4 +1,7 @@
 ﻿<%@ Page Title="About" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ChessKnockoff.WebForm9" %>
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
+    About
+</asp:Content>
 
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <script type="text/javascript">
@@ -18,11 +21,7 @@
         //Call init once the DOM fully loads
         $(document).ready(init);
     </script>
-    <div class="container mx-auto">
-        <div class="text-center">
-            <img class="mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2 mt-4">About</h2>
-        </div>
+    <div class="container">
         <div class="row justify-content-center">
             <div id="board" style="width: 400px">
             </div>

@@ -1,10 +1,10 @@
 ﻿<%@ Page Title="Forgot" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm7" %>
+<asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
+    Forgot
+</asp:Content>
+
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="inputForm mx-auto">
-        <div class="text-center">
-            <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-            <h2 class="mb-2">Reset password</h2>
-        </div>
         <div class="form-group">
         <label for="email">Email</label>
             <asp:CustomValidator ID="valEmail" runat="server" ControlToValidate="inpEmail" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpForgot" ValidateEmptyText="True" OnServerValidate="validateEmail"></asp:CustomValidator>
