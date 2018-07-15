@@ -16,7 +16,7 @@
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>
         <div class="form-group">
-            <asp:Button id="btnSubmitReset" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" Text="Change password" ValidationGroup="grpReset" OnClick="ResetPassword" />
+            <asp:Button id="btnSubmitReset" class="btn btn-primary btn-block" type="submit" runat="server" Text="Change password" ValidationGroup="grpReset" OnClick="ResetPassword" />
         </div>
         <div id="altError" class="alert alert-danger" role="alert" runat="server">
         </div>

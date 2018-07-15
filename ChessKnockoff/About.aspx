@@ -20,6 +20,7 @@
     </script>
     <div class="container mx-auto">
         <div class="text-center">
+            <img class="mt-4" src="/logo.png" width="72" height="72">
             <h2 class="mb-2 mt-4">About</h2>
         </div>
         <div class="row justify-content-center">

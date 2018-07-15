@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChessKnockoff.Models;
+using ChessDotNet;
 
 namespace ChessKnockoff
 {
@@ -19,11 +20,48 @@ namespace ChessKnockoff
             new Lazy<GameState>(() => new GameState(GlobalHost.ConnectionManager.GetHubContext<GameHub>()));
 
         /// <summary>
+        /// A unique identifier for this game. Also used as the group name.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// One of two partipants of the game.
+        /// </summary>
+        public playerConnection playerWhite { get; set; }
+
+        /// <summary>
+        /// One of two participants of the game.
+        /// </summary>
+        public playerConnection playerBlack { get; set; }
+
+        /// <summary>
+        /// The board that represents the tic-tac-toe game.
+        /// </summary>
+        public ChessGame Board { get; set; }
+
+        /// <summary>
+        /// Creates a new game object.
+        /// </summary>
+        /// <param name="player1">The first player to join the game.</param>
+        /// <param name="player2">The second player to join the game.</param>
+        public GameState(playerConnection playerWhite, playerConnection playerBlack)
+        {
+            this.playerWhite = playerWhite;
+            this.playerBlack = playerBlack;
+            this.Id = Guid.NewGuid().ToString("d");
+            this.Board = new ChessGame();
+
+            // Link the players to the game as well
+            this.playerWhite.GameId = this.Id;
+            this.playerBlack.GameId = this.Id;
+        }
+
+        /// <summary>
         /// A reference to all players. Key is the unique ID of the player.
         /// Note that this collection is concurrent to handle multiple threads.
         /// </summary>
-        private readonly ConcurrentDictionary<string, ApplicationUser> players =
-            new ConcurrentDictionary<string, Player>(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, playerConnection> players =
+            new ConcurrentDictionary<string, playerConnection>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// A reference to all games. Key is the group name of the game.
@@ -35,8 +73,8 @@ namespace ChessKnockoff
         /// <summary>
         /// A queue of players that are waiting for an opponent.
         /// </summary>
-        private readonly ConcurrentQueue<Player> waitingPlayers =
-            new ConcurrentQueue<Player>();
+        private readonly ConcurrentQueue<playerConnection> waitingPlayers =
+            new ConcurrentQueue<playerConnection>();
 
         private GameState(IHubContext context)
         {
@@ -53,22 +91,14 @@ namespace ChessKnockoff
 
         public IGroupManager Groups { get; set; }
 
-        public Player CreatePlayer(string username, string connectionId)
-        {
-            var player = new Player(username, connectionId);
-            this.players[connectionId] = player;
-
-            return player;
-        }
-
         /// <summary>
         /// Retrieves the player that has the given ID.
         /// </summary>
         /// <param name="playerId">The unique identifier of the player to find.</param>
         /// <returns>The found player; otherwise null.</returns>
-        public Player GetPlayer(string playerId)
+        public playerConnection GetPlayer(string playerId)
         {
-            Player foundPlayer;
+            playerConnection foundPlayer;
             if (!this.players.TryGetValue(playerId, out foundPlayer))
             {
                 return null;
@@ -83,7 +113,7 @@ namespace ChessKnockoff
         /// <param name="playerId">The player in the game.</param>
         /// <param name="opponent">The opponent of the player if there is one; otherwise null.</param>
         /// <returns>The game that the specified player is a member of if game is found; otherwise null.</returns>
-        public Game GetGame(Player player, out Player opponent)
+        public Game GetGame(playerConnection player, out playerConnection opponent)
         {
             opponent = null;
             Game foundGame = this.games.Values.FirstOrDefault(g => g.Id == player.GameId);
@@ -93,9 +123,9 @@ namespace ChessKnockoff
                 return null;
             }
 
-            opponent = (player.Id == foundGame.Player1.Id) ?
-                foundGame.Player2 :
-                foundGame.Player1;
+            opponent = (player.applicationUser == foundGame.playerWhite.applicationUser) ?
+                foundGame.playerBlack :
+                foundGame.playerWhite;
 
             return foundGame;
         }
@@ -104,9 +134,9 @@ namespace ChessKnockoff
         /// Retrieves a game waiting for players.
         /// </summary>
         /// <returns>Returns a pending game if any; otherwise returns null.</returns>
-        public Player GetWaitingOpponent()
+        public playerConnection GetWaitingOpponent()
         {
-            Player foundPlayer;
+            playerConnection foundPlayer;
             if (!this.waitingPlayers.TryDequeue(out foundPlayer))
             {
                 return null;
@@ -131,28 +161,18 @@ namespace ChessKnockoff
             }
 
             // Remove the players, best effort
-            Player foundPlayer;
-            this.players.TryRemove(foundGame.Player1.Id, out foundPlayer);
-            this.players.TryRemove(foundGame.Player2.Id, out foundPlayer);
+            playerConnection foundPlayer;
+            this.players.TryRemove(foundGame.playerWhite.applicationUser.Id, out foundPlayer);
+            this.players.TryRemove(foundGame.playerBlack.applicationUser.Id, out foundPlayer);
         }
 
         /// <summary>
         /// Adds specified player to the waiting pool.
         /// </summary>
         /// <param name="player">The player to add to waiting pool.</param>
-        public void AddToWaitingPool(Player player)
+        public void AddToWaitingPool(playerConnection player)
         {
             this.waitingPlayers.Enqueue(player);
-        }
-
-        /// <summary>
-        /// Determines if the username is already taken, ignoring case.
-        /// </summary>
-        /// <param name="username">The username to check.</param>
-        /// <returns>true if another player shares the same username; otherwise false.</returns>
-        public bool IsUsernameTaken(string username)
-        {
-            return this.players.Values.FirstOrDefault(player => player.Name.Equals(username, StringComparison.InvariantCultureIgnoreCase)) != null;
         }
 
         /// <summary>
@@ -160,15 +180,15 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="joiningPlayer">The first player to enter the game.</param>
         /// <returns>The newly created game in a pending state.</returns>
-        public async Task<Game> CreateGame(Player firstPlayer, Player secondPlayer)
+        public async Task<Game> CreateGame(playerConnection whitePlayer, playerConnection blackPlayer)
         {
             // Define the new game and add to waiting pool
-            Game game = new Game(firstPlayer, secondPlayer);
+            Game game = new Game(whitePlayer, blackPlayer);
             this.games[game.Id] = game;
 
             // Create a new group to manage communication using ID as group name
-            await this.Groups.Add(firstPlayer.Id, groupName: game.Id);
-            await this.Groups.Add(secondPlayer.Id, groupName: game.Id);
+            await this.Groups.Add(whitePlayer.applicationUser.Id, groupName: game.Id);
+            await this.Groups.Add(blackPlayer.applicationUser.Id, groupName: game.Id);
 
             return game;
         }

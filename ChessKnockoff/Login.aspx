@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="form-group">
-            <button id="btnSubmitLogin" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" onserverclick="LoginClick">Login</button>
+            <button id="btnSubmitLogin" class="btn btn-primary btn-block" type="submit" runat="server" onserverclick="LoginClick">Login</button>
         </div>
         <div class="form-group text-center">
             Don't have an account? <a href="Register.aspx">Register here</a>

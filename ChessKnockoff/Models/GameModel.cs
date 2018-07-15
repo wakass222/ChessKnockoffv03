@@ -11,6 +11,23 @@ namespace ChessKnockoff.Models
     public class Game
     {
         /// <summary>
+        /// Creates a new game object.
+        /// </summary>
+        /// <param name="playerWhite">The first player to join the game.</param>
+        /// <param name="playerBlack">The second player to join the game.</param>
+        public Game(playerConnection playerWhite, playerConnection playerBlack)
+        {
+            this.playerWhite = playerWhite;
+            this.playerBlack = playerBlack;
+            this.Id = Guid.NewGuid().ToString("d");
+            this.Board = new ChessGame();
+
+            // Link the players to the game as well
+            this.playerWhite.GameId = this.Id;
+            this.playerBlack.GameId = this.Id;
+        }
+
+        /// <summary>
         /// A unique identifier for the game.
         /// </summary>
         public string Id { get; set; }
@@ -18,12 +35,12 @@ namespace ChessKnockoff.Models
         /// <summary>
         /// The black player
         /// </summary>
-        public ApplicationUser playerBlack { get; set; }
+        public playerConnection playerBlack { get; set; }
 
         /// <summary>
         /// The white player
         /// </summary>
-        public ApplicationUser playerWhite { get; set; }
+        public playerConnection playerWhite { get; set; }
 
         /// <summary>
         /// Create a ChessGame object to store the chess game

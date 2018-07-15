@@ -34,7 +34,9 @@ namespace ChessKnockoff.Models
             return Task.FromResult(GenerateUserIdentity(manager));
         }
 
-        //Create the ELO property to hold player's ELO
+        /// <summary>
+        /// Create the ELO property to hold player's ELO
+        /// </summary>
         public int ELO { get; set; }
     }
 

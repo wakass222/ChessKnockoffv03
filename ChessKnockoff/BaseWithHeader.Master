@@ -11,6 +11,7 @@
     <asp:PlaceHolder runat="server">
         <%: Scripts.Render("~/bundles/js") %>
     </asp:PlaceHolder>
+    <script src="signalr/hubs"></script>
     <webopt:bundlereference runat="server" path="~/Content/css" />
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>

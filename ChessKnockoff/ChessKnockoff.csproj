@@ -343,8 +343,8 @@
     <Compile Include="BaseWithHeaderNavLogin.master.designer.cs">
       <DependentUpon>BaseWithHeaderNavLogin.master</DependentUpon>
     </Compile>
-    <None Include="GameHub.cs" />
-    <None Include="GameState.cs" />
+    <Compile Include="GameHub.cs" />
+    <Compile Include="GameState.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -366,6 +366,7 @@
     <Compile Include="About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Utilities.cs" />

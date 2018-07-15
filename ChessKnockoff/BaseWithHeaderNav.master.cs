@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ChessKnockoff.Models;
 
 namespace ChessKnockoff
 {
@@ -28,8 +29,15 @@ namespace ChessKnockoff
                 navLogin.Visible = false;
                 navLogout.Visible = true;
 
+                //Create manager
+                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+                //Return the current user along with their other information
+                var user = manager.FindById(HttpContext.Current.User.Identity.GetUserId());
+
                 //Display the name of the logged in user and escaping any tags
-                txtName.InnerText = HttpUtility.HtmlEncode(HttpContext.Current.User.Identity.Name);
+                //Also display their ELO
+                txtInfo.InnerText = string.Format("ELO: {1}, {0}", HttpUtility.HtmlEncode(HttpContext.Current.User.Identity.Name), user.ELO);
             }
             else
             {

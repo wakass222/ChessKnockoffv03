@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using ChessKnockoff.Models;
+using ChessDotNet;
 
 namespace ChessKnockoff
 {
@@ -15,20 +16,12 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="username">The friendly name that the user has chosen.</param>
         /// <returns>A Task to track the asynchronous method execution.</returns>
-        public async Task FindGame(string username)
+        public async Task FindGame(playerConnection joiningPlayer)
         {
-            if (GameState.Instance.IsUsernameTaken(username))
-            {
-                this.Clients.Caller.usernameTaken();
-                return;
-            }
-
-            Player joiningPlayer =
-                GameState.Instance.CreatePlayer(username, this.Context.ConnectionId);
             this.Clients.Caller.playerJoined(joiningPlayer);
 
             // Find any pending games if any
-            Player opponent = GameState.Instance.GetWaitingOpponent();
+            playerConnection opponent = GameState.Instance.GetWaitingOpponent();
             if (opponent == null)
             {
                 // No waiting players so enter the waiting pool
@@ -50,9 +43,27 @@ namespace ChessKnockoff
         /// <param name="row">The row part of the position.</param>
         /// <param name="col">The column part of the position.</param>
         /// <returns>A Task to track the asynchronous method execution.<</returns>
-        public void makeTurn(int row, int col)
+        public void makeTurn(string sourcePosition, string destinationPosition)
         {
+            playerConnection playerMakingTurn = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
+            playerConnection opponent;
+            Game game = GameState.Instance.GetGame(playerMakingTurn, out opponent);
 
+            //Create the move object
+            Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side);
+
+            /*
+            if (game.Board.IsCheckmated(opponent.side))
+            {
+                this.Clients.Client(playerMakingTurn.applicationUser)
+            }
+            */
+            //Check if the move valid, if is not valid then do nothing since there is client side validation
+            if (game.Board.IsValidMove(move))
+            {
+                game.Board.ApplyMove(move, true);
+                this.Clients.Group(game.Id).updatePosition(game.Board.GetFen());
+            }
         }
 
         /// <summary>
@@ -62,12 +73,12 @@ namespace ChessKnockoff
         /// <returns></returns>
         public override async Task OnDisconnected(bool stopCalled)
         {
-            ApplicationUser leavingPlayer = 
+            playerConnection leavingPlayer = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
 
             // Only handle cases where user was a player in a game or waiting for an opponent
             if (leavingPlayer != null)
             {
-                Player opponent;
+                playerConnection opponent;
                 Game ongoingGame = GameState.Instance.GetGame(leavingPlayer, out opponent);
                 if (ongoingGame != null)
                 {
