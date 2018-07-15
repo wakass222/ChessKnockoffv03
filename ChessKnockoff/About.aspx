@@ -31,7 +31,7 @@
             Fine. It's just chess with the starting pieces arranged differently.<br /><br />
             
             But now with an ELO ranking system so you get paired up with people of roughly similar skill level!<br />
-            more getting smashed. No more whining. No more salt. Kappa.
+            No more getting smashed. No more whining. No more salt. Kappa.
         </div>
     </div>
 </asp:Content>
