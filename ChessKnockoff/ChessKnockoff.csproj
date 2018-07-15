@@ -224,7 +224,7 @@
     <Content Include="Scripts\chess.js" />
     <Content Include="Scripts\chess.min.js" />
     <Content Include="Scripts\chessboard-0.3.0.js" />
-    <Content Include="Scripts\OUDATED-chessboard-0.3.0.min.js" />
+    <Content Include="Scripts\chessboard-0.3.0.min.js" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
@@ -357,7 +357,7 @@
       <DependentUpon>201807130922366_add_ELO.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\GameModel.cs" />
+    <Compile Include="Models\Game.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>

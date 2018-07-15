@@ -11,6 +11,11 @@ using ChessDotNet;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// This class can statically persist a collection of players and
+    /// matches that each of the players are playing using the singleton pattern.
+    /// The singleton pattern restricts the instantiation of the class to one object.
+    /// </summary>
     public class GameState
     {
         /// <summary>
@@ -123,7 +128,7 @@ namespace ChessKnockoff
                 return null;
             }
 
-            opponent = (player.applicationUser == foundGame.playerWhite.applicationUser) ?
+            opponent = (player == foundGame.playerWhite) ?
                 foundGame.playerBlack :
                 foundGame.playerWhite;
 
@@ -162,8 +167,8 @@ namespace ChessKnockoff
 
             // Remove the players, best effort
             playerConnection foundPlayer;
-            this.players.TryRemove(foundGame.playerWhite.applicationUser.Id, out foundPlayer);
-            this.players.TryRemove(foundGame.playerBlack.applicationUser.Id, out foundPlayer);
+            this.players.TryRemove(foundGame.playerWhite.connectionString, out foundPlayer);
+            this.players.TryRemove(foundGame.playerBlack.connectionString, out foundPlayer);
         }
 
         /// <summary>
@@ -185,10 +190,10 @@ namespace ChessKnockoff
             // Define the new game and add to waiting pool
             Game game = new Game(whitePlayer, blackPlayer);
             this.games[game.Id] = game;
-
+            
             // Create a new group to manage communication using ID as group name
-            await this.Groups.Add(whitePlayer.applicationUser.Id, groupName: game.Id);
-            await this.Groups.Add(blackPlayer.applicationUser.Id, groupName: game.Id);
+            await this.Groups.Add(whitePlayer.connectionString, groupName: game.Id);
+            await this.Groups.Add(blackPlayer.connectionString, groupName: game.Id);
 
             return game;
         }

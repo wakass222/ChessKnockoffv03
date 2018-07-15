@@ -6,6 +6,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using ChessKnockoff.Models;
 using ChessDotNet;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace ChessKnockoff
 {
@@ -16,9 +17,10 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="username">The friendly name that the user has chosen.</param>
         /// <returns>A Task to track the asynchronous method execution.</returns>
-        public async Task FindGame(playerConnection joiningPlayer)
+        public async Task FindGame()
         {
-            this.Clients.Caller.playerJoined(joiningPlayer);
+            //Create a player connection object to store related connection data
+            playerConnection joiningPlayer = new playerConnection(Context.User.Identity, this.Context.ConnectionId);
 
             // Find any pending games if any
             playerConnection opponent = GameState.Instance.GetWaitingOpponent();
@@ -30,10 +32,39 @@ namespace ChessKnockoff
             }
             else
             {
-                // An opponent was found so join a new game and start the game
-                // Opponent is first player since they were waiting first
+                //Create a new random object
+                Random rand = new Random();
+                bool randomBool = rand.Next(0, 2) == 0;
+
+                // An opponent was found so make a new game
                 Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
-                Clients.Group(newGame.Id).start(newGame);
+
+                //Make sure to HTML encode both players' username
+                string opponentUsername = HttpUtility.HtmlEncode(opponent.userInformation.UserName);
+                string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.userInformation.UserName);
+
+                //Randomly assign the side the player is playing on
+                if (randomBool)
+                {
+                    //Set the respective players side
+                    joiningPlayer.side = Player.Black;
+                    opponent.side = Player.White;
+
+                    //The joining client
+                    Clients.Client(this.Context.ConnectionId).start(newGame.fenString, opponentUsername, "Black");
+                    //The opponent client
+                    Clients.Client(opponent.connectionString).start(newGame.fenString, joiningPlayerUsername, "White");
+                } else
+                {
+                    //Set the respective players side
+                    joiningPlayer.side = Player.White;
+                    opponent.side = Player.Black;
+
+                    //The joining client
+                    Clients.Client(this.Context.ConnectionId).start(newGame.fenString, opponentUsername, "White");
+                    //The opponent client
+                    Clients.Client(opponent.connectionString).start(newGame.fenString, joiningPlayerUsername, "Black");
+                }
             }
         }
 
@@ -43,7 +74,7 @@ namespace ChessKnockoff
         /// <param name="row">The row part of the position.</param>
         /// <param name="col">The column part of the position.</param>
         /// <returns>A Task to track the asynchronous method execution.<</returns>
-        public void makeTurn(string sourcePosition, string destinationPosition)
+        public void MakeTurn(string sourcePosition, string destinationPosition)
         {
             playerConnection playerMakingTurn = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
             playerConnection opponent;
@@ -52,12 +83,6 @@ namespace ChessKnockoff
             //Create the move object
             Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side);
 
-            /*
-            if (game.Board.IsCheckmated(opponent.side))
-            {
-                this.Clients.Client(playerMakingTurn.applicationUser)
-            }
-            */
             //Check if the move valid, if is not valid then do nothing since there is client side validation
             if (game.Board.IsValidMove(move))
             {

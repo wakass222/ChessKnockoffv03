@@ -7,101 +7,130 @@
     <script type="text/javascript">
         //Contains all the code to be execute once the page has loaded
         function init() {
+            //Code references board before it has been configured
+            var board;
+
+            //The start button
+            var btnPlay = $("#btnPlay");
+
+            //The fail alert
+            var altFail = $("#altFail");
+
+            //The opponent's username heading element
+            var hedOpponent = $("#hedOpponentName");
+
+            //Hide the game start button
+            btnPlay.hide();
+
+            //Hide the error emssage
+            altFail.hide();
+
             //Create chess engine that validates move
-            var game = new Chess("nnnnknnn/pppppppp/2p2p2/1pppppp1/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1");
-            var statusEl = $('#status');
-
-            // do not pick up pieces if the game is over
-            // only pick up pieces for the side to move
-            var onDragStart = function (source, piece, position, orientation) {
-                if (game.game_over() === true ||
-                    (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                    (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                    return false;
-                }
-            };
-
-            var onDrop = function (source, target) {
-                // see if the move is legal
-                var move = game.move({
-                    from: source,
-                    to: target,
-                    promotion: 'q' // NOTE: always promote to a queen for example simplicity
-                });
-
-                // illegal move
-                if (move === null) return 'snapback';
-
-                updateStatus();
-            };
-
-            // update the board position after the piece snap 
-            // for castling, en passant, pawn promotion
-            var onSnapEnd = function () {
-                board.position(game.fen());
-            };
-
-            var updateStatus = function () {
-                var status = '';
-
-                var moveColor = 'White';
-                if (game.turn() === 'b') {
-                    moveColor = 'Black';
-                }
-
-                // checkmate?
-                if (game.in_checkmate() === true) {
-                    status = 'Game over, ' + moveColor + ' is in checkmate.';
-                }
-
-                // draw?
-                else if (game.in_draw() === true) {
-                    status = 'Game over, drawn position';
-                }
-
-                // game still on
-                else {
-                    status = moveColor + ' to move';
-
-                    // check?
-                    if (game.in_check() === true) {
-                        status += ', ' + moveColor + ' is in check';
-                    }
-                }
-
-                statusEl.html(status);
-            };
-
-            //Create the actualy HTML board in the div with the id, board
-            var board = ChessBoard('board');
+            //var game = new Chess("nnnnknnn/pppppppp/2p2p2/1pppppp1/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1");
+            //var statusEl = $('#status');
 
             //Create the SignaIR connection to the server
-            var contosoChatHubProxy = $.connection.contosoChatHub;
+            var gameHubProxy = $.connection.gameHub;
+
+            //Function to setup the game
+            gameHubProxy.client.start = function (fenString, opponentUsername, side) {
+                console.log(fenString + " " + opponentUsername + " " + side);
+
+                //Display the opponent's username
+                hedOpponent.html(opponentUsername);
+
+                //Configure the board
+                var cfg = {
+                    draggable: true,
+                    position: fenString,
+                    orientation: side,
+                    pieceTheme: 'Content/Images/{piece}.png',
+                };
+
+                //Create the actualy HTML board in the div with the id, board
+                board = ChessBoard('board');
+            }
 
             //Any functions that the server can call
-            contosoChatHubProxy.client.updatePosition = function (fenString) {
+
+            //Update the board
+            gameHubProxy.client.updatePosition = function (fenString) {
                 //Set the board fen string
-                board.position("fenString");
+                board.position(fenString);
             };
 
-            updateStatus();
+            //Display game over
+            gameHubProxy.client.gameOver = function (fenString) {
+                
+            };
+
+            //Display win
+            gameHubProxy.client.gameWon = function (fenString) {
+
+            };
+
+            // Open a connection to the server hub
+            $.connection.hub.logging = true; // Enable client side logging
+
+            //When the start search button is pressed
+            btnPlay.click(function () {
+                //Store the new state of the button
+                var isPressed = btnPlay.attr("aria-pressed") == "false";
+
+                //Depending on whether it has been pressed start or end matchmaking
+                if (isPressed) {
+                    //Show that the matchmaking has started
+                    btnPlay.html("Looking for game...");
+
+                    //Call the server function to match make
+                    gameHubProxy.server.findGame();
+
+                } else {
+                    btnPlay.html("Find game");
+                }
+            });
+
+            //When the connection is disconnected for any reason
+            $.connection.hub.disconnected(function () {
+                setTimeout(function () {
+                    $.connection.hub.start();
+                }, 5000); //Try to restart the connectiona after 5 seconds
+            });
+
+            //Start the connection to the hub
+            $.connection.hub.start()
+                .done(function () {
+                    //Hide the play button once the connection has been made
+                    btnPlay.toggle();
+                })
+                .fail(function () {
+                    //Show the error if a connection could not be made
+                    altFail.show();
+                });
+
+            function onDrop(source, target) {
+                gameHubProxy.server.makeTurn(source, target);
+            }
         };
 
         //Call init once the DOM fully loads
         $(document).ready(init);
     </script>
     <div class="container mt-2">
-        <div class="row justify-content-center" style="margin: 0 auto;">
+        <div class="row justify-content-center">
             <h3 id="hedOpponentName"></h3>
         </div>
         <div class="row mt-1 justify-content-center">
-            <div class="wrap">
-                <div id="board" style="width: 500px">
-                </div>
+            <div id="board" style="width: 500px">
             </div>
         </div>
-        <div class="form-group">
-            <button id="btnSubmitLogin" class="btn btn-lg btn-primary" type="submit"  data-toggle="button" aria-pressed="false"">Find game</button>
+        <div class="row mt-2 justify-content-center">
+            <div class="form-group">
+                <div id="altFail" class="alert alert-danger" role="alert">
+                    Sorry but a connection to the game server could not be created. Please try again at a later time.
+                </div>
+                <button id="btnPlay" class="btn btn-lg btn-primary" type="submit"  data-toggle="button" aria-pressed="false"">Find game</button>
+            </div>
         </div>
     </div>
 </asp:Content>

@@ -15,7 +15,7 @@ namespace ChessKnockoff
             bundles.Add(new ScriptBundle("~/bundles/js").Include(
                     "~/Scripts/jquery-3.3.1.min.js",
                     "~/Scripts/jquery.signalR-2.3.0.min.js",
-                    "~/Scripts/chessboard-0.3.0.js",
+                    "~/Scripts/chessboard-0.3.0.min.js",
                     "~/Scripts/chess.min.js",
                     "~/Scripts/popper.min.js",
                     "~/Scripts/bootstrap.min.js",
