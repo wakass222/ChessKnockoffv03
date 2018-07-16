@@ -91,9 +91,11 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.<</returns>
         public void MakeTurn(string sourcePosition, string destinationPosition)
         {
-            playerConnection playerMakingTurn = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
+            playerConnection playerMakingTurn = GameState.Instance.GetPlayer(this.Context.ConnectionId);
             playerConnection opponent;
-            Game game = GameState.Instance.GetGame(playerMakingTurn, out opponent);
+            Game game;
+
+            game = GameState.Instance.GetGame(playerMakingTurn, out opponent);
 
             //Create the move object
             Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side);

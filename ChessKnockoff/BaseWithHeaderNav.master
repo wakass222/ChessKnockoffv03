@@ -29,7 +29,7 @@
         <div class="mx-auto">
             <div class="text-center">
                 <img class="mb-4 mt-4" src="/logo.png" width="72" height="72">
-                <h2 class="mb-2">
+                <h2 class="mb-2" id="title">
                     <asp:ContentPlaceHolder ID="BaseContentWithHeaderNavTitle" runat="server"></asp:ContentPlaceHolder>
                 </h2>
             </div>

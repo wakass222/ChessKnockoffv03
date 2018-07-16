@@ -25,43 +25,6 @@ namespace ChessKnockoff
             new Lazy<GameState>(() => new GameState(GlobalHost.ConnectionManager.GetHubContext<GameHub>()));
 
         /// <summary>
-        /// A unique identifier for this game. Also used as the group name.
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// One of two partipants of the game.
-        /// </summary>
-        public playerConnection playerWhite { get; set; }
-
-        /// <summary>
-        /// One of two participants of the game.
-        /// </summary>
-        public playerConnection playerBlack { get; set; }
-
-        /// <summary>
-        /// The board that represents the tic-tac-toe game.
-        /// </summary>
-        public ChessGame Board { get; set; }
-
-        /// <summary>
-        /// Creates a new game object.
-        /// </summary>
-        /// <param name="player1">The first player to join the game.</param>
-        /// <param name="player2">The second player to join the game.</param>
-        public GameState(playerConnection playerWhite, playerConnection playerBlack)
-        {
-            this.playerWhite = playerWhite;
-            this.playerBlack = playerBlack;
-            this.Id = Guid.NewGuid().ToString("d");
-            this.Board = new ChessGame();
-
-            // Link the players to the game as well
-            this.playerWhite.GameId = this.Id;
-            this.playerBlack.GameId = this.Id;
-        }
-
-        /// <summary>
         /// A reference to all players. Key is the unique ID of the player.
         /// Note that this collection is concurrent to handle multiple threads.
         /// </summary>
@@ -199,7 +162,11 @@ namespace ChessKnockoff
             // Define the new game and add to waiting pool
             Game game = new Game(firstPlayer, secondPlayer);
             this.games[game.Id] = game;
-            
+
+            //Store the users in a dictionary
+            this.players[firstPlayer.connectionString] = firstPlayer;
+            this.players[secondPlayer.connectionString] = secondPlayer;
+
             // Create a new group to manage communication using ID as group name
             await this.Groups.Add(firstPlayer.connectionString, groupName: game.Id);
             await this.Groups.Add(secondPlayer.connectionString, groupName: game.Id);

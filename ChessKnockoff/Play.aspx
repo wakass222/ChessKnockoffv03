@@ -1,6 +1,11 @@
 ﻿<%@ Page Title="Play" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Play.aspx.cs" Inherits="ChessKnockoff.WebForm9" %>
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLoginTitle" runat="server">
-    Play
+    <script type="text/javascript">
+        //Once the DOM has loaded set the title
+        $(document).ready(function () {
+            $("#title").html("Play");
+        });
+    </script>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLogin" runat="server">
@@ -25,8 +30,8 @@
             //The lose alert
             var altLose = $("#altLose");
 
-            //The opponent's username heading element
-            var hedOpponent = $("#hedOpponentName");
+            //The title element
+            var hedTitle = $("#title");
 
             //Hide the game start button
             btnPlay.hide();
@@ -50,7 +55,7 @@
                 btnPlay.hide();
 
                 //Display the opponent's username
-                hedOpponent.html(opponentUsername);
+                hedTitle.html(opponentUsername);
 
                 //Set up the board with pieces
                 board.position(fenString);
@@ -165,11 +170,8 @@
         $(document).ready(init);
     </script>
     <div class="container mt-2">
-        <div class="row justify-content-center">
-            <h3 id="hedOpponentName"></h3>
-        </div>
         <div class="row mt-1 justify-content-center">
-            <div id="board" style="width: 500px">
+            <div id="board" style="width: 400px">
             </div>
         </div>
         <div class="row mt-2 justify-content-center">
@@ -197,7 +199,7 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mb-2">
             <button id="btnPlay" class="btn btn-lg btn-primary" type="submit" data-toggle="button" aria-pressed="false"">Find game</button>
         </div>
     </div>
