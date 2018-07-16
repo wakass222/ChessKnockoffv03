@@ -19,17 +19,8 @@ namespace ChessKnockoff.Models
         /// <param name="connectionString"></param>
         public playerConnection(IIdentity applicationIdentity, string connectionString)
         {
-            //The current user information can not be accessed by using the OWIN context
-            //Therefore a connection has to be made manually
-            ApplicationDbContext mycontext = new ApplicationDbContext();
-            UserStore<ApplicationUser> mystore = new UserStore<ApplicationUser>(mycontext);
-            ApplicationUserManager userMgr = new ApplicationUserManager(mystore);
-
-            //Look for the user and their data
-            ApplicationUser foundUser = userMgr.FindByName(applicationIdentity.Name);
-
             //Setup the new object
-            this.userInformation = foundUser;
+            this.Username = applicationIdentity.Name;
             this.connectionString = connectionString;
         }
 
@@ -41,7 +32,7 @@ namespace ChessKnockoff.Models
         /// <summary>
         /// The Identity of the player with all their data
         /// </summary>
-        public ApplicationUser userInformation { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         /// Stores the connection ID of the client

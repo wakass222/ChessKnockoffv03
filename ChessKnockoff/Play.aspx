@@ -256,7 +256,7 @@
                 showConfetti = true;
 
                 //Make 250 pieces
-                for (var i = 0; i < 250; i++) {
+                for (var i = 0; i < 100; i++) {
                     create(i);
                 }
 
@@ -393,7 +393,9 @@
         //Call init once the DOM fully loads
         $(document).ready(init);
     </script>
-    <div class="container mt-2 wrapper">
+    <div class="wrapper">
+    </div>
+    <div class="container mt-2">
         <div class="row mt-1 mb-1 justify-content-center">
             <div id="board" style="width: 400px">
             </div>
@@ -412,7 +414,7 @@
                 <div id="altDraw" class="alert alert-warning" role="alert">
                     It's a draw, both of you both suck...
                 </div>
-                <div id="altLose" class="alert alert-success" role="alert">
+                <div id="altLose" class="alert alert-warning" role="alert">
                     Not surprising, you lost...
                 </div>
                 <div id="altLeave" class="alert alert-warning" role="alert">

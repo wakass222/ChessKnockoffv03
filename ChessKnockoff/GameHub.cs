@@ -8,6 +8,7 @@ using ChessKnockoff.Models;
 using ChessDotNet;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Diagnostics;
+using Microsoft.AspNet.Identity;
 
 namespace ChessKnockoff
 {
@@ -71,8 +72,8 @@ namespace ChessKnockoff
                 Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
 
                 //Make sure to HTML encode both players' username
-                string opponentUsername = HttpUtility.HtmlEncode(opponent.userInformation.UserName);
-                string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.userInformation.UserName);
+                string opponentUsername = HttpUtility.HtmlEncode(opponent.Username);
+                string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.Username);
 
                 //Hold the fen string for the new game
                 string fenString = newGame.Board.GetFen();
@@ -140,18 +141,32 @@ namespace ChessKnockoff
             //Check if there is a winner
             if (game.Board.IsCheckmated(opponent.side))
             {
+                //The current user information can not be accessed by using the OWIN context
+                //Therefore a connection has to be made manually
+                ApplicationDbContext mycontext = new ApplicationDbContext();
+                UserStore<ApplicationUser> mystore = new UserStore<ApplicationUser>(mycontext);
+                ApplicationUserManager userMgr = new ApplicationUserManager(mystore);
+
+                //Find both the players information
+                ApplicationUser playerMakingTurnInformation = userMgr.FindByNameAsync(playerMakingTurn.Username).Result;
+                ApplicationUser oppoentnInformation = userMgr.FindByNameAsync(opponent.Username).Result;
+
                 //Update the winning players ELO in which the player making the turn won
                 //Calculate the different between them
-                int eloDifference = opponent.userInformation.ELO - playerMakingTurn.userInformation.ELO;
+                int eloDifference = playerMakingTurnInformation.ELO - oppoentnInformation.ELO;
                 //Calculate the odds of player making the turn would win
                 int expectationPlayerMakingTurn = 1 / (1 + 10 ^ (eloDifference / 400));
                 //Get the expectation of the opponent winning
                 int expectationOpponent = 1 - expectationPlayerMakingTurn;
 
                 //Since the player making the turn won, increase their ELO
-                playerMakingTurn.userInformation.ELO += 20 * (1 - expectationPlayerMakingTurn);
+                playerMakingTurnInformation.ELO += 20 * (1 - expectationPlayerMakingTurn);
                 //Since the opponent lost, decrease their ELO
-                opponent.userInformation.ELO += 20 * ( - expectationOpponent);
+                oppoentnInformation.ELO += 20 * ( - expectationOpponent);
+
+                //Update both player's information by writing to the database
+                userMgr.Update(playerMakingTurnInformation);
+                userMgr.Update(oppoentnInformation);
 
                 //Notify both clients that the player making the turn has won
                 this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
