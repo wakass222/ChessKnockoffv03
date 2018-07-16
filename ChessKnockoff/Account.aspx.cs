@@ -9,7 +9,7 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm3 : ValidationPage
+    public partial class WebForm3 : LoginRequiredPage
     {
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
@@ -45,6 +45,9 @@ namespace ChessKnockoff
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Activate the current link
+            activateNav("likAccount");
+
             //Hide the error message
             altError.Visible = false;
             altSuccess.Visible = false;

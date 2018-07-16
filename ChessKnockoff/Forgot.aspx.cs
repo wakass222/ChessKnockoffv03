@@ -7,11 +7,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using static ChessKnockoff.Utilities;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm7 : ValidationPage
+    public partial class WebForm7 : ExtendedPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ChessDotNet;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm10 : System.Web.UI.Page
+    public partial class WebForm11 : ExtendedPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            //Activate the current page
+            activateNav("likAbout");
         }
     }
 }

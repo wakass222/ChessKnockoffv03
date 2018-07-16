@@ -8,11 +8,11 @@ using ChessDotNet;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm9 : System.Web.UI.Page
+    public partial class WebForm9 : LoginRequiredPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            activateNav("likPlay");
         }
     }
 }

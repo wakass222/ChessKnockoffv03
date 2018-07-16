@@ -10,11 +10,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using static ChessKnockoff.Utilities;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm1 : ValidationPage
+    public partial class WebForm1 : ExtendedPage
     {
 
         public void checkPassword(object source, ServerValidateEventArgs args)
@@ -33,7 +32,7 @@ namespace ChessKnockoff
             }
 
             //Make the current link in the navbar active
-            activateNav(this, "likRegister");
+            activateNav("likRegister");
 
             //Hide errors as the viewstate is not saved
             altPassword.Visible = false;

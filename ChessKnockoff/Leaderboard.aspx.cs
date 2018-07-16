@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm8 : System.Web.UI.Page
+    public partial class WebForm8 : ExtendedPage
     {
         private void addCellsForRow(int rank, string name, int elo, string css)
         {
@@ -40,6 +40,9 @@ namespace ChessKnockoff
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            //Activate the current link
+            activateNav("likLeaderboard");
+
             //Get all the users
             var UsersContext = new ApplicationDbContext();
 

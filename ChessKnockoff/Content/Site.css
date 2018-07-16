@@ -4,6 +4,22 @@ body {
     background-color: #f5f5f5;
 }
 
+[class|="confetti"] {
+    position: absolute;
+}
+
+.red {
+    background-color: #E94A3F;
+}
+
+.yellow {
+    background-color: #FAA040;
+}
+
+.blue {
+    background-color: #5FC9F5;
+}
+
 /* Will display the doge background which will repeat to fill the entire content*/
 .doge {
     background-image: url(/Content/Images/Doge.jpg);
@@ -11,7 +27,7 @@ body {
 }
 
 p {
-    max-width: 550px;
+    max-width: 450px;
 }
 
 /* Centered text */

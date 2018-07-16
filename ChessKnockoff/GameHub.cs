@@ -7,11 +7,31 @@ using Microsoft.AspNet.SignalR;
 using ChessKnockoff.Models;
 using ChessDotNet;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Diagnostics;
 
 namespace ChessKnockoff
 {
     public class GameHub : Hub
     {
+        /// <summary>
+        /// Converts the enum value to a string
+        /// </summary>
+        /// <param name="player">The Player side enum</param>
+        /// <returns></returns>
+        private string playerEnumToString(Player player)
+        {
+            //If they are black
+            if (player == Player.Black)
+            {
+                //Return black
+                return "black";
+            } else
+            {
+                //Else return white if they are not black
+                return "white";
+            }
+        }
+
         /// <summary>
         /// Stops the search for a game
         /// </summary>
@@ -107,18 +127,54 @@ namespace ChessKnockoff
                 game.Board.ApplyMove(move, true);
             }
 
+            //If either player has stalemated
+            if (game.Board.IsStalemated(playerMakingTurn.side))
+            {
+                //Notify both clients that a draw has occured
+                this.Clients.Group(game.Id).gameDraw();
+
+                // Remove the game (in any game over scenario) to reclaim resources
+                GameState.Instance.RemoveGame(game.Id);
+            }
+
+            //Check if there is a winner
+            if (game.Board.IsCheckmated(opponent.side))
+            {
+                //Update the winning players ELO in which the player making the turn won
+                //Calculate the different between them
+                int eloDifference = opponent.userInformation.ELO - playerMakingTurn.userInformation.ELO;
+                //Calculate the odds of player making the turn would win
+                int expectationPlayerMakingTurn = 1 / (1 + 10 ^ (eloDifference / 400));
+                //Get the expectation of the opponent winning
+                int expectationOpponent = 1 - expectationPlayerMakingTurn;
+
+                //Since the player making the turn won, increase their ELO
+                playerMakingTurn.userInformation.ELO += 20 * (1 - expectationPlayerMakingTurn);
+                //Since the opponent lost, decrease their ELO
+                opponent.userInformation.ELO += 20 * ( - expectationOpponent);
+
+                //Notify both clients that the player making the turn has won
+                this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
+
+                // Remove the game (in any game over scenario) to reclaim resources
+                GameState.Instance.RemoveGame(game.Id);
+            }
+
+            //Must be done after the move has been processed
+            //Stores whose turn it is
             string turn = "";
 
             //Check whose turn it is
             if (game.Board.WhoseTurn == Player.Black)
             {
                 turn = "black";
-            } else
+            }
+            else
             {
                 turn = "white";
             }
 
-            //A promoise could be used but this is cleaner
+            //The method is void therefore to a call needs to be made to parse the board state
             this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), turn);
         }
 

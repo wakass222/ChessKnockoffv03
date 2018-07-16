@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using static ChessKnockoff.Utilities;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChessKnockoff.Models;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm4 : System.Web.UI.Page
+    public partial class WebForm4 : ExtendedPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -30,7 +29,7 @@ namespace ChessKnockoff
             }
 
             //Make the current link in the navbar active
-            activateNav(this, "likLogin");
+            activateNav( "likLogin");
 
             //Hide the messages when first entering the page and for other request as the viewstate is not saved
             altAuthentication.Visible = false;

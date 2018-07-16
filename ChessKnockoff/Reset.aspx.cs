@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm2 :  ValidationPage
+    public partial class WebForm2 :  ExtendedPage
     {
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {

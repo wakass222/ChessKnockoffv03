@@ -23,6 +23,9 @@
             var randomMoveTimer;
             var game;
 
+            //Holds whether confetti should be made
+            var showConfetti = false;
+
             //Store play information
             var gameData = {
                 orientation: "",
@@ -30,6 +33,12 @@
                 opponentUsername: "",
                 lookingForGame: false
             }
+
+            //The wrapper
+            var divWrapper = ("#wrapper");
+
+            //The draw alter
+            var altDraw = $("#altDraw");
 
             //The turn message
             var msgTurn = $("#msgTurn");
@@ -55,12 +64,19 @@
             //Hide the game start button
             btnPlay.hide();
 
-            //Hide the alerts/messages until needed
-            altFail.hide();
-            altLeave.hide();
-            altLose.hide();
-            altWin.hide();
-            msgTurn.hide();
+            //Function to hide messages/alerts
+            var hideAllAlert = function () {
+                //Hide the alerts/messages until needed
+                altFail.hide();
+                altLeave.hide();
+                altLose.hide();
+                altWin.hide();
+                msgTurn.hide();
+                altDraw.hide();
+            }
+
+            //Hide all alerts
+            hideAllAlert();
 
             //Method to set the board
             var setBoard = function () {
@@ -73,14 +89,26 @@
                 board = ChessBoard("board", cfg);
             }
 
-            var resetView = function (fenString) {
+            var resetView = function (fenString, showPlay) {
+                //Remove all messages/alerts
+                hideAllAlert();
+
+                //Show the board
                 setBoard(fenString);
+
                 //Show the button
                 btnPlay.show();
+
                 //Reset the button state
-                btnPlay.attr("aria-pressed", "true");
-                //Hide whose turn it is
-                msgTurn.hide();
+                if (showPlay) {
+                    //If tru then show the play button
+                    btnPlay.button('toggle');
+                    btnPlay.html("Find game");
+                } else {
+                    //Else hide it
+                    btnPlay.hide();
+                }
+
                 //Reset the title
                 hedTitle.html("Play");
             }
@@ -109,7 +137,7 @@
                 game.move(possibleMoves[randomIndex]);
                 //Set the board position to the newly generated move
                 board.position(game.fen());
-                
+
                 //Make a new event with a 0.5 second delay
                 randomMoveTimer = window.setTimeout(makeRandomMove, 500);
             };
@@ -135,14 +163,14 @@
                     console.log("It finised");
                 });
             }
-            
+
             //Create the SignaIR connection to the server
             var gameHubProxy = $.connection.gameHub;
 
             //Function to setup the game
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
-                //Hide the search for game button
-                btnPlay.hide();
+                //Reset the view
+                resetView(fenString, false);
 
                 //Display the opponent's username
                 hedTitle.html(opponentUsername);
@@ -188,30 +216,106 @@
 
                 //Set the persons current turn
                 gameData.currentTurn = turn;
+                showTurn();
             };
+
+            //The game drawed
+            gameHubProxy.client.gameDraw = function () {
+                //Retain the board state
+                resetView(board.fen(), true);
+                //Show the proper message
+                altDraw.show();
+            }
 
             //Opponent has left
             gameHubProxy.client.opponentLeft = function () {
-                resetView();
+                resetView(board.fen(), true);
                 //Show the proper message
                 altLeave.show();
             }
 
-            //Display game over
-            gameHubProxy.client.gameOver = function () {
+            //Display whether they lost or won
+            gameHubProxy.client.gameFinish = function (winner) {
                 //Clear the view
-                resetView();
-                //Show lose message
-                altLose.show();
+                resetView(board.fen(), true);
+
+                //This player won
+                if (gameData.orientation === winner) {
+                    //Show the win alert
+                    altWin.show();
+                    //Create some conffeti
+                    createConffeti();
+                } else {
+                    //Show lose message
+                    altLose.show();
+                }
             };
 
-            //Display win
-            gameHubProxy.client.gameWon = function () {
-                //Clear the view
-                resetView();
-                //Show the win message
-                altWin.show();
-            };
+            function createConffeti(time) {
+                //Allow confetti to respawn
+                showConfetti = true;
+
+                //Make 250 pieces
+                for (var i = 0; i < 250; i++) {
+                    create(i);
+                }
+
+                function create(i) {
+                    var width = Math.random() * 8;
+                    var height = width * 0.4;
+                    var colourIdx = Math.ceil(Math.random() * 3);
+                    var colour = "red";
+                    switch (colourIdx) {
+                        case 1:
+                            colour = "yellow";
+                            break;
+                        case 2:
+                            colour = "blue";
+                            break;
+                        default:
+                            colour = "red";
+                    }
+
+                    //Create the actual confettu
+                    ($('<div class="confetti-' + i + ' ' + colour + '"></div>').css({
+                        "width": width + "px",
+                        "height": height + "px",
+                        "top": -Math.random() * 20 + "%",
+                        "left": Math.random() * 100 + "%",
+                        "opacity": Math.random() + 0.5,
+                        "transform": "rotate(" + Math.random() * 360 + "deg)"
+                    }).appendTo('.wrapper'));
+
+                    //Make them fall at different speeds
+                    drop(i);
+                }
+
+                function drop(x) {
+                    $('.confetti-' + x).animate({
+                        top: "100%",
+                        left: "+=" + Math.random() * 15 + "%"
+                    }, Math.random() * 3000 + 3000, function () {
+                        reset(x);
+                    });
+                }
+
+                //Once they have fallen reset and put them at the top
+                function reset(x) {
+                    $('.confetti-' + x).animate({
+                        "top": -Math.random() * 20 + "%",
+                        "left": "-=" + Math.random() * 15 + "%"
+                    }, 0, function () {
+                        //Check if they should be reset
+                        if (showConfetti) {
+                            //If they should allow them to drop
+                            drop(x);
+                        } else {
+                            //Remove them if they are not needed
+                            $('.confetti-' + x).remove();
+                        }
+                    });
+                }
+            }
 
             // Open a connection to the server hub
             $.connection.hub.logging = true; // Enable client side logging
@@ -225,13 +329,16 @@
                 if (isPressed) {
                     //Show that the matchmaking has started
                     btnPlay.html("Looking for game...");
-                    
+
                     //Intialise the loading chess engine
                     game = new Chess();
 
+                    //Stop making confetti if the player already won
+                    showConfetti = false;
+
                     //If the find game was successful then show the matchmaking visuals
                     //Make a frozen board in the default chess position
-                    freezeBoard("start");
+                    setBoard("start");
 
                     //Make the chess board make random moves after a delay
                     randomMoveTimer = window.setTimeout(makeRandomMove, 1000);
@@ -256,12 +363,12 @@
 
             //When the connection is disconnected for any reason
             $.connection.hub.disconnected(function () {
+                //Reset the view
+                resetView("", false);
+
                 //Show the error message
                 altFail.show();
-                btnPlay.hide();
 
-                //Clear the board
-                setBoard("");
                 //Stop the board from updating if they were searching
                 clearTimeout(randomMoveTimer);
                 /*
@@ -270,7 +377,7 @@
                 }, 5000); //Try to restart the connectiona after 5 seconds
                 */
             });
-
+            
             //Start the connection to the hub
             $.connection.hub.start()
                 .done(function () {
@@ -286,35 +393,30 @@
         //Call init once the DOM fully loads
         $(document).ready(init);
     </script>
-    <div class="container mt-2">
-        <div class="row mt-1 justify-content-center">
+    <div class="container mt-2 wrapper">
+        <div class="row mt-1 mb-1 justify-content-center">
             <div id="board" style="width: 400px">
             </div>
         </div>
-        <div id="msgTurn" class="row mt-1 form-group text-left justify-content-center" style="width: 400px">
+        <div class="row justify-content-center" >
+            <p id="msgTurn" style="width: 400px"></p>
         </div>
         <div class="row mt-2 justify-content-center">
-            <div class="form-group text-center" style="width: 400px">
+            <div class="text-center" style="width: 400px">
                 <div id="altFail" class="alert alert-danger" role="alert">
                     Sorry but the connection to the game server broke. Please try again at a later time.
                 </div>
-                <div id="altWin" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div id="altWin" class="alert alert-success" role="alert">
                     Wow. You won...
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
-                <div id="altLose" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div id="altDraw" class="alert alert-warning" role="alert">
+                    It's a draw, both of you both suck...
+                </div>
+                <div id="altLose" class="alert alert-success" role="alert">
                     Not surprising, you lost...
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
-                <div id="altLeave" class="alert alert-warning alert-dismissible fade show" role="alert">
-                    The opponent has disconnected. Congrats on freelo.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div id="altLeave" class="alert alert-warning" role="alert">
+                    The opponent has disconnected. Congrats have some freelo.
                 </div>
             </div>
         </div>
