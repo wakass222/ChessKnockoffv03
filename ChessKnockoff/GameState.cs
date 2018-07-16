@@ -67,7 +67,7 @@ namespace ChessKnockoff
         public playerConnection GetPlayer(string playerId)
         {
             playerConnection foundPlayer;
-            if (!this.players.TryGetValue(playerId, out foundPlayer))
+            if (!players.TryGetValue(playerId, out foundPlayer))
             {
                 return null;
             }
@@ -84,7 +84,7 @@ namespace ChessKnockoff
         public Game GetGame(playerConnection player, out playerConnection opponent)
         {
             opponent = null;
-            Game foundGame = this.games.Values.FirstOrDefault(g => g.Id == player.GameId);
+            Game foundGame = games.Values.FirstOrDefault(g => g.Id == player.GameId);
 
             if (foundGame == null)
             {
@@ -105,7 +105,7 @@ namespace ChessKnockoff
         public playerConnection GetWaitingOpponent()
         {
             playerConnection foundPlayer;
-            if (!this.waitingPlayers.TryDequeue(out foundPlayer))
+            if (!waitingPlayers.TryDequeue(out foundPlayer))
             {
                 return null;
             }
@@ -123,15 +123,15 @@ namespace ChessKnockoff
         {
             // Remove the game
             Game foundGame;
-            if (!this.games.TryRemove(gameId, out foundGame))
+            if (!games.TryRemove(gameId, out foundGame))
             {
                 throw new InvalidOperationException("Game not found.");
             }
 
             // Remove the players, best effort
             playerConnection foundPlayer;
-            this.players.TryRemove(foundGame.firstPlayer.connectionString, out foundPlayer);
-            this.players.TryRemove(foundGame.secondPlayer.connectionString, out foundPlayer);
+            players.TryRemove(foundGame.firstPlayer.connectionString, out foundPlayer);
+            players.TryRemove(foundGame.secondPlayer.connectionString, out foundPlayer);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace ChessKnockoff
         /// <param name="player">The player to remove from the waiting pool.</param>
         public void RemoveFromWaitingPool(playerConnection player)
         {
-            this.waitingPlayers.TryDequeue(out player);
+            waitingPlayers.TryDequeue(out player);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace ChessKnockoff
         /// <param name="player">The player to add to waiting pool.</param>
         public void AddToWaitingPool(playerConnection player)
         {
-            this.waitingPlayers.Enqueue(player);
+            waitingPlayers.Enqueue(player);
         }
 
         /// <summary>

@@ -107,8 +107,19 @@ namespace ChessKnockoff
                 game.Board.ApplyMove(move, true);
             }
 
-            //Else just return the current board state
-            this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen());
+            string turn = "";
+
+            //Check whose turn it is
+            if (game.Board.WhoseTurn == Player.Black)
+            {
+                turn = "black";
+            } else
+            {
+                turn = "white";
+            }
+
+            //A promoise could be used but this is cleaner
+            this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), turn);
         }
 
         /// <summary>
@@ -118,6 +129,7 @@ namespace ChessKnockoff
         /// <returns></returns>
         public override async Task OnDisconnected(bool stopCalled)
         {
+            //Players are only added to the player list once they are in a game, therefore it is only necessary to remove the game along with its players
             playerConnection leavingPlayer = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
 
             // Only handle cases where user was a player in a game or waiting for an opponent
