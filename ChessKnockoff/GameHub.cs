@@ -15,6 +15,27 @@ namespace ChessKnockoff
     public class GameHub : Hub
     {
         /// <summary>
+        /// Private field that stores the usermanager object
+        /// </summary>
+        private readonly UserManager<ApplicationUser> _userManager;
+
+
+        public GameHub(UserManager<ApplicationUser> userManager)
+        {
+            //The current user information can not be accessed by using the OWIN context
+            //Therefore a connection has to be made manually and is stored for the lifetime of this object
+
+            //Create the database connection
+            ApplicationDbContext applicationContext = new ApplicationDbContext();
+
+            //Create the Entity framework that supports the identity interfaces
+            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(applicationContext);
+
+            //Create and store the user manager as a private field
+            this._userManager = new ApplicationUserManager(userStore);
+        }
+
+        /// <summary>
         /// Converts the enum value to a string
         /// </summary>
         /// <param name="player">The Player side enum</param>
@@ -107,8 +128,8 @@ namespace ChessKnockoff
         /// <summary>
         /// Client has requested to place a piece down in the following position.
         /// </summary>
-        /// <param name="row">The row part of the position.</param>
-        /// <param name="col">The column part of the position.</param>
+        /// <param name="sourcePosition">The original position of the piece.</param>
+        /// <param name="destinationPosition">The destination of the piece.</param>
         /// <returns>A Task to track the asynchronous method execution.<</returns>
         public void MakeTurn(string sourcePosition, string destinationPosition)
         {
@@ -118,15 +139,22 @@ namespace ChessKnockoff
 
             game = GameState.Instance.GetGame(playerMakingTurn, out opponent);
 
-            //Create the move object
-            Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side);
-
-            //Check if the move valid, if is not valid then do nothing since there is client side validation
-            if (game.Board.IsValidMove(move))
+            //Try to apply the move
+            try
             {
-                //Apply that move
-                game.Board.ApplyMove(move, true);
+                //Create the move object and always promote to queen if possible
+                Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side, 'Q');
+
+                //Apply that move and pass the to check parameter
+                game.Board.ApplyMove(move, false);
+            } catch(Exception)
+            {
+
             }
+
+            //Always return the position even if it is not valid so that the piece returns to its original position on the client
+            //The method is void therefore to a call needs to be made to parse the board state
+            this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), playerEnumToString(game.Board.WhoseTurn));
 
             //If either player has stalemated
             if (game.Board.IsStalemated(playerMakingTurn.side))
@@ -141,15 +169,9 @@ namespace ChessKnockoff
             //Check if there is a winner
             if (game.Board.IsCheckmated(opponent.side))
             {
-                //The current user information can not be accessed by using the OWIN context
-                //Therefore a connection has to be made manually
-                ApplicationDbContext mycontext = new ApplicationDbContext();
-                UserStore<ApplicationUser> mystore = new UserStore<ApplicationUser>(mycontext);
-                ApplicationUserManager userMgr = new ApplicationUserManager(mystore);
-
                 //Find both the players information
-                ApplicationUser playerMakingTurnInformation = userMgr.FindByNameAsync(playerMakingTurn.Username).Result;
-                ApplicationUser oppoentnInformation = userMgr.FindByNameAsync(opponent.Username).Result;
+                ApplicationUser playerMakingTurnInformation = _userManager.FindByNameAsync(playerMakingTurn.Username).Result;
+                ApplicationUser oppoentnInformation = _userManager.FindByNameAsync(opponent.Username).Result;
 
                 //Update the winning players ELO in which the player making the turn won
                 //Calculate the different between them
@@ -159,14 +181,15 @@ namespace ChessKnockoff
                 //Get the expectation of the opponent winning
                 int expectationOpponent = 1 - expectationPlayerMakingTurn;
 
+                //A k-factor of 20 is used
                 //Since the player making the turn won, increase their ELO
                 playerMakingTurnInformation.ELO += 20 * (1 - expectationPlayerMakingTurn);
                 //Since the opponent lost, decrease their ELO
                 oppoentnInformation.ELO += 20 * ( - expectationOpponent);
 
                 //Update both player's information by writing to the database
-                userMgr.Update(playerMakingTurnInformation);
-                userMgr.Update(oppoentnInformation);
+                _userManager.Update(playerMakingTurnInformation);
+                _userManager.Update(oppoentnInformation);
 
                 //Notify both clients that the player making the turn has won
                 this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
@@ -174,23 +197,6 @@ namespace ChessKnockoff
                 // Remove the game (in any game over scenario) to reclaim resources
                 GameState.Instance.RemoveGame(game.Id);
             }
-
-            //Must be done after the move has been processed
-            //Stores whose turn it is
-            string turn = "";
-
-            //Check whose turn it is
-            if (game.Board.WhoseTurn == Player.Black)
-            {
-                turn = "black";
-            }
-            else
-            {
-                turn = "white";
-            }
-
-            //The method is void therefore to a call needs to be made to parse the board state
-            this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), turn);
         }
 
         /// <summary>

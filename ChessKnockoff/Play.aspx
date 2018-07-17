@@ -29,7 +29,7 @@
             //Store play information
             var gameData = {
                 orientation: "",
-                currentTurn: "",
+                currentTurn: "white",
                 opponentUsername: "",
                 lookingForGame: false
             }
@@ -78,12 +78,13 @@
             //Hide all alerts
             hideAllAlert();
 
-            //Method to set the board
-            var setBoard = function () {
+            //Method to set the board but not allowing dragging of pieces
+            var setBoard = function fenString() {
                 var cfg = {
-                    position: "",
+                    position: fenString,
                     draggable: false,
-                    pieceTheme: 'Content/Images/{piece}.png'
+                    pieceTheme: 'Content/Images/{piece}.png',
+                    orientation: gameData.orientation
                 }
 
                 board = ChessBoard("board", cfg);
@@ -170,7 +171,9 @@
             //Function to setup the game
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
                 //Reset the view
-                resetView(fenString, false);
+                hideAllAlert();
+                //Hide the play button
+                btnPlay.hide();
 
                 //Display the opponent's username
                 hedTitle.html(opponentUsername);
@@ -191,7 +194,8 @@
                     position: fenString,
                     pieceTheme: 'Content/Images/{piece}.png',
                     onDrop: onDrop,
-                    onDragStart: onDragStart
+                    onDragStart: onDragStart,
+                    orientation: side
                 };
 
                 //Replace the current board
@@ -202,9 +206,6 @@
 
                 //Show whose turn it is
                 showTurn();
-
-                //Change the orientation of the board
-                board.orientation(side);
             }
 
             //Any functions that the server can call
