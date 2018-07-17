@@ -79,10 +79,10 @@
             hideAllAlert();
 
             //Method to set the board but not allowing dragging of pieces
-            var setBoard = function fenString() {
+            var setBoard = function fenString(draggable) {
                 var cfg = {
                     position: fenString,
-                    draggable: false,
+                    draggable: draggable,
                     pieceTheme: 'Content/Pieces/{piece}.png',
                     orientation: gameData.orientation
                 }
@@ -90,12 +90,12 @@
                 board = ChessBoard("board", cfg);
             }
 
-            var resetView = function (fenString, showPlay) {
+            var resetView = function (fenString, showPlay, draggable) {
                 //Remove all messages/alerts
                 hideAllAlert();
 
                 //Show the board
-                setBoard(fenString);
+                setBoard(fenString, draggable);
 
                 //Show the button
                 btnPlay.show();
@@ -170,15 +170,12 @@
 
             //Function to setup the game
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
-                //Reset the view
-                hideAllAlert();
-                //Hide the play button
-                btnPlay.hide();
+                resetView(fen, false, true);
 
                 //Display the opponent's username
                 hedTitle.html(opponentUsername);
 
-                //Turn off the look for a game
+                //Turn off the loading visual
                 clearTimeout(randomMoveTimer);
 
                 //Store the side
@@ -223,14 +220,14 @@
             //The game drawed
             gameHubProxy.client.gameDraw = function () {
                 //Retain the board state
-                resetView(board.fen(), true);
+                resetView(board.fen(), true, false);
                 //Show the proper message
                 altDraw.show();
             }
 
             //Opponent has left
             gameHubProxy.client.opponentLeft = function () {
-                resetView(board.fen(), true);
+                resetView(board.fen(), true, false);
                 //Show the proper message
                 altLeave.show();
             }
@@ -238,7 +235,7 @@
             //Display whether they lost or won
             gameHubProxy.client.gameFinish = function (winner) {
                 //Clear the view
-                resetView(board.fen(), true);
+                resetView(board.fen(), true, false);
 
                 //This player won
                 if (gameData.orientation === winner) {
@@ -261,7 +258,9 @@
                     create(i);
                 }
 
+                //Create the confetti elements 
                 function create(i) {
+                    //Randomly assign their properties
                     var width = Math.random() * 8;
                     var height = width * 0.4;
                     var colourIdx = Math.ceil(Math.random() * 3);
@@ -277,7 +276,7 @@
                             colour = "red";
                     }
 
-                    //Create the actual confettu
+                    //Create the actual confetti in the div of wrapper
                     ($('<div class="confetti-' + i + ' ' + colour + '"></div>').css({
                         "width": width + "px",
                         "height": height + "px",
@@ -286,11 +285,12 @@
                         "opacity": Math.random() + 0.5,
                         "transform": "rotate(" + Math.random() * 360 + "deg)"
                     }).appendTo('.wrapper'));
+                    //Wrapper takes up the full screen and has overflow set to hide
 
-                    //Make them fall at different speeds
                     drop(i);
                 }
 
+                //Make them fall at different speeds and to different positions
                 function drop(x) {
                     $('.confetti-' + x).animate({
                         top: "100%",
@@ -365,7 +365,7 @@
             //When the connection is disconnected for any reason
             $.connection.hub.disconnected(function () {
                 //Reset the view
-                resetView("", false);
+                resetView("", false, false);
 
                 //Show the error message
                 altFail.show();

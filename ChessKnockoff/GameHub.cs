@@ -19,6 +19,40 @@ namespace ChessKnockoff
         /// </summary>
         private readonly UserManager<ApplicationUser> _userManager;
 
+        /// <summary>
+        /// Calculate the new ELO
+        /// </summary>
+        /// <param name="expected">The expected percentage that the player will win</param>
+        /// <param name="actual">The actual result, 1 for win; 0 for loss; 0.5 for draw</param>
+        /// <param name="kFactor">The amount of how sensitive the ELO change should be</param>
+        /// <returns>The amount to change the ELO rating</returns>
+        private int calculateELOAdjustment(double expectation, float result, float kFactor)
+        {
+            //Calulcate the amount ot update the current ELO by
+            //Making sure to round as database does not store floats/doubles
+            int ELOAmount = Convert.ToInt32(kFactor * (result - expectation));
+            //Return the ELO amount to increase/decrease by
+            return ELOAmount;
+        }
+
+        /// <summary>
+        /// Calculates the expectation one of the players which is a percentage that the current player will win
+        /// </summary>
+        /// <param name="playerOne">The rating of the current player</param>
+        /// <param name="playerTwo">The rating of the otherPlayer</param>
+        /// <returns>The percentage the current player will win</returns>
+        private double calculateExpectation(int playerOne, int playerTwo)
+        {
+            //Update the winning players ELO in which the player making the turn won
+            //Calculate the different between them
+            int eloDifference = playerTwo - playerOne;
+
+            //Calculate the odds of player making the turn would win
+            double expectationPlayerMakingTurn = 1 / (1 + Math.Pow(10, eloDifference / 400));
+
+            //Return the final result
+            return expectationPlayerMakingTurn;
+        }
 
         public GameHub(UserManager<ApplicationUser> userManager)
         {
@@ -149,13 +183,13 @@ namespace ChessKnockoff
                 game.Board.ApplyMove(move, false);
             } catch(Exception)
             {
-
+                //Do nothing with the exception
             }
 
             //Always return the position even if it is not valid so that the piece returns to its original position on the client
             //The method is void therefore to a call needs to be made to parse the board state
             this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), playerEnumToString(game.Board.WhoseTurn));
-
+            
             //If either player has stalemated
             if (game.Board.IsStalemated(playerMakingTurn.side))
             {
@@ -169,28 +203,6 @@ namespace ChessKnockoff
             //Check if there is a winner
             if (game.Board.IsCheckmated(opponent.side))
             {
-                //Find both the players information
-                ApplicationUser playerMakingTurnInformation = _userManager.FindByNameAsync(playerMakingTurn.Username).Result;
-                ApplicationUser oppoentnInformation = _userManager.FindByNameAsync(opponent.Username).Result;
-
-                //Update the winning players ELO in which the player making the turn won
-                //Calculate the different between them
-                int eloDifference = playerMakingTurnInformation.ELO - oppoentnInformation.ELO;
-                //Calculate the odds of player making the turn would win
-                int expectationPlayerMakingTurn = 1 / (1 + 10 ^ (eloDifference / 400));
-                //Get the expectation of the opponent winning
-                int expectationOpponent = 1 - expectationPlayerMakingTurn;
-
-                //A k-factor of 20 is used
-                //Since the player making the turn won, increase their ELO
-                playerMakingTurnInformation.ELO += 20 * (1 - expectationPlayerMakingTurn);
-                //Since the opponent lost, decrease their ELO
-                oppoentnInformation.ELO += 20 * ( - expectationOpponent);
-
-                //Update both player's information by writing to the database
-                _userManager.Update(playerMakingTurnInformation);
-                _userManager.Update(oppoentnInformation);
-
                 //Notify both clients that the player making the turn has won
                 this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
 
