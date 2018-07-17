@@ -32,7 +32,7 @@ body {
 
 /* Will display the doge background which will repeat to fill the entire content*/
 .doge {
-    background-image: url(/Content/Images/Doge.jpg);
+    background-image: url(/Doge.jpg);
     background-repeat: repeat;
 }
 

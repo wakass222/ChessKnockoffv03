@@ -17,7 +17,7 @@
             var cfg = {
                 position: "",
                 draggable: false,
-                pieceTheme: 'Content/Images/{piece}.png'
+                pieceTheme: 'Content/Pieces/{piece}.png'
             };
             var board = ChessBoard("board", cfg);
             var randomMoveTimer;
@@ -83,7 +83,7 @@
                 var cfg = {
                     position: fenString,
                     draggable: false,
-                    pieceTheme: 'Content/Images/{piece}.png',
+                    pieceTheme: 'Content/Pieces/{piece}.png',
                     orientation: gameData.orientation
                 }
 
@@ -192,7 +192,7 @@
                 var cfg = {
                     draggable: true,
                     position: fenString,
-                    pieceTheme: 'Content/Images/{piece}.png',
+                    pieceTheme: 'Content/Pieces/{piece}.png',
                     onDrop: onDrop,
                     onDragStart: onDragStart,
                     orientation: side

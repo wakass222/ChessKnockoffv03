@@ -11,7 +11,7 @@
                 //Disable dragging of pieces
                 draggable: false,
                 //Set the image files
-                pieceTheme: 'Content/Images/{piece}.png',
+                pieceTheme: 'Content/Pieces/{piece}.png',
                 //Set the pieces up
                 position: "rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP"
             };
