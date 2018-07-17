@@ -78,15 +78,39 @@
             //Hide all alerts
             hideAllAlert();
 
+            //Only allow dragging of owned pieces and must be their turn
+            var onDragStart = function (source, piece, position, orientation) {
+                //Check the board orientation and whether the piece is black or white owned
+                if ((orientation === 'white' && piece.search(/^w/) === -1) ||
+                    (orientation === 'black' && piece.search(/^b/) === -1)) {
+                    return false;
+                }
+
+                //If it is not their turn then dont allow the piece to be dragged
+                if (gameData.currentTurn !== orientation) {
+                    return false;
+                }
+            };
+
+            //Method call on how to process the board
+            var onDrop = function (source, target, piece, newPos, oldPos, orientation) {
+                //Sends the data to the server
+                gameHubProxy.server.makeTurn(source, target).done(function () {
+                    console.log("It finised");
+                });
+            }
+
             //Method to set the board but not allowing dragging of pieces
-            var setBoard = function fenString(draggable) {
+            var setBoard = function fenString(fenString, draggable) {
                 var cfg = {
                     position: fenString,
                     draggable: draggable,
                     pieceTheme: 'Content/Pieces/{piece}.png',
-                    orientation: gameData.orientation
+                    orientation: gameData.orientation,
+                    onDragStart: onDragStart,
+                    onDrop: onDrop
                 }
-
+                //Create the board in the DOM with the configuration
                 board = ChessBoard("board", cfg);
             }
 
@@ -143,34 +167,12 @@
                 randomMoveTimer = window.setTimeout(makeRandomMove, 500);
             };
 
-            //Only allow dragging of owned pieces and must be their turn
-            var onDragStart = function (source, piece, position, orientation) {
-                //Check the board orientation and whether the piece is black or white owned
-                if ((orientation === 'white' && piece.search(/^w/) === -1) ||
-                    (orientation === 'black' && piece.search(/^b/) === -1)) {
-                    return false;
-                }
-
-                //If it is not their turn then dont allow the piece to be dragged
-                if (gameData.currentTurn !== orientation) {
-                    return false;
-                }
-            };
-
-            //Method call on how to process the board
-            var onDrop = function (source, target, piece, newPos, oldPos, orientation) {
-                //Sends the data to the server
-                gameHubProxy.server.makeTurn(source, target).done(function () {
-                    console.log("It finised");
-                });
-            }
-
             //Create the SignaIR connection to the server
             var gameHubProxy = $.connection.gameHub;
 
             //Function to setup the game
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
-                resetView(fen, false, true);
+                resetView(fenString, false, true);
 
                 //Display the opponent's username
                 hedTitle.html(opponentUsername);
@@ -185,18 +187,7 @@
                 //Store the username
                 gameData.opponentUsername = opponentUsername;
 
-                //Configure the board for actual playing
-                var cfg = {
-                    draggable: true,
-                    position: fenString,
-                    pieceTheme: 'Content/Pieces/{piece}.png',
-                    onDrop: onDrop,
-                    onDragStart: onDragStart,
-                    orientation: side
-                };
-
-                //Replace the current board
-                board = ChessBoard('board', cfg);
+                resetView(fenString, false, true);
 
                 //Show the message
                 msgTurn.show();
@@ -412,14 +403,14 @@
                 <div id="altWin" class="alert alert-success" role="alert">
                     Wow. You won...
                 </div>
-                <div id="altDraw" class="alert alert-warning" role="alert">
+                <div id="altDraw" class="alert alert-secondary" role="alert">
                     It's a draw, both of you both suck...
                 </div>
                 <div id="altLose" class="alert alert-warning" role="alert">
                     Not surprising, you lost...
                 </div>
-                <div id="altLeave" class="alert alert-warning" role="alert">
-                    The opponent has disconnected. Congrats have some freelo.
+                <div id="altLeave" class="alert alert-info" role="alert">
+                    The opponent has disconnected. Not surprising, no one wants to play with you.
                 </div>
             </div>
         </div>

@@ -15,46 +15,12 @@ namespace ChessKnockoff
     public class GameHub : Hub
     {
         /// <summary>
-        /// Private field that stores the usermanager object
+        /// Updates both players ELO
         /// </summary>
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        /// <summary>
-        /// Calculate the new ELO
-        /// </summary>
-        /// <param name="expected">The expected percentage that the player will win</param>
-        /// <param name="actual">The actual result, 1 for win; 0 for loss; 0.5 for draw</param>
-        /// <param name="kFactor">The amount of how sensitive the ELO change should be</param>
-        /// <returns>The amount to change the ELO rating</returns>
-        private int calculateELOAdjustment(double expectation, float result, float kFactor)
-        {
-            //Calulcate the amount ot update the current ELO by
-            //Making sure to round as database does not store floats/doubles
-            int ELOAmount = Convert.ToInt32(kFactor * (result - expectation));
-            //Return the ELO amount to increase/decrease by
-            return ELOAmount;
-        }
-
-        /// <summary>
-        /// Calculates the expectation one of the players which is a percentage that the current player will win
-        /// </summary>
-        /// <param name="playerOne">The rating of the current player</param>
-        /// <param name="playerTwo">The rating of the otherPlayer</param>
-        /// <returns>The percentage the current player will win</returns>
-        private double calculateExpectation(int playerOne, int playerTwo)
-        {
-            //Update the winning players ELO in which the player making the turn won
-            //Calculate the different between them
-            int eloDifference = playerTwo - playerOne;
-
-            //Calculate the odds of player making the turn would win
-            double expectationPlayerMakingTurn = 1 / (1 + Math.Pow(10, eloDifference / 400));
-
-            //Return the final result
-            return expectationPlayerMakingTurn;
-        }
-
-        public GameHub(UserManager<ApplicationUser> userManager)
+        /// <param name="playerOne"></param>
+        /// <param name="playerTwo">The actual result, 1 for win; 0 for loss; 0.5 for draw</param>
+        /// <param name="resultOfPlayerOne"></param>
+        private void updateELO(string playerOneUsername, string playerTwoUsername, double resultOfPlayerOne)
         {
             //The current user information can not be accessed by using the OWIN context
             //Therefore a connection has to be made manually and is stored for the lifetime of this object
@@ -66,7 +32,31 @@ namespace ChessKnockoff
             UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(applicationContext);
 
             //Create and store the user manager as a private field
-            this._userManager = new ApplicationUserManager(userStore);
+            ApplicationUserManager userManager = new ApplicationUserManager(userStore);
+
+            //Find the ApplicationUser of each of the players which holds the ELO
+            ApplicationUser playerOne = userManager.FindByName(playerOneUsername);
+            ApplicationUser playerTwo = userManager.FindByName(playerTwoUsername);
+
+            //Update the winning players ELO in which the player making the turn won
+            //Calculate the different between them
+            int eloDifference = playerTwo.ELO - playerOne.ELO;
+
+            //Calculate the odds of player one would win
+            //A cast has to be used so there is enough precision
+            double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, (double)eloDifference / (double)400));
+
+            //Calculate how much to update the ELO by
+            //K-factor of 20 is used
+            int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
+
+            //ELO is a zero sum game, the amount lost is equivalent to the amount gained
+            playerOne.ELO += updateValue;
+            playerTwo.ELO -= updateValue;
+
+            //Use the manager to save the updates into the database
+            userManager.Update(playerTwo);
+            userManager.Update(playerTwo);
         }
 
         /// <summary>
@@ -178,7 +168,7 @@ namespace ChessKnockoff
             {
                 //Create the move object and always promote to queen if possible
                 Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side, 'Q');
-
+                
                 //Apply that move and pass the to check parameter
                 game.Board.ApplyMove(move, false);
             } catch(Exception)
@@ -193,6 +183,9 @@ namespace ChessKnockoff
             //If either player has stalemated
             if (game.Board.IsStalemated(playerMakingTurn.side))
             {
+                //Update both players' ELO with the stalemate calculation
+                updateELO(playerMakingTurn.Username, opponent.Username, 0.5);
+
                 //Notify both clients that a draw has occured
                 this.Clients.Group(game.Id).gameDraw();
 
@@ -203,6 +196,9 @@ namespace ChessKnockoff
             //Check if there is a winner
             if (game.Board.IsCheckmated(opponent.side))
             {
+                //Update both players' ELO, in which the player making the turn won
+                updateELO(playerMakingTurn.Username, opponent.Username, 1);
+
                 //Notify both clients that the player making the turn has won
                 this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
 

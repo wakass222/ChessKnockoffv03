@@ -30,7 +30,7 @@ namespace ChessKnockoff.Models
         public Player side { get; set; }
 
         /// <summary>
-        /// The Identity of the player with all their data
+        /// The Username of the player
         /// </summary>
         public string Username { get; set; }
 
