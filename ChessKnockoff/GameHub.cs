@@ -94,7 +94,7 @@ namespace ChessKnockoff
         /// Matches the player with another opponent
         /// </summary>
         /// <returns>A Task to track the asynchronous method execution.</returns>
-        public async Task FindGame()
+        public async Task<bool> FindGame()
         {
             //Create a player connection object to store related connection data
             playerConnection joiningPlayer = new playerConnection(Context.User.Identity, this.Context.ConnectionId);
@@ -103,7 +103,7 @@ namespace ChessKnockoff
             if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
             {
                 //Inform the client that they are already playing
-                this.Clients.Caller.AlreadyPlaying();
+                return true;
             }             
             else if (GameState.Instance.GetWaitingOpponent() == null) //Check if the player is already waiting
             {
@@ -154,6 +154,9 @@ namespace ChessKnockoff
                     Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
                 }
             }
+
+            //Return false as a default
+            return false;
         }
 
         /// <summary>

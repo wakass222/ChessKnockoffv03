@@ -206,15 +206,6 @@
 
             //Any functions that the server can call
 
-            //Tell the user to log off if they are on two machines
-            gameHubProxy.client.alreadyPlaying = function () {
-                //Reset the view
-                resetView("", true, false);
-
-                //Show the user is playing
-                altAlreadyPlaying.show();
-            };
-
             //Update the board
             gameHubProxy.client.updatePosition = function (fenString, turn) {
                 //Set the board fen string
@@ -336,25 +327,33 @@
 
                 //Depending on whether it has been pressed start or end matchmaking
                 if (isPressed) {
-                    //Show that the matchmaking has started
-                    btnPlay.html("Looking for game...");
-
-                    //Intialise the loading chess engine
-                    game = new Chess();
-
                     //Stop making confetti if the player already won
                     showConfetti = false;
 
-                    //If the find game was successful then show the matchmaking visuals
-                    //Make a frozen board in the default chess position
-                    setBoard("start");
-
-                    //Make the chess board make random moves after a delay
-                    randomMoveTimer = window.setTimeout(makeRandomMove, 1000);
-
                     //Call the server function to match make
-                    gameHubProxy.server.findGame().fail(function () {
-                        clearTimeout(randomMoveTimer);
+                    gameHubProxy.server.findGame().done(function (isAlreadyPlaying) {
+                        //Check if the user is already playing
+                        if (isAlreadyPlaying) {
+                            //Make the board empty
+                            resetView("", true, false);
+
+                            //Show that the user is already playing
+                            altAlreadyPlaying.show();
+                        } else {
+                            //The game is actively searching
+
+                            //Show that the matchmaking has started
+                            btnPlay.html("Looking for game...");
+
+                            //Create a board in the actual chess position
+                            setBoard("start", false);
+
+                            //Intialise the loading chess engine
+                            game = new Chess();
+
+                            //Make the chess board make random moves after a short delay
+                            randomMoveTimer = window.setTimeout(makeRandomMove, 500);
+                        }
                     });
                 } else {
                     //Change the text of the button
@@ -364,7 +363,7 @@
                     gameHubProxy.server.quitFindGame();
 
                     //Stop the find game visual
-                    setBoard("");
+                    setBoard("", false);
 
                     //Stop the chessboard from making moves
                     clearTimeout(randomMoveTimer);
