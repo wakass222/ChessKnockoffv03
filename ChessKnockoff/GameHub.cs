@@ -99,9 +99,13 @@ namespace ChessKnockoff
             //Create a player connection object to store related connection data
             playerConnection joiningPlayer = new playerConnection(Context.User.Identity, this.Context.ConnectionId);
 
-            // Find any pending games if any
-            playerConnection opponent = GameState.Instance.GetWaitingOpponent();
-            if (opponent == null)
+            //Check if the player is already waiting or in game from another client to avoid pairing
+            if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
+            {
+                //Inform the client that they are already playing
+                this.Clients.Caller.AlreadyPlaying();
+            }             
+            else if (GameState.Instance.GetWaitingOpponent() == null) //Check if the player is already waiting
             {
                 // No waiting players so enter the waiting pool
                 GameState.Instance.AddToWaitingPool(joiningPlayer);
@@ -109,6 +113,9 @@ namespace ChessKnockoff
             }
             else
             {
+                // Find any pending games if any
+                playerConnection opponent = GameState.Instance.GetWaitingOpponent();
+
                 //Create a new random object
                 Random rand = new Random();
                 bool randomBool = rand.Next(0, 2) == 0;
@@ -131,9 +138,9 @@ namespace ChessKnockoff
                     opponent.side = Player.White;
 
                     //The joining client
-                    Clients.Client(this.Context.ConnectionId).start(fenString, opponentUsername, "black");
+                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "black");
                     //The opponent client
-                    Clients.Client(opponent.connectionString).start(fenString, joiningPlayerUsername, "white");
+                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "white");
                 }
                 else
                 {
@@ -142,9 +149,9 @@ namespace ChessKnockoff
                     opponent.side = Player.Black;
 
                     //The joining client
-                    Clients.Client(this.Context.ConnectionId).start(fenString, opponentUsername, "white");
+                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "white");
                     //The opponent client
-                    Clients.Client(opponent.connectionString).start(fenString, joiningPlayerUsername, "black");
+                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
                 }
             }
         }
@@ -192,9 +199,7 @@ namespace ChessKnockoff
                 // Remove the game (in any game over scenario) to reclaim resources
                 GameState.Instance.RemoveGame(game.Id);
             }
-
-            //Check if there is a winner
-            if (game.Board.IsCheckmated(opponent.side))
+            else if (game.Board.IsCheckmated(opponent.side)) //Check if there is a winner
             {
                 //Update both players' ELO, in which the player making the turn won
                 updateELO(playerMakingTurn.Username, opponent.Username, 1);

@@ -61,6 +61,9 @@
             //The title element
             var hedTitle = $("#title");
 
+            //The already playing alert
+            var altAlreadyPlaying = $("#altAlreadyPlaying");
+
             //Hide the game start button
             btnPlay.hide();
 
@@ -73,6 +76,7 @@
                 altWin.hide();
                 msgTurn.hide();
                 altDraw.hide();
+                altAlreadyPlaying.hide();
             }
 
             //Hide all alerts
@@ -102,6 +106,7 @@
 
             //Method to set the board but not allowing dragging of pieces
             var setBoard = function fenString(fenString, draggable) {
+                board.destroy();
                 var cfg = {
                     position: fenString,
                     draggable: draggable,
@@ -123,6 +128,9 @@
 
                 //Show the button
                 btnPlay.show();
+
+                //Stop the timer if there is still a timer
+                clearTimeout(randomMoveTimer);
 
                 //Reset the button state
                 if (showPlay) {
@@ -197,6 +205,15 @@
             }
 
             //Any functions that the server can call
+
+            //Tell the user to log off if they are on two machines
+            gameHubProxy.client.alreadyPlaying = function () {
+                //Reset the view
+                resetView("", true, false);
+
+                //Show the user is playing
+                altAlreadyPlaying.show();
+            };
 
             //Update the board
             gameHubProxy.client.updatePosition = function (fenString, turn) {
@@ -340,6 +357,7 @@
                         clearTimeout(randomMoveTimer);
                     });
                 } else {
+                    //Change the text of the button
                     btnPlay.html("Find game");
 
                     //Call the function to stop match make
@@ -350,6 +368,8 @@
 
                     //Stop the chessboard from making moves
                     clearTimeout(randomMoveTimer);
+                    //Call the function to stop match make
+                    gameHubProxy.server.quitFindGame();
                 }
             });
 
@@ -360,14 +380,6 @@
 
                 //Show the error message
                 altFail.show();
-
-                //Stop the board from updating if they were searching
-                clearTimeout(randomMoveTimer);
-                /*
-                setTimeout(function () {
-                    $.connection.hub.start();
-                }, 5000); //Try to restart the connectiona after 5 seconds
-                */
             });
             
             //Start the connection to the hub
@@ -397,6 +409,9 @@
         </div>
         <div class="row mt-2 justify-content-center">
             <div class="text-center" style="width: 400px">
+                <div id="altAlreadyPlaying" class="alert alert-info" role="alert">
+                    Please log off the other machine to play.
+                </div>
                 <div id="altFail" class="alert alert-danger" role="alert">
                     Sorry but the connection to the game server broke. Please try again at a later time.
                 </div>

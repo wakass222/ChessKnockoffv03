@@ -99,6 +99,28 @@ namespace ChessKnockoff
         }
 
         /// <summary>
+        /// Determines if the player is already waiting or in a game
+        /// </summary>
+        /// <param name="playerToCheck">The player to check.</param>
+        /// <returns>true if the player is in a game or waiting</returns>
+        public bool playerAlreadyExists(string Username)
+        {
+            //Check if player is in game
+            bool playerInGame = this.players.Values.FirstOrDefault(player => player.Username == Username) != null;
+            //Check if they are in queue
+            bool playerIsWaiting = this.waitingPlayers.FirstOrDefault(player => player.Username == Username) != null;
+
+            //If the player is waiting or in queue then return true
+            if (playerInGame || playerIsWaiting)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Retrieves a game waiting for players.
         /// </summary>
         /// <returns>Returns a pending game if any; otherwise returns null.</returns>
