@@ -21,7 +21,7 @@ namespace ChessKnockoff.Models
             this.firstPlayer = firstPlayer;
             this.secondPlayer = secondPlayer;
             this.Id = Guid.NewGuid().ToString("d");
-            this.Board = new ChessGame();
+            this.Board = new HordeChessGame();
 
             // Link the players to the game as well
             this.firstPlayer.GameId = this.Id;

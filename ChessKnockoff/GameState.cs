@@ -121,6 +121,21 @@ namespace ChessKnockoff
         }
 
         /// <summary>
+        /// Check if there is waiting opponents
+        /// </summary>
+        /// <returns>Returns true if there are opponents waiting else false</returns>
+        public bool isThereWaitingOpponent()
+        {
+            if (waitingPlayers.IsEmpty)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Retrieves a game waiting for players.
         /// </summary>
         /// <returns>Returns a pending game if any; otherwise returns null.</returns>
