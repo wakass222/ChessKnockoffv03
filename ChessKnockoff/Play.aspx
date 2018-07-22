@@ -37,6 +37,10 @@
             //The wrapper
             var divWrapper = ("#wrapper");
 
+            //The afk win and lose alerts
+            var altAfkLose = $("#altAfkLose");
+            var altAfkWin = $("#altAfkWin");
+
             //The draw alter
             var altDraw = $("#altDraw");
 
@@ -76,6 +80,8 @@
                 altWin.hide();
                 msgTurn.hide();
                 altDraw.hide();
+                altAfkLose.hide()
+                altAfkWin.hide();
                 altAlreadyPlaying.hide();
             }
 
@@ -206,7 +212,8 @@
                 showTurn();
             }
 
-            gameHubProxy.client.AlreadyPlaying = function () {
+            //Call if the player is already playing
+            gameHubProxy.client.alreadyPlaying = function () {
                     //Make the board empty
                     resetView("", true, false);
 
@@ -214,7 +221,25 @@
                     altAlreadyPlaying.show();
             }
 
-            gameHubProxy.client.IsWaiting = function () {
+            gameHubProxy.client.afkWin = function () {
+                //Lock the current view
+                resetView(board.fen(), true, false);
+
+                //Show the lose alert
+                altAfkWin.show();
+            }
+
+            //Call if the player needs to make a move
+            gameHubProxy.client.afkLose = function () {
+                //Lock the current board in its state
+                resetView(board.fen(), true, false);
+
+                //Show the win alert
+                altAfkLose.show();
+            }
+
+            //Shows that the player is in queue
+            gameHubProxy.client.inQueue = function () {
                 //Check if the user is already playing
                 //The game is actively searching
 
@@ -409,7 +434,7 @@
             </div>
         </div>
         <div class="row justify-content-center" >
-            <p id="msgTurn" style="width: 400px"></p>
+            <div id="msgTurn" style="width: 400px"></div>
         </div>
         <div class="row mt-2 justify-content-center">
             <div class="text-center" style="width: 400px">
@@ -427,6 +452,12 @@
                 </div>
                 <div id="altLose" class="alert alert-warning" role="alert">
                     Not surprising, you lost...
+                </div>
+                <div id="altAfkLose" class="alert alert-warning" role="alert">
+                    You took too long to make a move...
+                </div>
+                <div id="altAfkWin" class="alert alert-warning" role="alert">
+                    Your opponent got bored and went afk. Here is a free win...
                 </div>
                 <div id="altLeave" class="alert alert-info" role="alert">
                     The opponent has disconnected. Not surprising, no one wants to play with you.

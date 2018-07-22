@@ -6,59 +6,11 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using ChessKnockoff.Models;
 using ChessDotNet;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System.Diagnostics;
-using Microsoft.AspNet.Identity;
 
 namespace ChessKnockoff
 {
     public class GameHub : Hub
     {
-        /// <summary>
-        /// Updates both players ELO
-        /// </summary>
-        /// <param name="playerOne"></param>
-        /// <param name="playerTwo">The actual result, 1 for win; 0 for loss; 0.5 for draw</param>
-        /// <param name="resultOfPlayerOne"></param>
-        private void updateELO(string playerOneUsername, string playerTwoUsername, double resultOfPlayerOne)
-        {
-            //The current user information can not be accessed by using the OWIN context
-            //Therefore a connection has to be made manually and is stored for the lifetime of this object
-
-            //Create the database connection
-            ApplicationDbContext applicationContext = new ApplicationDbContext();
-
-            //Create the Entity framework that supports the identity interfaces
-            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(applicationContext);
-
-            //Create and store the user manager as a private field
-            ApplicationUserManager userManager = new ApplicationUserManager(userStore);
-
-            //Find the ApplicationUser of each of the players which holds the ELO
-            ApplicationUser playerOne = userManager.FindByName(playerOneUsername);
-            ApplicationUser playerTwo = userManager.FindByName(playerTwoUsername);
-
-            //Update the winning players ELO in which the player making the turn won
-            //Calculate the different between them
-            int eloDifference = playerTwo.ELO - playerOne.ELO;
-
-            //Calculate the odds of player one would win
-            //A cast has to be used so there is enough precision
-            double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, (double)eloDifference / (double)400));
-
-            //Calculate how much to update the ELO by
-            //K-factor of 20 is used
-            int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
-
-            //ELO is a zero sum game, the amount lost is equivalent to the amount gained
-            playerOne.ELO += updateValue;
-            playerTwo.ELO -= updateValue;
-
-            //Use the manager to save the updates into the database
-            userManager.Update(playerTwo);
-            userManager.Update(playerTwo);
-        }
-
         /// <summary>
         /// Converts the enum value to a string
         /// </summary>
@@ -109,7 +61,7 @@ namespace ChessKnockoff
             {
                 // No waiting players so enter the waiting pool
                 GameState.Instance.AddToWaitingPool(joiningPlayer);
-                Clients.Caller.IsWaiting();
+                Clients.Caller.InQueue();
             }
             else
             {
@@ -179,6 +131,10 @@ namespace ChessKnockoff
                 
                 //Apply that move and pass the to check parameter
                 game.Board.ApplyMove(move, false);
+
+                //If an exception does not occur then reset the timer
+                game.timer.Stop();
+                game.timer.Start();
             } catch(Exception)
             {
                 //Do nothing with the exception
@@ -192,7 +148,7 @@ namespace ChessKnockoff
             if (game.Board.IsStalemated(playerMakingTurn.side))
             {
                 //Update both players' ELO with the stalemate calculation
-                updateELO(playerMakingTurn.Username, opponent.Username, 0.5);
+                GameState.Instance.updateELO(playerMakingTurn.Username, opponent.Username, 0.5);
 
                 //Notify both clients that a draw has occured
                 this.Clients.Group(game.Id).gameDraw();
@@ -203,7 +159,7 @@ namespace ChessKnockoff
             else if (game.Board.IsCheckmated(opponent.side)) //Check if there is a winner
             {
                 //Update both players' ELO, in which the player making the turn won
-                updateELO(playerMakingTurn.Username, opponent.Username, 1);
+                GameState.Instance.updateELO(playerMakingTurn.Username, opponent.Username, 1);
 
                 //Notify both clients that the player making the turn has won
                 this.Clients.Group(game.Id).gameFinish(playerEnumToString(playerMakingTurn.side));
@@ -229,15 +185,18 @@ namespace ChessKnockoff
                 //Get the game of the leaving player
                 playerConnection opponent;
                 Game ongoingGame = GameState.Instance.GetGame(leavingPlayer, out opponent);
-
+                
                 //If there was a game
                 if (ongoingGame != null)
                 {
                     //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
 
+                    //Remove the afk timer
+                    ongoingGame.timer.Dispose();
+
                     //Also count as a loss for the opponent
-                    updateELO(leavingPlayer.Username, opponent.Username, 0);
+                    GameState.Instance.updateELO(leavingPlayer.Username, opponent.Username, 0);
 
                     //Remove them from the collection of games
                     GameState.Instance.RemoveGame(ongoingGame.Id);
