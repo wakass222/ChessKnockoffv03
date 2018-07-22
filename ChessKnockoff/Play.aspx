@@ -382,9 +382,6 @@
                 //Reset the view
                 resetView("", false, false);
 
-                if ($.connection.hub.lastError) 
-                { alert("Disconnected. Reason: " + $.connection.hub.lastError.message); }
-
                 //Show the error message
                 altFail.show();
             });

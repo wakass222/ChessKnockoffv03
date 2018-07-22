@@ -235,6 +235,10 @@ namespace ChessKnockoff
                 {
                     //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
+
+                    //Also count as a loss for the opponent
+                    updateELO(leavingPlayer.Username, opponent.Username, 0);
+
                     //Remove them from the collection of games
                     GameState.Instance.RemoveGame(ongoingGame.Id);
                 }
