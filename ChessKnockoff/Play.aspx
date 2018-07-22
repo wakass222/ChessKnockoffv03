@@ -414,7 +414,7 @@
         <div class="row mt-2 justify-content-center">
             <div class="text-center" style="width: 400px">
                 <div id="altAlreadyPlaying" class="alert alert-info" role="alert">
-                    Please log off the other machine to play.
+                    Please stop looking for a game or finish the other game on the other machine to play.
                 </div>
                 <div id="altFail" class="alert alert-danger" role="alert">
                     Sorry but the connection to the game server broke. Please try again at a later time.
