@@ -29,20 +29,57 @@ namespace ChessKnockoff.Models
             this.secondPlayer.GameId = this.Id;
 
             //Start the timer as well
-            this.timer = new Timer(turnTime);
+            this.timerWarning = new Timer(warningTime);
             //Attach the lambda to the event to call the player is afk function
-            timer.Elapsed += (sender, e) => PlayerIsAfk();
+            timerWarning.Elapsed += (sender, e) => PlayerIsAfkWarning();
             //Make sure that it only executes once
-            timer.AutoReset = false;
+            timerWarning.AutoReset = false;
             //Start the timer
-            timer.Start();
+            timerWarning.Start();
+
+            //Create the warning timer as well but do not start it
+            this.timerFinal = new Timer(finalTime);
+            //Attach the lambda to the event to call the player is afk function
+            timerFinal.Elapsed += (sender, e) => PlayerIsAfk();
+            //Make sure that it only executes once
+            timerFinal.AutoReset = false;
         }
 
-        public Timer timer;
+        public Timer timerWarning;
+        public Timer timerFinal;
 
-        //Only allow this property to be read
-        //Sets how long each turn can be
-        public static int turnTime { get; } = 30000;
+        /// <summary>
+        /// Sets how long before the warning appears, 30 seconds
+        /// </summary>
+        public static int warningTime { get; } = 30000;
+
+        /// <summary>
+        /// Sets the time after the warning that results in a loss if still afk, 10 seconds
+        /// </summary>
+        public static int finalTime { get; } = 10000;
+
+        /// <summary>
+        /// Call to notify the player to make a move and starts the final timer
+        /// </summary>
+        private void PlayerIsAfkWarning()
+        {
+            //Gets the GameHub so client functions can be invoked here
+            var context = GlobalHost.ConnectionManager.GetHubContext<GameHub>();
+
+            //Notify the user to make a move 
+            if (this.Board.WhoseTurn == this.firstPlayer.side)
+            {
+                //Notify the first player to make a move
+                context.Clients.Client(firstPlayer.connectionString).AfkWarning();
+            } else
+            {
+                //NOtify the second player to make a move
+                context.Clients.Client(secondPlayer.connectionString).AfkWarning();
+            }
+
+            //Start the timer for the final action
+            this.timerFinal.Start();
+        }
 
         /// <summary>
         /// Calls if the player is afk and does all the required actions
@@ -59,19 +96,20 @@ namespace ChessKnockoff.Models
                 //The first player is afk therefore they lose
                 GameState.Instance.updateELO(this.firstPlayer.Username, this.secondPlayer.Username, 0);
                 //In form both clients of what happened
-                context.Clients.Client(this.firstPlayer.connectionString).afkWin();
-                context.Clients.Client(this.secondPlayer.connectionString).afkLose();
+                context.Clients.Client(this.firstPlayer.connectionString).afkLose();
+                context.Clients.Client(this.secondPlayer.connectionString).afkWin();
             } else
             {
                 //The second payer is afk therefore the first player wins
                 GameState.Instance.updateELO(this.firstPlayer.Username, this.secondPlayer.Username, 1);
                 //In form both clients of what happened
-                context.Clients.Client(this.firstPlayer.connectionString).afkLose();
-                context.Clients.Client(this.secondPlayer.connectionString).afkWin();
+                context.Clients.Client(this.firstPlayer.connectionString).afkWin();
+                context.Clients.Client(this.secondPlayer.connectionString).afkLose();
             }
 
-            //Get rid of the timer since it is not needed anymore
-            this.timer.Dispose();
+            //Get rid of the timers since it is not needed anymore
+            this.timerFinal.Dispose();
+            this.timerWarning.Dispose();
 
             //Remove the game from the list of all current games
             GameState.Instance.RemoveGame(this.Id);

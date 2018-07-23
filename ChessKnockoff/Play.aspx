@@ -238,6 +238,12 @@
                 altAfkLose.show();
             }
 
+            //Call to warn the player to make a turn soon
+            gameHubProxy.client.afkWarning = function () {
+                //Show the warning
+                msgTurn.html("<span class='text-danger'>Make a move or it is an automatic forfeit.</span>");
+            }
+
             //Shows that the player is in queue
             gameHubProxy.client.inQueue = function () {
                 //Check if the user is already playing
@@ -433,7 +439,7 @@
             <div id="board" style="width: 400px">
             </div>
         </div>
-        <div class="row justify-content-center" >
+        <div class="row justify-content-center mt-1" >
             <div id="msgTurn" style="width: 400px"></div>
         </div>
         <div class="row mt-2 justify-content-center">

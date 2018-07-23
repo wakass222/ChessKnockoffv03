@@ -123,18 +123,27 @@ namespace ChessKnockoff
 
             game = GameState.Instance.GetGame(playerMakingTurn, out opponent);
 
+            //Check if the board state changed
+            string fenTemp = game.Board.GetFen();
+
             //Try to apply the move
             try
             {
                 //Create the move object and always promote to queen if possible
                 Move move = new Move(sourcePosition, destinationPosition, playerMakingTurn.side, 'Q');
-                
+
                 //Apply that move and pass the to check parameter
                 game.Board.ApplyMove(move, false);
 
-                //If an exception does not occur then reset the timer
-                game.timer.Stop();
-                game.timer.Start();
+                if (fenTemp != game.Board.GetFen())
+                {
+                    //If an exception does not occur then reset the timer
+                    game.timerWarning.Stop();
+                    game.timerWarning.Start();
+
+                    //Also stop the final warning timer
+                    game.timerFinal.Stop();
+                }
             } catch(Exception)
             {
                 //Do nothing with the exception
@@ -192,8 +201,9 @@ namespace ChessKnockoff
                     //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
 
-                    //Remove the afk timer
-                    ongoingGame.timer.Dispose();
+                    //Remove the afk timers since they are not needed
+                    ongoingGame.timerWarning.Dispose();
+                    ongoingGame.timerFinal.Dispose();
 
                     //Also count as a loss for the opponent
                     GameState.Instance.updateELO(leavingPlayer.Username, opponent.Username, 0);
