@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm2 :  ExtendedPage
+    /// <summary>
+    /// 
+    /// </summary>
+    public partial class ResetForm : ExtendedPage
     {
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
@@ -18,46 +20,69 @@ namespace ChessKnockoff
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
+        /// <summary>
+        /// Checks whether the token is valid or not
+        /// </summary>
+        /// <param name="tokenID">The token from the url</param>
+        /// <returns>Returns true if the token is correct else returns false</returns>
+        public bool isResetTokenCorrect(string token)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM ResetToken INNER JOIN Player ON ResetToken.Id = Player.Id AND ResetToken=@ResetToken";
+
+            //Create the reader to store results
+            SqlDataReader reader;
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
+
+                //Add the sql parameter
+                sqlCommand.Parameters.AddWithValue("@ResetToken", token);
+
+                //Execute the sql command
+                reader = sqlCommand.ExecuteReader();
+
+                //If the reader has rows then the token is correct
+                if (reader.HasRows)
+                {
+                    return true;
+                }
+                else
+                {
+                    //Return false since the reset token is incorrect
+                    return false;
+                }
+            }
+        }
+
         protected void ResetPassword(object sender, EventArgs e)
         {
             //Check if the inputs are valid in this case if both passwords match
             if (IsValid)
             {
-                //Create manager object
-                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                //Store the list of errors
+                string errorList = validatePassword(inpPassword.Value);
 
-                //Check if the password is valid and block until it gets a result
-                IdentityResult resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
-
-                //Check if the password is valid
-                if (!resultPassword.Succeeded)
+                //Check error list is empty
+                if (errorList != "")
                 {
                     //Show the error message
                     altError.Visible = true;
-                    //Show the specific error
-                    altError.InnerText = resultPassword.Errors.FirstOrDefault<string>();
+                    //Show the errors
+                    altError.InnerText = errorList;
                 }
-
-                //Check if the password is valid
-                if (resultPassword.Succeeded)
+                else
                 {
-                    //Get the reset code
-                    string code = IdentityHelper.GetCodeFromRequest(Request);
+                    //There was no error so change the password
 
-                    //Get the user ID
-                    string userID = IdentityHelper.GetUserIdFromRequest(Request);
-
-                    //Change their password
-                    IdentityResult result = manager.ResetPassword(userID, code, inpPassword.Value);
-
-                    //Check if it was successful
-                    if (result.Succeeded)
-                    {
-                        //Also end the lockout if there was one
-                        manager.SetLockoutEndDate(userID, new DateTimeOffset(DateTime.UtcNow));
-                        //Redirect to the login page and show the success message
-                        Response.Redirect("~/Login?ResetPassword=1");
-                    }
+                    //Redirect to the login page and show the success message
+                    Response.Redirect("~/Login?ResetPassword=1");
                 }
             }
         }
@@ -68,10 +93,7 @@ namespace ChessKnockoff
             altError.Visible = false;
 
             //Get the reset code
-            string code = IdentityHelper.GetCodeFromRequest(Request);
-
-            //Get the user ID
-            string userID = IdentityHelper.GetUserIdFromRequest(Request);
+            string code = Request.QueryString["ResetToken"];
 
             //Check if the code and userID is sent
             if (code == null && userID != "")
