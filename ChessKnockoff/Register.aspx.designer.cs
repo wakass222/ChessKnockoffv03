@@ -10,7 +10,7 @@
 namespace ChessKnockoff {
     
     
-    public partial class WebForm1 {
+    public partial class RegisterForm {
         
         /// <summary>
         /// valUsername control.

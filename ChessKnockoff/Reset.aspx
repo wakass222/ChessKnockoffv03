@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Reset" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Reset.aspx.cs" Inherits="ResetForm" %>
+﻿<%@ Page Title="Reset" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Reset.aspx.cs" Inherits="ChessKnockoff.ResetForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
     Reset
 </asp:Content>

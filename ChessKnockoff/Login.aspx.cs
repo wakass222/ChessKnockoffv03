@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChessKnockoff.Models;
+using System.Data.SqlClient;
 
 namespace ChessKnockoff
 {
@@ -15,15 +14,17 @@ namespace ChessKnockoff
         protected void Page_Load(object sender, EventArgs e)
         {
             //If user is already logged in
-            if (User.Identity.IsAuthenticated)
+            if (isAuthenticated())
             {
-                //Redirect them to the play page
+                //Check if they had the return query
                 if (this.Request.QueryString["ReturnUrl"] != null)
                 {
+                    //IF they did redirect them to that
                     this.Response.Redirect(Request.QueryString["ReturnUrl"].ToString());
                 }
                 else
                 {
+                    //Redirect them to the play page
                     this.Response.Redirect("/Play");
                 }
             }
@@ -39,30 +40,19 @@ namespace ChessKnockoff
             altEmailConfirm.Visible = false;
             altResetPassword.Visible = false;
             altLockout.Visible = false;
-
-            //Get the confirmation code and ID
-            string confirmationCode = IdentityHelper.GetCodeFromRequest(Request);
-            string confirmationUserId = IdentityHelper.GetUserIdFromRequest(Request);
-
-            //Check they both exist
-            if (confirmationCode != null && confirmationUserId != null)
-            {
-                //Try to confirm them
-                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                IdentityResult result = manager.ConfirmEmail(confirmationUserId, confirmationCode);
-               
-                //If it succeeded them confirm
-                if (result.Succeeded)
-                {
-                    altEmailConfirm.Visible = true;
-                }
-            }
-
+            
             //If the user was redirected from another page that required to be logged in
             if (Request.QueryString["ReturnUrl"] != null)
             {
                 //Display the message
                 altMustBeLoggedIn.Visible = true;
+            }
+
+            //If the user has a confirmation code
+            if (Request.QueryString["Confirm"] != null)
+            {
+                //Display the message
+
             }
 
             //If the user just registered show them the success message and prompt them to login
@@ -79,74 +69,110 @@ namespace ChessKnockoff
             }
         }
 
+        /// <summary>
+        /// Validates the user credentials
+        /// </summary>
+        /// <param name="username">The username</param>
+        /// <param name="passwordPlaintext">The password is plaintext</param>
+        private bool validateUser(string username, string passwordPlaintext)
+        {
+            //Stores the query string
+            string queryString = "SELECT Salt FROM Player WHERE Username=@Username";
+
+            //Create the reader to store results
+            SqlDataReader reader;
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Add the parameters into the query
+                command.Parameters.AddWithValue("@Username", username);
+
+                //Execute the SQL command and get the results
+                reader = command.ExecuteReader();
+
+                //Retrieve the salt password from the database and cast it to a byte array
+                byte[] salt = (byte[])reader["Salt"];
+
+                //Retrieve the salted hash from the database
+                byte[] saltedPasswordHash = (byte[])reader["Password"];
+
+                //Calculate user entered hash with the salt
+                byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
+
+                //Check if they match
+                if (saltedUserenteredHash == saltedPasswordHash)
+                {
+                    //Return true that the crendentials are valid
+                    return true;
+                }
+                else
+                {
+                    //The crendentials are not valid so return false
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the user has their email confirmed or not
+        /// </summary>
+        /// <param name="username">The name of the player</param>
+        /// <returns>Returns true if their email is confirmed else false</returns>
+        private bool isEmailConfirmed(string username)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed=1";
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Add the parameters to the query
+                command.Parameters.AddWithValue("@Username", username);
+
+                //Execute the command and store how many rows it found
+                int rowsAffected = command.ExecuteNonQuery();
+
+                //If there were no rows matching it
+                if (rowsAffected == 0)
+                {
+                    //Show that the email was not confirmed
+                    altEmailConfirm.Visible = true;
+
+                    //Return false since their email was not confirmed
+                    return false;
+                } else
+                {
+                    //Return true since their email is confirmed
+                    return true;
+                }
+            }
+        }
+
         protected void LoginClick(object sender, EventArgs e)
         {
             if (IsValid)
             {
-                //Validate the user password
-                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                ApplicationSignInManager signinManager = Context.GetOwinContext().GetUserManager<ApplicationSignInManager>();
-
-                //Require the user to have a confirmed email before they can log on.
-                ApplicationUser user = manager.FindByName(inpUsername.Value);
-
-                //Check if a user by that name exists
-                if (user != null)
+                //Validate their credentials
+                if (validateUser(inpUsername.Value, inpPassword.Value) && isEmailConfirmed(inpUsername.Value))
                 {
-                    //Check if their email has been confirmed
-                    if (!user.EmailConfirmed)
-                    {
-                        //Send email confirmation link
-                        string code = manager.GenerateEmailConfirmationToken(user.Id);
-                        string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-                        manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                    //Store their information in a session variable
+                    Session["Username"] = inpUsername.Value;
 
-                        //If it has not been confirmed show an error message
-                        altVerify.Visible = true;
-                    }
-                    else
-                    {
-                        //Try to log them in
-                        SignInStatus result = signinManager.PasswordSignIn(inpUsername.Value, inpPassword.Value, boxRememberCheck.Checked, true);
-
-                        //Check the result of sign in status to the possible errors
-                        if (result == SignInStatus.Success)
-                        {
-                            //If there is return url then redirect them to it
-                            if (Request.QueryString["ReturnUrl"] != null)
-                            {
-                                Response.Redirect(Request.QueryString["ReturnUrl"]);
-                            }
-                            else
-                            {
-                                //If it does not exist redirect them to the play page
-                                Response.Redirect("~/Play");
-                            }
-                        }
-                        else if(result == SignInStatus.RequiresVerification)
-                        {
-                            //Show that they need to verify their email
-                            altVerify.Visible = true;
-                        }
-                        else if(result == SignInStatus.Failure)
-                        {
-                            //Show that the password/username combination was incorrect
-                            altAuthentication.Visible = true;
-                        }
-                        else if(result == SignInStatus.LockedOut)
-                        {
-                            //Show that they have been locked out
-                            altLockout.Visible = true;
-                            altLockout.InnerText = string.Format("Your account has been locked for {0} minutes after {1} failed attempts. Please reset your password to prematurely end the lockout.",
-                                manager.DefaultAccountLockoutTimeSpan.Minutes, manager.MaxFailedAccessAttemptsBeforeLockout);
-                        }
-                    }
-                }
-                else
-                {
-                    //Show error message even if the username does not exist
-                    //Does not reveal whether that username exists
-                    altAuthentication.Visible = true;
+                    //Redirect them to the play page
+                    Response.Redirect("/Play");
                 }
             }
         }

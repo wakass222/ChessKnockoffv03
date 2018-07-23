@@ -1,6 +1,4 @@
 ﻿using ChessKnockoff.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm1 : ExtendedPage
+    public partial class RegisterForm : ExtendedPage
     {
 
         public void checkPassword(object source, ServerValidateEventArgs args)

@@ -27,6 +27,24 @@ namespace ChessKnockoff
         public static string dbConnectionString {get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=True";
 
         /// <summary>
+        /// Checks whether the user is validated
+        /// </summary>
+        /// <returns>Returns true if the user is logged in else false</returns>
+        public bool isAuthenticated()
+        {
+            //Check if the session variable Username is set
+            if (Session["Username"] != null)
+            {
+                //Return true since they are authenticated
+                return true;
+            } else
+            {
+                //Return false since they are not authenticated
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Validates a password
         /// </summary>
         /// <param name="password">The password to validate</param>
@@ -184,56 +202,6 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Validates the user credentials
-        /// </summary>
-        /// <param name="username">The username</param>
-        /// <param name="passwordPlaintext">The password is plaintext</param>
-        public bool validateUser(string username, string passwordPlaintext)
-        {
-            //Stores the query string
-            string queryString = "SELECT Salt FROM Player WHERE Username=@Username";
-
-            //Create the reader to store results
-            SqlDataReader reader;
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Add the parameters into the query
-                command.Parameters.AddWithValue("@Username", username);
-
-                //Execute the SQL command and get the results
-                reader = command.ExecuteReader();
-
-                //Retrieve the salt password from the database and cast it to a byte array
-                byte[] salt = (byte[])reader["Salt"];
-
-                //Retrieve the salted hash from the database
-                byte[] saltedPasswordHash = (byte[])reader["Password"];
-
-                //Calculate user entered hash with the salt
-                byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
-
-                //Check if they match
-                if (saltedUserenteredHash == saltedPasswordHash)
-                {
-                    //Return true that the crendentials are valid
-                    return true;
-                } else
-                {
-                    //The crendentials are not valid so return false
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
         /// Confirms the email
         /// </summary>
         /// <param name="UsernameID">The ID from the querystring to confirm</param>
@@ -269,6 +237,19 @@ namespace ChessKnockoff
         }
 
         /// <summary>
+        /// Fills the array with a salt
+        /// </summary>
+        /// <param name="arrayToFill">The byte array to fill with salts</param>
+        public void fillArraySalt(byte[] arrayToFill)
+        {
+            //Create the random number generator object
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+
+            //Fill the array with random bytes
+            rng.GetBytes(arrayToFill);
+        }
+
+        /// <summary>
         /// Create the account
         /// </summary>
         /// <param name="Username">The desired username</param>
@@ -277,15 +258,7 @@ namespace ChessKnockoff
         public void createAccount(string username, string email, string passwordPlaintext)
         {
             //Stores the query string
-            string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt) SELECT SCOPE_IDENTITY()";
-            //Create the random number generator object
-            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-
-            //Create the array to store 20 bytes of random salt
-            byte[] saltByte = new byte[20];
-
-            //Fill the array with random bytes
-            rng.GetBytes(saltByte);
+            string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt) SELECT SCOPE_IDENTITY()";
 
             //Create the database connection then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
@@ -295,6 +268,11 @@ namespace ChessKnockoff
 
                 //Create the query string in the sqlCommand format
                 SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Declare the array to store the salt
+                byte[] saltByte = new byte[20];
+                //Fill the array with the salt
+                fillArraySalt(saltByte);
 
                 //Calculate the salted hash
                 byte[] saltedPasswordHash = generateSaltedHash(passwordPlaintext, saltByte);
@@ -325,7 +303,7 @@ namespace ChessKnockoff
         /// <param name="plainText">The plaintext of the password</param>
         /// <param name="salt">The salt</param>
         /// <returns>The computed salted hash</returns>
-        static byte[] generateSaltedHash(string plainText, byte[] salt)
+        public static byte[] generateSaltedHash(string plainText, byte[] salt)
         {
             //Convert the string password to bytes
             byte[] passwordBytes = Encoding.UTF8.GetBytes(plainText);
