@@ -24,7 +24,7 @@ namespace ChessKnockoff
         public void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on validation to the password validation function
-            validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
+            checkPasswordMarch(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace ChessKnockoff
         /// <returns>Returns true if the email is taken else false</returns>
         public bool isEmailTaken(string email)
         {
-            //Stores the query string
+            //Finds a player by that email
             string queryString = "SELECT * FROM Player WHERE Email=@Email";
 
             //Create the database connection and command then dispose when done
@@ -72,7 +72,7 @@ namespace ChessKnockoff
         /// <returns>True if the username is taken else false</returns>
         public bool isUsernameTaken(string username)
         {
-            //Stores the query string
+            //Finds a player by their username
             string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
             //Create the database connection and command then dispose when done
@@ -111,7 +111,7 @@ namespace ChessKnockoff
         /// <param name="Password">The plaintext password</param>
         public void createAccount(string username, string email, string passwordPlaintext)
         {
-            //Stores the query string
+            //Create a new row with player information
             string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt)";
 
             //Create the database connection and command then dispose when done

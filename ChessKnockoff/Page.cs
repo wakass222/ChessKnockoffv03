@@ -146,42 +146,6 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Confirms the email
-        /// </summary>
-        /// <param name="UsernameID">The ID from the querystring to confirm</param>
-        /// <returns>True if the email was confirmed else false</returns>
-        public bool confirmEmail(string UsernameID)
-        {
-            //Stores the query string
-            string queryString = "UPDATE Player SET EmailIsConfirmed=1 WHERE Id=@Id";
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Execute the command and store how many rows were affected
-                int rowsAffected = command.ExecuteNonQuery();
-
-                //If one row was altered then it was succesful
-                if (rowsAffected == 1)
-                {
-                    //Return true since it was successful
-                    return true;
-                }
-                else
-                {
-                    //Return false since it did not work
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
         /// Fills the array with random bytes
         /// </summary>
         /// <param name="arrayToFill">The byte array to fill with salts</param>
@@ -262,7 +226,7 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="source">The source object from the validation call</param>
         /// <param name="args">Arguments from the validation call</param>
-        protected void validatePassword(object source, ServerValidateEventArgs args, string passwordValue, string passwordValueConfirm)
+        protected void checkPasswordMarch(object source, ServerValidateEventArgs args, string passwordValue, string passwordValueConfirm)
         {
             //Check if passwords match
             bool matchResult = passwordValue == passwordValueConfirm;

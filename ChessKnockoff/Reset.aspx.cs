@@ -22,7 +22,7 @@ namespace ChessKnockoff
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on password validation to another function
-            validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
+            checkPasswordMarch(source, args, inpPassword.Value, inpRePassword.Value);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace ChessKnockoff
         /// <returns>Returns true if the token is correct else returns false</returns>
         public bool isResetTokenCorrect(string token)
         {
-            //Stores the query string
+            //Finds the reset token and the associated user
             string queryString = "SELECT * FROM Reset INNER JOIN Player ON Reset.Username = Player.Username AND ResetToken=@ResetToken";
 
             //Create the database connection and command then dispose when done
@@ -140,7 +140,7 @@ namespace ChessKnockoff
                         //Hash the new password with the salt
                         byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
 
-                        //Stores the query string
+                        //Updates the user's password
                         string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt FROM Player INNER JOIN Reset ON Player.Username = Reset.Username WHERE Reset.ResetToken = @ResetToken";
 
                         int rowsAffected;

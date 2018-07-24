@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Account" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Account.aspx.cs" Inherits="ChessKnockoff.WebForm3" %>
+﻿<%@ Page Title="Account" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Account.aspx.cs" Inherits="ChessKnockoff.AccountForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLoginTitle" runat="server">
     Account
 </asp:Content>

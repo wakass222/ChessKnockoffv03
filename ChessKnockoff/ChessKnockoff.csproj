@@ -394,10 +394,10 @@
     <Compile Include="Page.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <None Include="Account.aspx.cs">
+    <Compile Include="Account.aspx.cs">
       <DependentUpon>Account.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </None>
+    </Compile>
     <Compile Include="Account.aspx.designer.cs">
       <DependentUpon>Account.aspx</DependentUpon>
     </Compile>

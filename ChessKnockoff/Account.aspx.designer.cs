@@ -10,7 +10,7 @@
 namespace ChessKnockoff {
     
     
-    public partial class WebForm3 {
+    public partial class AccountForm {
         
         /// <summary>
         /// altSuccess control.

@@ -22,7 +22,7 @@ namespace ChessKnockoff
         /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
         public bool? isEmailConfirmedFromEmail(string email)
         {
-            //Stores the query string
+            //Check if an email is confirmed
             string queryString = "SELECT * FROM Player WHERE Email=@Email";
 
             //Create the database connection and command then dispose when done
@@ -111,7 +111,7 @@ namespace ChessKnockoff
                     //Stores the found username
                     string username;
 
-                    //Stores the query string
+                    //Find the player's information by their email
                     string queryString = "SELECT * FROM Player WHERE Email=@Email";
 
                     //Create the database connection and command then dispose when done

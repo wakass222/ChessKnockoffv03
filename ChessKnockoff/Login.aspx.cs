@@ -20,7 +20,7 @@ namespace ChessKnockoff
         /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
         public bool? isEmailConfirmedFromUsername(string username)
         {
-            //Stores the query string
+            //Find the player's information from their username
             string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
             //Create the database connection and command then dispose when done
@@ -61,7 +61,7 @@ namespace ChessKnockoff
         /// <returns>Returns true if the crendtials are correct else false</returns>
         private bool checkUserCredentials(string username, string passwordPlaintext)
         {
-            //Stores the query string
+            //Selectt the player's information but exclude if they are not confirmed
             string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed = 1";
 
             //Create the reader to store results
@@ -155,7 +155,7 @@ namespace ChessKnockoff
             {
                 //Check the password confirmation token
 
-                //Stores the query string
+                //Confirms the player email in the database
                 string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Confirmation ON Player.Username = Confirmation.Username WHERE Confirmation.ConfirmationToken = @Token";
 
                 //Create the database connection and command then dispose when done
@@ -235,6 +235,38 @@ namespace ChessKnockoff
                 {
                     //Show the message to verify their email
                     altVerify.Visible = true;
+
+                    //Resend the email
+
+                    //Look in the database for the token
+                    string queryString = "SELECT * FROM Player INNER JOIN Confirmation ON Player.Username = Confirmation.Username WHERE Player.Username=@Username";
+
+                    //Create the database connection and command then dispose when done
+                    using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    {
+                        //Open the database connection
+                        connection.Open();
+
+                        //Add the parameters
+                        command.Parameters.AddWithValue("@Username", inpUsername.Value);
+
+                        //Execute the command
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        //Create a URI builder to create the path
+                        UriBuilder builder = new UriBuilder();
+                        //Set the host
+                        builder.Host = Request.Url.Host;
+                        //Set the port
+                        builder.Port = Request.Url.Port;
+                        //Set the path
+                        builder.Path = "/Login";
+                        //Add the query with the token
+                        builder.Query += "ConfirmationToken=" + HttpServerUtility.UrlTokenEncode((byte[])reader["ConfirmationToken"]);
+                        //Send the email to the user with the correct link
+                        sendEmail(reader["Email"].ToString(), "Confirm email", "Please confirm your email by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
+                    }
                 }
 
                 //Check whether the credentials are correct
