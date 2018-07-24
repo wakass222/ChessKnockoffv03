@@ -10,7 +10,7 @@
 namespace ChessKnockoff {
     
     
-    public partial class WebForm4 {
+    public partial class LoginForm {
         
         /// <summary>
         /// altRegistered control.

@@ -90,46 +90,6 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Checks whether the user has their email confirmed or not
-        /// </summary>
-        /// <param name="username">The name of the player</param>
-        /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
-        public bool? isEmailConfirmed(string username)
-        {
-            //Stores the query string
-            string queryString = "SELECT * FROM Player WHERE Username=@Username";
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Add the parameters to the query
-                command.Parameters.AddWithValue("@Username", username);
-
-                //Execute the command and store the result
-                SqlDataReader reader = command.ExecuteReader();
-
-                //If there were rows matching it
-                if (reader.HasRows)
-                {
-                    //Read the first row
-                    reader.Read();
-
-                    //Return the result
-                    return (bool)reader["EmailIsConfirmed"];
-                }
-
-                //Return null if no user was found
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Encodes the byte array so it can be sent via URL
         /// </summary>
         /// <param name="bytesToEncode">The bytes to encode</param>

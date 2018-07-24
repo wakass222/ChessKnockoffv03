@@ -8,8 +8,115 @@ using System.Data.SqlClient;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm4 : ExtendedPage
+    /// <summary>
+    /// Class for the login
+    /// </summary>
+    public partial class LoginForm : ExtendedPage
     {
+        /// <summary>
+        /// Checks whether the user has their email confirmed or not
+        /// </summary>
+        /// <param name="username">The name of the player</param>
+        /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
+        public bool? isEmailConfirmedFromUsername(string username)
+        {
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Stores the query string
+                string queryString = "SELECT * FROM Player WHERE Username=@Username";
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Add the parameters to the query
+                command.Parameters.AddWithValue("@Username", username);
+
+                //Execute the command and store the result
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    //If there were rows matching it
+                    if (reader.HasRows)
+                    {
+                        //Read the first row
+                        reader.Read();
+
+                        //Return the result
+                        return (bool)reader["EmailIsConfirmed"];
+                    }
+
+                    //Return null if no user was found
+                    return null;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Validates the user credentials
+        /// </summary>
+        /// <param name="username">The username</param>
+        /// <param name="passwordPlaintext">The password is plaintext</param>
+        /// <returns>Returns true if the crendtials are correct else false</returns>
+        private bool checkUserCredentials(string username, string passwordPlaintext)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed = 1";
+
+            //Create the reader to store results
+            SqlDataReader reader;
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Add the parameters into the query
+                command.Parameters.AddWithValue("@Username", username);
+
+                //Execute the SQL command and get the results
+                reader = command.ExecuteReader();
+
+                //Check if a user was found
+                if (reader.HasRows)
+                {
+                    //Read the first row
+                    reader.Read();
+
+                    //Retrieve the salt password from the database and cast it to a byte array
+                    byte[] salt = (byte[])reader["Salt"];
+
+                    //Retrieve the salted hash from the database
+                    byte[] saltedPasswordHash = (byte[])reader["Password"];
+
+                    //Calculate user entered hash with the salt
+                    byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
+
+                    //Check if they match
+                    if (saltedUserenteredHash.SequenceEqual(saltedPasswordHash))
+                    {
+                        //Return true that the credentials are valid
+                        return true;
+                    }
+                }
+
+                //The crendentials are not valid so return false
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Called when the page loads. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
             //If user is already logged in
@@ -115,68 +222,16 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Validates the user credentials
+        /// Called when the login button is clicked. Should not be called directly
         /// </summary>
-        /// <param name="username">The username</param>
-        /// <param name="passwordPlaintext">The password is plaintext</param>
-        /// <returns>Returns true if the crendtials are correct else false</returns>
-        private bool checkUserCredentials(string username, string passwordPlaintext)
-        {
-            //Stores the query string
-            string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed = 1";
-
-            //Create the reader to store results
-            SqlDataReader reader;
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Add the parameters into the query
-                command.Parameters.AddWithValue("@Username", username);
-
-                //Execute the SQL command and get the results
-                reader = command.ExecuteReader();
-
-                //Check if a user was found
-                if (reader.HasRows)
-                {
-                    //Read the first row
-                    reader.Read();
-
-                    //Retrieve the salt password from the database and cast it to a byte array
-                    byte[] salt = (byte[])reader["Salt"];
-
-                    //Retrieve the salted hash from the database
-                    byte[] saltedPasswordHash = (byte[])reader["Password"];
-
-                    //Calculate user entered hash with the salt
-                    byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
-
-                    //Check if they match
-                    if (saltedUserenteredHash.SequenceEqual(saltedPasswordHash))
-                    {
-                        //Return true that the credentials are valid
-                        return true;
-                    }
-                }
-
-                //The crendentials are not valid so return false
-                return false;
-            }
-        }
-
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void LoginClick(object sender, EventArgs e)
         {
             if (IsValid)
             {
                 //Store whether the email is confirmed
-                bool? emailConfirmed = isEmailConfirmed(inpUsername.Value);
+                bool? emailConfirmed = isEmailConfirmedFromUsername(inpUsername.Value);
                 if (emailConfirmed == false)
                 {
                     //Show the message to verify their email

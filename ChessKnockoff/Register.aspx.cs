@@ -34,14 +34,14 @@ namespace ChessKnockoff
         /// <returns>Returns true if the email is taken else false</returns>
         public bool isEmailTaken(string email)
         {
-            //Stores the query string
-            string queryString = "SELECT * FROM Player WHERE Email=@Email";
-
             //Create the database connection then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
             {
                 //Open the database connection
                 connection.Open();
+
+                //Stores the query string
+                string queryString = "SELECT * FROM Player WHERE Email=@Email";
 
                 //Create the query string in the sqlCommand format
                 SqlCommand sqlCommand = new SqlCommand(queryString, connection);

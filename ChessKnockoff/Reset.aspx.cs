@@ -10,15 +10,15 @@ using System.Data.SqlClient;
 namespace ChessKnockoff
 {
     /// <summary>
-    /// 
+    /// Class for reset page
     /// </summary>
     public partial class ResetForm : ExtendedPage
     {
         /// <summary>
         /// Custom validation calls this function. Should not be called directly
         /// </summary>
-        /// <param name="source">Object that raised event</param>
-        /// <param name="args">Contains event data</param>
+        /// <param name="source"></param>
+        /// <param name="args"></param>
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on password validation to another function
@@ -34,8 +34,6 @@ namespace ChessKnockoff
         {
             //Stores the query string
             string queryString = "SELECT * FROM Reset INNER JOIN Player ON Reset.Username = Player.Username AND ResetToken=@ResetToken";
-            //Create the reader to store results
-            SqlDataReader reader;
 
             //Create the database connection then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
@@ -52,7 +50,7 @@ namespace ChessKnockoff
                     sqlCommand.Parameters.AddWithValue("@ResetToken", decodeToBytes(token));
 
                     //Execute the sql command
-                    reader = sqlCommand.ExecuteReader();
+                    SqlDataReader reader = sqlCommand.ExecuteReader();
 
                     //If the reader has rows then the token is correct
                     if (reader.HasRows)
@@ -113,14 +111,14 @@ namespace ChessKnockoff
                         //Hash the new password with the salt
                         byte[] saltedHash = generateSaltedHash(inpPassword.Value, newSalt);
 
-                        //Stores the query string
-                        string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt INNER JOIN Reset ON Player.Username = Reset.Username AND ResetToken=@ResetToken";
-
                         //Create the database connection then dispose when done
                         using (SqlConnection connection = new SqlConnection(dbConnectionString))
                         {
                             //Open the database connection
                             connection.Open();
+
+                            //Stores the query string
+                            string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt INNER JOIN Reset ON Player.Username = Reset.Username AND ResetToken=@ResetToken";
 
                             //Create the query string in the sqlCommand format
                             SqlCommand command = new SqlCommand(queryString, connection);
@@ -141,6 +139,11 @@ namespace ChessKnockoff
             }
         }
 
+        /// <summary>
+        /// Called on page load. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
             //Hide the error message

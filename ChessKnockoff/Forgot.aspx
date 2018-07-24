@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Forgot" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.WebForm7" %>
+﻿<%@ Page Title="Forgot" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.ForgotForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
     Forgot
 </asp:Content>
