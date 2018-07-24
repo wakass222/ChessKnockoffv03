@@ -35,14 +35,12 @@ namespace ChessKnockoff
             //Stores the query string
             string queryString = "SELECT * FROM Reset INNER JOIN Player ON Reset.Username = Player.Username AND ResetToken=@ResetToken";
 
-            //Create the database connection then dispose when done
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand sqlCommand = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
 
                 try
                 {
@@ -50,17 +48,18 @@ namespace ChessKnockoff
                     sqlCommand.Parameters.AddWithValue("@ResetToken", decodeToBytes(token));
 
                     //Execute the sql command
-                    SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                    //If the reader has rows then the token is correct
-                    if (reader.HasRows)
+                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
                     {
-                        return true;
-                    }
-                    else
-                    {
-                        //Return false since the reset token is incorrect
-                        return false;
+                        //If the reader has rows then the token is correct
+                        if (reader.HasRows)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            //Return false since the reset token is incorrect
+                            return false;
+                        }
                     }
                 }
                 catch (Exception)

@@ -20,17 +20,15 @@ namespace ChessKnockoff
         /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
         public bool? isEmailConfirmedFromUsername(string username)
         {
-            //Create the database connection then dispose when done
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Username=@Username";
+
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
-
-                //Stores the query string
-                string queryString = "SELECT * FROM Player WHERE Username=@Username";
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
 
                 //Add the parameters to the query
                 command.Parameters.AddWithValue("@Username", username);
@@ -69,14 +67,12 @@ namespace ChessKnockoff
             //Create the reader to store results
             SqlDataReader reader;
 
-            //Create the database connection then dispose when done
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
 
                 //Add the parameters into the query
                 command.Parameters.AddWithValue("@Username", username);

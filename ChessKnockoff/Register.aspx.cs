@@ -34,35 +34,33 @@ namespace ChessKnockoff
         /// <returns>Returns true if the email is taken else false</returns>
         public bool isEmailTaken(string email)
         {
-            //Create the database connection then dispose when done
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Email=@Email";
+
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
 
-                //Stores the query string
-                string queryString = "SELECT * FROM Player WHERE Email=@Email";
-
-                //Create the query string in the sqlCommand format
-                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
-
                 //Add the username value the query
-                sqlCommand.Parameters.AddWithValue("@Email", email);
+                command.Parameters.AddWithValue("@Email", email);
 
-                //Since a single row/column is returned only necessary to get first one
-                //Returns the amount of users by that name
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                //If there is email already registered
-                if (reader.HasRows)
+                //Execute the command and read the results
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    //Return true
-                    return true;
-                }
-                else
-                {
-                    //Return false since the email is not taken
-                    return false;
+                    //If there is email already registered
+                    if (reader.HasRows)
+                    {
+                        //Return true
+                        return true;
+                    }
+                    else
+                    {
+                        //Return false since the email is not taken
+                        return false;
+                    }
                 }
             }
         }
@@ -77,32 +75,30 @@ namespace ChessKnockoff
             //Stores the query string
             string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
-            //Create the database connection then dispose when done
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using(SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
 
-                //Create the query string in the sqlCommand format
-                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
-
                 //Add the username value the query
-                sqlCommand.Parameters.AddWithValue("@Username", username);
+                command.Parameters.AddWithValue("@Username", username);
 
-                //Since a single row/column is returned only necessary to get first one
-                //Returns the amount of users by that name
-                SqlDataReader reader = sqlCommand.ExecuteReader();
-
-                //If there is user by that name
-                if (reader.HasRows)
+                //Execute the command and store the result
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    //Return true
-                    return true;
-                }
-                else
-                {
-                    //Return false since the username is not taken
-                    return false;
+                    //If there is user by that name
+                    if (reader.HasRows)
+                    {
+                        //Return true
+                        return true;
+                    }
+                    else
+                    {
+                        //Return false since the username is not taken
+                        return false;
+                    }
                 }
             }
         }
@@ -118,14 +114,12 @@ namespace ChessKnockoff
             //Stores the query string
             string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt)";
 
-            //Create the database connection then dispose when done
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
 
                 //Declare the array to store the salt
                 byte[] saltByte = new byte[20];
@@ -146,10 +140,15 @@ namespace ChessKnockoff
 
                 //Create a new query string
                 queryString = "INSERT INTO Confirmation (Username, ConfirmationToken) VALUES (@Username, @Token)";
+            }
 
-                //Overwrite with a new command
-                command = new SqlCommand(queryString, connection);
+            //Overwrite with a new querystring
+            queryString = "INSERT INTO Confirmation (Username, ConfirmationToken) VALUES (@Username, @Token)";
 
+            //Create the database connection and command then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
+            {
                 //Create an array to store 32 bytes
                 byte[] randomToken = new byte[32];
 

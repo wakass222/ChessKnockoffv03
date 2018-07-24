@@ -22,17 +22,15 @@ namespace ChessKnockoff
         /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
         public bool? isEmailConfirmedFromEmail(string email)
         {
-            //Create the database connection then dispose when done
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Email=@Email";
+
+            //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 //Open the database connection
                 connection.Open();
-
-                //Stores the query string
-                string queryString = "SELECT * FROM Player WHERE Email=@Email";
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
 
                 //Add the parameters to the query
                 command.Parameters.AddWithValue("@Email", email);
@@ -88,6 +86,9 @@ namespace ChessKnockoff
                 //If the email is confirmed
                 if (isEmailConfirmedFromEmail(inpEmail.Value) == true)
                 {
+                    //Show that it was successful
+                    altEmailSent.Visible = true;
+
                     //Holds the random bytes
                     byte[] randomToken = new byte[32];
                     //FIll it with random bytes
@@ -107,20 +108,18 @@ namespace ChessKnockoff
                     //Send the email
                     sendEmail(inpEmail.Value, "Reset password", "Please reset your password by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
 
-                    //Show that it was successful
-                    altEmailSent.Visible = true;
+                    //Stores the found username
+                    string username;
 
-                    //Create the database connection then dispose when done
+                    //Stores the query string
+                    string queryString = "SELECT * FROM Player WHERE Email=@Email";
+
+                    //Create the database connection and command then dispose when done
                     using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
                     {
                         //Open the database connection
                         connection.Open();
-
-                        //Stores the query string
-                        string queryString = "SELECT * FROM Player WHERE Email=@Email";
-
-                        //Create a command object
-                        SqlCommand command = new SqlCommand(queryString, connection);
 
                         //Add the parameters
                         command.Parameters.AddWithValue("@Email", inpEmail.Value);
@@ -131,26 +130,28 @@ namespace ChessKnockoff
                             reader.Read();
 
                             //Make sure to cast it to a string
-                            string username = reader["Username"].ToString();
-
-                            //Create a new query string
-                            queryString = "INSERT INTO Reset (Username, ConfirmationToken, ExpirationDateUTC) VALUES (@Username, @ConfirmationToken, @ExpirationDateUTC)";
-
-                            //Create the query string in the sqlCommand format
-                            command = new SqlCommand(queryString, connection);
-
-                            //Create the expiration date on the token
-                            DateTime currentDate = DateTime.UtcNow;
-                            TimeSpan expirationTime = new TimeSpan(2, 0, 0);
-
-                            //Add the query parameters
-                            command.Parameters.AddWithValue("@Username", username);
-                            command.Parameters.AddWithValue("@ConfirmationToken", randomToken);
-                            command.Parameters.AddWithValue("@ExpirationDateUTC", currentDate.Add(expirationTime));
-
-                            //Execute the command
-                            command.ExecuteNonQuery();
+                            username = reader["Username"].ToString();
                         }
+                    }
+
+                    //Create a new query string
+                    queryString = "INSERT INTO Reset (Username, ConfirmationToken, ExpirationDateUTC) VALUES (@Username, @ConfirmationToken, @ExpirationDateUTC)";
+
+                    //Create the database connection and command then dispose when done
+                    using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    {
+                        //Create the expiration date on the token
+                        DateTime currentDate = DateTime.UtcNow;
+                        TimeSpan expirationTime = new TimeSpan(2, 0, 0);
+
+                        //Add the query parameters
+                        command.Parameters.AddWithValue("@Username", username);
+                        command.Parameters.AddWithValue("@ConfirmationToken", randomToken);
+                        command.Parameters.AddWithValue("@ExpirationDateUTC", currentDate.Add(expirationTime));
+
+                        //Execute the command
+                        command.ExecuteNonQuery();
                     }
                 }
                 else
@@ -162,3 +163,4 @@ namespace ChessKnockoff
         }
     }
 }
+ 
