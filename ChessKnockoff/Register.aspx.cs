@@ -145,7 +145,7 @@ namespace ChessKnockoff
                 command.ExecuteNonQuery();
 
                 //Create a new query string
-                queryString = "INSERT INTO Reset (Username, Token) VALUES (@Username, @Token)";
+                queryString = "INSERT INTO Confirmation (Username, ConfirmationToken) VALUES (@Username, @Token)";
 
                 //Overwrite with a new command
                 command = new SqlCommand(queryString, connection);
@@ -158,7 +158,10 @@ namespace ChessKnockoff
 
                 //Add the values to the sql query
                 command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Token", Convert.ToBase64String(randomToken));
+                command.Parameters.AddWithValue("@Token", randomToken);
+
+                //Execute the command
+                command.ExecuteNonQuery();
 
                 //Create a URI builder to create the path
                 UriBuilder builder = new UriBuilder();
@@ -169,16 +172,21 @@ namespace ChessKnockoff
                 //Set the path
                 builder.Path = "/Login/";
                 //Add the query with the token
-                builder.Query += "Token=" + Convert.ToBase64String(randomToken);
+                builder.Query += "ConfirmationToken=" + encodeToString(randomToken);
                 //Send the email to the user with the correct link
-                sendEmail(email, "Please click here to confirm email: " + "< a href =" + builder.ToString() + "\">here</a>");
+                sendEmail(email, "Confirm email", "Please confirm your email by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
             }
         }
 
+        /// <summary>
+        /// Occurs when the page load. Should not be called directly
+        /// </summary>
+        /// <param name="sender">Information about the sender</param>
+        /// <param name="e">Event arguments</param>
         protected void Page_Load(object sender, EventArgs e)
         {
             //If user is already logged in
-            if (User.Identity.IsAuthenticated)
+            if (isAuthenticated())
             {
                 //Redirect them to the play page
                 Response.Redirect("~/Play");
@@ -194,11 +202,28 @@ namespace ChessKnockoff
             altError.Visible = false;
         }
 
+        /// <summary>
+        /// Called by a buttion click, should not be called directly
+        /// </summary>
+        /// <param name="sender">Information about sender</param>
+        /// <param name="e">Event arguments</param>
         protected void RegisterClick(object sender, EventArgs e)
         {
             //Check if controls in the group are all valid
             if (IsValid)
             {
+                //If the error list is empty then password is valid else false
+                string passwordResult = validatePassword(inpPassword.Value);
+
+                //If the password is not valid
+                if (passwordResult != "")
+                {
+                    //Make sure the alert gets rendered
+                    altPassword.Visible = true;
+                    //Set the text
+                    altPassword.InnerText = passwordResult;
+                }
+
                 //Check if the email is taken
                 bool emailTaken = isEmailTaken(inpEmail.Value);
 
@@ -207,7 +232,6 @@ namespace ChessKnockoff
                 {
                     //Show the email is taken message
                     altEmailTaken.Visible = true;
-
                 }
 
                 //Check if the username is taken
@@ -220,8 +244,8 @@ namespace ChessKnockoff
                     altUsernameTaken.Visible = true;
                 }
 
-                //Make sure all vairables have not be taken
-                if (!emailTaken && !usernameTaken)
+                //Make sure everything is correct
+                if (!emailTaken && !usernameTaken && passwordResult == "")
                 {
                     //Create the account
                     createAccount(inpUsername.Value, inpEmail.Value, inpPassword.Value);

@@ -68,19 +68,19 @@ namespace ChessKnockoff
             }
 
             //Check if the password contains an upper case letter
-            if (password.All(char.IsUpper))
+            if (!password.Any(char.IsUpper))
             {
                 error += "Password must contain upper case character. ";
             }
 
             //Check if the password contains a number
-            if (!password.All(char.IsNumber))
+            if (!password.Any(char.IsNumber))
             {
                 error += "Password must contain a number. ";
             }
 
             //Check if the password has a punctuation
-            if (!password.All(Char.IsPunctuation))
+            if (!password.Any(char.IsPunctuation))
             {
                 error += "Password must have a punctuation mark. ";
             }
@@ -90,11 +90,71 @@ namespace ChessKnockoff
         }
 
         /// <summary>
+        /// Checks whether the user has their email confirmed or not
+        /// </summary>
+        /// <param name="username">The name of the player</param>
+        /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
+        public bool? isEmailConfirmed(string username)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Username=@Username";
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Add the parameters to the query
+                command.Parameters.AddWithValue("@Username", username);
+
+                //Execute the command and store the result
+                SqlDataReader reader = command.ExecuteReader();
+
+                //If there were rows matching it
+                if (reader.HasRows)
+                {
+                    //Read the first row
+                    reader.Read();
+
+                    //Return the result
+                    return (bool)reader["EmailIsConfirmed"];
+                }
+
+                //Return null if no user was found
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Encodes the byte array so it can be sent via URL
+        /// </summary>
+        /// <param name="bytesToEncode">The bytes to encode</param>
+        /// <returns>An encoded string</returns>
+        public string encodeToString(byte[] bytesToEncode)
+        {
+            return HttpUtility.UrlEncode(Convert.ToBase64String(bytesToEncode));
+        }
+
+        /// <summary>
+        /// Decodes the string
+        /// </summary>
+        /// <param name="stringToDecode">The string to decode</param>
+        /// <returns>The string in a byte array</returns>
+        public byte[] decodeToBytes(string stringToDecode)
+        {
+            return Convert.FromBase64String(HttpUtility.UrlDecode(stringToDecode));
+        }
+
+        /// <summary>
         /// Sends an email the address
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="message"></param>
-        public void sendEmail(string destination, string message)
+        public void sendEmail(string destination, string subject, string message)
         {
             //Create mail message object
             using (MailMessage mail = new MailMessage())
@@ -104,7 +164,7 @@ namespace ChessKnockoff
                 //Set the destination address
                 mail.To.Add(destination);
                 //Set the subject
-                mail.Subject = "Chess Knockoff Verification";
+                mail.Subject = subject;
                 //Set the body
                 mail.Body = message;
                 //Make sure the body is rendered as HTML
@@ -132,10 +192,10 @@ namespace ChessKnockoff
         {
             //Create username regex
             Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
-        bool regexUsernameResult = regexUsername.IsMatch(args.Value);
+            bool regexUsernameResult = regexUsername.IsMatch(args.Value);
 
-            //Check if the username only contains alphanumeric values and is 50 characters or less
-            if (regexUsernameResult && args.Value.Length <= 50)
+            //Check if the username only contains alphanumeric values and is 25 characters or less
+            if (regexUsernameResult && args.Value.Length <= 25)
             {
                 args.IsValid = true;
             }

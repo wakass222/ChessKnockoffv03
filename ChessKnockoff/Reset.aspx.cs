@@ -33,8 +33,7 @@ namespace ChessKnockoff
         public bool isResetTokenCorrect(string token)
         {
             //Stores the query string
-            string queryString = "SELECT * FROM ResetToken INNER JOIN Player ON ResetToken.Id = Player.Id AND ResetToken=@ResetToken";
-
+            string queryString = "SELECT * FROM Reset INNER JOIN Player ON Reset.Username = Player.Username AND ResetToken=@ResetToken";
             //Create the reader to store results
             SqlDataReader reader;
 
@@ -47,21 +46,30 @@ namespace ChessKnockoff
                 //Create the query string in the sqlCommand format
                 SqlCommand sqlCommand = new SqlCommand(queryString, connection);
 
-                //Add the sql parameter
-                sqlCommand.Parameters.AddWithValue("@ResetToken", token);
-
-                //Execute the sql command
-                reader = sqlCommand.ExecuteReader();
-
-                //If the reader has rows then the token is correct
-                if (reader.HasRows)
+                try
                 {
-                    return true;
+                    //Add the sql parameter
+                    sqlCommand.Parameters.AddWithValue("@ResetToken", decodeToBytes(token));
+
+                    //Execute the sql command
+                    reader = sqlCommand.ExecuteReader();
+
+                    //If the reader has rows then the token is correct
+                    if (reader.HasRows)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        //Return false since the reset token is incorrect
+                        return false;
+                    }
                 }
-                else
+                catch (Exception)
                 {
-                    //Return false since the reset token is incorrect
+                    //Return false since the token was not in the correct format
                     return false;
+                    throw;
                 }
             }
         }
@@ -106,7 +114,7 @@ namespace ChessKnockoff
                         byte[] saltedHash = generateSaltedHash(inpPassword.Value, newSalt);
 
                         //Stores the query string
-                        string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt";
+                        string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt INNER JOIN Reset ON Player.Username = Reset.Username AND ResetToken=@ResetToken";
 
                         //Create the database connection then dispose when done
                         using (SqlConnection connection = new SqlConnection(dbConnectionString))
@@ -120,6 +128,7 @@ namespace ChessKnockoff
                             //Add the parameters to the command
                             command.Parameters.AddWithValue("@Salt", saltedHash);
                             command.Parameters.AddWithValue("@Password", saltedHash);
+                            command.Parameters.AddWithValue("@ResetToken", decodeToBytes(code));
 
                             //Execute the statement
                             command.ExecuteNonQuery();

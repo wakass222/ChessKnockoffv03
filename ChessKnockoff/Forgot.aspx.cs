@@ -18,7 +18,7 @@ namespace ChessKnockoff
             altEmailFail.Visible = false;
 
             //If user is already logged in
-            if (User.Identity.IsAuthenticated)
+            if (isAuthenticated())
             {
                 //Redirect them to the play page
                 Response.Redirect("~/Play");
@@ -30,20 +30,27 @@ namespace ChessKnockoff
             //Check if the inputs are valid
             if (IsValid)
             {
-                //Create manager object
-                ApplicationUserManager manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                //Look for user by that email
-                ApplicationUser user = manager.FindByEmail(inpEmail.Value);
-
-                //Check if a user by that email exists and has their email confirmed
-                if (user != null && user.EmailConfirmed)
+                //If the email is confirmed
+                if (isEmailConfirmed(inpEmail.Value) == true)
                 {
-                    //Generate the reset code
-                    string code = manager.GeneratePasswordResetToken(user.Id);
+                    //Holds the random bytes
+                    byte[] randomToken = new byte[32];
+                    //FIll it with random bytes
+                    fillByteRandom(randomToken);
 
-                    //Create the link with the reset code
-                    string callbackUrl = IdentityHelper.GetResetPasswordRedirectUrl(user.Id, code, Request);
-                    manager.SendEmail(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>.");
+                    //Create a URI builder
+                    UriBuilder builder = new UriBuilder();
+                    //Set the host
+                    builder.Host = Request.Url.Host;
+                    //Set the port
+                    builder.Port = Request.Url.Port;
+                    //Set the path
+                    builder.Path = "/Reset/";
+                    //Set the query parameter
+                    builder.Query += "ResetToken=" + encodeToString(randomToken);
+
+                    //Send the email
+                    sendEmail(inpEmail.Value, "Reset password", "Please reset your password by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
 
                     //Show that it was successful
                     altEmailSent.Visible = true;

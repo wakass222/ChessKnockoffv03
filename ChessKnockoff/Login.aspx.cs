@@ -48,12 +48,12 @@ namespace ChessKnockoff
             }
 
             //If the user has a confirmation code
-            if (Request.QueryString["Token"] != null)
+            if (Request.QueryString["ConfirmationToken"] != null)
             {
                 //Check the password confirmation token
 
                 //Stores the query string
-                string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Reset ON Player.Username = Reset.Username WHERE Reset.Token = @Token";
+                string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Confirmation ON Player.Username = Confirmation.Username WHERE Confirmation.ConfirmationToken = @Token";
 
                 //Create the database connection then dispose when done
                 using (SqlConnection connection = new SqlConnection(dbConnectionString))
@@ -64,17 +64,37 @@ namespace ChessKnockoff
                     //Create the query string in the sqlCommand format
                     SqlCommand command = new SqlCommand(queryString, connection);
 
-                    //Add the parameters
-                    command.Parameters.AddWithValue("@Token", Request.QueryString["Token"]);
-
-                    //Store the result in a reader
-                    int rowsAffected = command.ExecuteNonQuery();
-
-                    //Rows were affected therefore show the success message
-                    if (rowsAffected > 0)
+                    //Try to retrieve the token and convert to a byte array
+                    try
                     {
-                        //Show that the email has been confirmed
-                        altEmailConfirm.Visible = true;
+                        //Add the parameters
+                        command.Parameters.AddWithValue("@Token", Convert.FromBase64String(HttpUtility.UrlDecode(Request.QueryString["ConfirmationToken"])));
+
+                        //Store the result in a reader
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        //Rows were affected therefore show the success message
+                        if (rowsAffected > 0)
+                        {
+                            //Show that the email has been confirmed
+                            altEmailConfirm.Visible = true;
+
+                            //Also delete the row since it will never be needed again
+                            queryString = "DELETE FROM Confirmation WHERE ConfirmationToken = @Token";
+
+                            //Make a new query
+                            command = new SqlCommand(queryString, connection);
+
+                            //Add the parameters
+                            command.Parameters.AddWithValue("@Token", decodeToBytes(Request.QueryString["ConfirmationToken"]));
+
+                            //Execute the command
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //Do nothing with the exception
                     }
                 }
             }
@@ -99,10 +119,11 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="username">The username</param>
         /// <param name="passwordPlaintext">The password is plaintext</param>
-        private bool validateUser(string username, string passwordPlaintext)
+        /// <returns>Returns true if the crendtials are correct else false</returns>
+        private bool checkUserCredentials(string username, string passwordPlaintext)
         {
             //Stores the query string
-            string queryString = "SELECT * FROM Player WHERE Username=@Username";
+            string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed = 1";
 
             //Create the reader to store results
             SqlDataReader reader;
@@ -140,66 +161,13 @@ namespace ChessKnockoff
                     //Check if they match
                     if (saltedUserenteredHash.SequenceEqual(saltedPasswordHash))
                     {
-                        //Return true that the crendentials are valid
+                        //Return true that the credentials are valid
                         return true;
                     }
-                    else
-                    {
-                        //Show the fail message
-                        altAuthentication.Visible = true;
-
-                        //The crendentials are not valid so return false
-                        return false;
-                    }
-                } else
-                {
-                    //Show an error
-                    altAuthentication.Visible = true;
-
-                    //The crendentials are not valid so return false
-                    return false;
                 }
-            }
-        }
 
-        /// <summary>
-        /// Checks whether the user has their email confirmed or not
-        /// </summary>
-        /// <param name="username">The name of the player</param>
-        /// <returns>Returns true if their email is confirmed else false</returns>
-        private bool isEmailConfirmed(string username)
-        {
-            //Stores the query string
-            string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed=1";
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Add the parameters to the query
-                command.Parameters.AddWithValue("@Username", username);
-
-                //Execute the command and store how many rows it found
-                int rowsAffected = command.ExecuteNonQuery();
-
-                //If there were no rows matching it
-                if (rowsAffected == 0)
-                {
-                    //Show that the email was not confirmed
-                    altEmailConfirm.Visible = true;
-
-                    //Return false since their email was not confirmed
-                    return false;
-                } else
-                {
-                    //Return true since their email is confirmed
-                    return true;
-                }
+                //The crendentials are not valid so return false
+                return false;
             }
         }
 
@@ -207,8 +175,24 @@ namespace ChessKnockoff
         {
             if (IsValid)
             {
-                //Validate their credentials
-                if (validateUser(inpUsername.Value, inpPassword.Value))
+                //Store whether the email is confirmed
+                bool? emailConfirmed = isEmailConfirmed(inpUsername.Value);
+                if (emailConfirmed == false)
+                {
+                    //Show the message to verify their email
+                    altVerify.Visible = true;
+                }
+
+                //Check whether the credentials are correct
+                bool credentialCorrect = checkUserCredentials(inpUsername.Value, inpPassword.Value);
+                if (!credentialCorrect)
+                {
+                    //Show the alert
+                    altAuthentication.Visible = true;
+                }
+
+                //Check whether their credentials are correct and their email has been confirmed
+                if (credentialCorrect && emailConfirmed == true)
                 {
                     //Store their information in a session variable
                     Session["Username"] = inpUsername.Value;

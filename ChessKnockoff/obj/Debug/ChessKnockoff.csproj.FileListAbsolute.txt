@@ -562,9 +562,6 @@ C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\C
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AI.WindowsServer.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.ApplicationInsights.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.FriendlyUrls.dll
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.Core.dll
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.EntityFramework.dll
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.Owin.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.Core.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.TelemetryCorrelation.dll
@@ -603,9 +600,6 @@ C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\C
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\System.Web.Http.WebHost.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\EntityFramework.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\EntityFramework.SqlServer.xml
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.Core.xml
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.Owin.xml
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AspNet.Identity.EntityFramework.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\System.Web.Providers.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.Owin.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.Owin.Host.SystemWeb.xml
@@ -623,9 +617,6 @@ C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\C
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.AI.Web.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csprojResolveAssemblyReference.cache
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.initial.resources
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.Migrations.add_ELO.resources
-C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.GenerateResource.cache
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.CoreCompileInputs.cache
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.csproj.CopyComplete
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\obj\Debug\ChessKnockoff.dll
