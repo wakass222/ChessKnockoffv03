@@ -24,7 +24,7 @@ namespace ChessKnockoff
         /// <summary>
         /// Stores the database connection string and can not be altered
         /// </summary>
-        public static string dbConnectionString {get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=True";
+        public static string dbConnectionString { get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=True";
 
         /// <summary>
         /// Checks whether the user is validated
@@ -37,7 +37,8 @@ namespace ChessKnockoff
             {
                 //Return true since they are authenticated
                 return true;
-            } else
+            }
+            else
             {
                 //Return false since they are not authenticated
                 return false;
@@ -116,88 +117,31 @@ namespace ChessKnockoff
                     smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["emailServiceUserName"], ConfigurationManager.AppSettings["emailServicePassword"]);
                     //SSL must be enabled
                     smtp.EnableSsl = true;
-                    //Send the email and wait for it to finish
-                    smtp.SendMailAsync(mail).Wait();
+                    //Send the email
+                    smtp.Send(mail);
                 }
             }
         }
 
         /// <summary>
-        /// Checks whether the email is taken
+        /// Validates username
         /// </summary>
-        /// <param name="email">The email to check</param>
-        /// <returns>Returns true if the email is taken else false</returns>
-        public bool isEmailTaken(string email)
+        /// <param name="source">The source object from the validation call</param>
+        /// <param name="args">Arguments from the validation call</param>
+        protected void validateUsername(object source, ServerValidateEventArgs args)
         {
-            //Stores the query string
-            string queryString = "SELECT COUNT(*) FROM Player WHERE Email=@Email";
+            //Create username regex
+            Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
+        bool regexUsernameResult = regexUsername.IsMatch(args.Value);
 
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            //Check if the username only contains alphanumeric values and is 50 characters or less
+            if (regexUsernameResult && args.Value.Length <= 50)
             {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
-
-                //Add the username value the query
-                sqlCommand.Parameters.AddWithValue("@Email", email);
-
-                //Since a single row/column is returned only necessary to get first one
-                //Returns the amount of users by that name
-                int emailExists = (int)sqlCommand.ExecuteScalar();
-
-                //If there is email already registered
-                if (emailExists > 0)
-                {
-                    //Return true
-                    return true;
-                }
-                else
-                {
-                    //Return false since the email is not taken
-                    return false;
-                }
+                args.IsValid = true;
             }
-        }
-
-        /// <summary>
-        /// Checks whether the username is taken
-        /// </summary>
-        /// <param name="username">The username to check</param>
-        /// <returns>True if the username is taken else false</returns>
-        public bool isUsernameTaken(string username)
-        {
-            //Stores the query string
-            string queryString = "SELECT COUNT(*) FROM Player WHERE Username=@Username";
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            else
             {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
-
-                //Add the username value the query
-                sqlCommand.Parameters.AddWithValue("@Username", username);
-
-                //Since a single row/column is returned only necessary to get first one
-                //Returns the amount of users by that name
-                int userExists = (int)sqlCommand.ExecuteScalar();
-
-                //If there is user by that name
-                if (userExists > 0)
-                {
-                    //Return true
-                    return true;
-                } else
-                {
-                    //Return false since the username is not taken
-                    return false;
-                }
+                args.IsValid = false;
             }
         }
 
@@ -228,7 +172,8 @@ namespace ChessKnockoff
                 {
                     //Return true since it was successful
                     return true;
-                } else
+                }
+                else
                 {
                     //Return false since it did not work
                     return false;
@@ -237,64 +182,19 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Fills the array with a salt
+        /// Fills the array with random bytes
         /// </summary>
         /// <param name="arrayToFill">The byte array to fill with salts</param>
-        public void fillArraySalt(byte[] arrayToFill)
+        public void fillByteRandom(byte[] arrayToFill)
         {
             //Create the random number generator object
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
 
             //Fill the array with random bytes
             rng.GetBytes(arrayToFill);
-        }
 
-        /// <summary>
-        /// Create the account
-        /// </summary>
-        /// <param name="Username">The desired username</param>
-        /// <param name="Email">The email</param>
-        /// <param name="Password">The plaintext password</param>
-        public void createAccount(string username, string email, string passwordPlaintext)
-        {
-            //Stores the query string
-            string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt) SELECT SCOPE_IDENTITY()";
-
-            //Create the database connection then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            {
-                //Open the database connection
-                connection.Open();
-
-                //Create the query string in the sqlCommand format
-                SqlCommand command = new SqlCommand(queryString, connection);
-
-                //Declare the array to store the salt
-                byte[] saltByte = new byte[20];
-                //Fill the array with the salt
-                fillArraySalt(saltByte);
-
-                //Calculate the salted hash
-                byte[] saltedPasswordHash = generateSaltedHash(passwordPlaintext, saltByte);
-
-                //Pass on values to the command
-                command.Parameters.AddWithValue("@Username", username);
-                command.Parameters.AddWithValue("@Email", email);
-                command.Parameters.AddWithValue("@Password", saltedPasswordHash);
-                command.Parameters.AddWithValue("@Salt", saltByte);
-
-                //Execute the actual command
-                //Store the ID of the newly created user
-                int createdUserID = (int)command.ExecuteScalar();
-
-                //Create base uri
-                Uri baseUri = new Uri(Request.Url.Host);
-                //Add on the confirmation query string
-                Uri finalUri = new Uri(baseUri, "/Login/?Email=" + createdUserID);
-                //Send the email to the user with the correct link
-                sendEmail(email, "Please click here to confirm email: " + "< a href =" + finalUri + "\">here</a>");
-
-            }
+            //Dispose of the object
+            rng.Dispose();
         }
 
         /// <summary>
@@ -391,28 +291,6 @@ namespace ChessKnockoff
             bool regexEmailResult = regexEmail.IsMatch(args.Value);
 
             if (regexEmailResult)
-            {
-                args.IsValid = true;
-            }
-            else
-            {
-                args.IsValid = false;
-            }
-        }
-
-        /// <summary>
-        /// Validates username
-        /// </summary>
-        /// <param name="source">The source object from the validation call</param>
-        /// <param name="args">Arguments from the validation call</param>
-        protected void validateUsername(object source, ServerValidateEventArgs args)
-        {
-            //Create username regex
-            Regex regexUsername = new Regex(@"^[a-zA-Z0-9_]*$");
-            bool regexUsernameResult = regexUsername.IsMatch(args.Value);
-
-            //Check if the username only contains alphanumeric values and is 25 characters or less
-            if (regexUsernameResult && args.Value.Length <= 25)
             {
                 args.IsValid = true;
             }

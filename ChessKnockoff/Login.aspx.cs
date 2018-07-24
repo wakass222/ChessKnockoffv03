@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ChessKnockoff.Models;
 using System.Data.SqlClient;
 
 namespace ChessKnockoff
@@ -49,10 +48,35 @@ namespace ChessKnockoff
             }
 
             //If the user has a confirmation code
-            if (Request.QueryString["Confirm"] != null)
+            if (Request.QueryString["Token"] != null)
             {
-                //Display the message
+                //Check the password confirmation token
 
+                //Stores the query string
+                string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Reset ON Player.Username = Reset.Username WHERE Reset.Token = @Token";
+
+                //Create the database connection then dispose when done
+                using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                {
+                    //Open the database connection
+                    connection.Open();
+
+                    //Create the query string in the sqlCommand format
+                    SqlCommand command = new SqlCommand(queryString, connection);
+
+                    //Add the parameters
+                    command.Parameters.AddWithValue("@Token", Request.QueryString["Token"]);
+
+                    //Store the result in a reader
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    //Rows were affected therefore show the success message
+                    if (rowsAffected > 0)
+                    {
+                        //Show that the email has been confirmed
+                        altEmailConfirm.Visible = true;
+                    }
+                }
             }
 
             //If the user just registered show them the success message and prompt them to login
@@ -62,6 +86,7 @@ namespace ChessKnockoff
                 altRegistered.Visible = true;
             }
 
+            //If the password was reset
             if (Request.QueryString["ResetPassword"] == "1")
             {
                 //Displat the message
@@ -77,7 +102,7 @@ namespace ChessKnockoff
         private bool validateUser(string username, string passwordPlaintext)
         {
             //Stores the query string
-            string queryString = "SELECT Salt FROM Player WHERE Username=@Username";
+            string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
             //Create the reader to store results
             SqlDataReader reader;
@@ -97,23 +122,40 @@ namespace ChessKnockoff
                 //Execute the SQL command and get the results
                 reader = command.ExecuteReader();
 
-                //Retrieve the salt password from the database and cast it to a byte array
-                byte[] salt = (byte[])reader["Salt"];
-
-                //Retrieve the salted hash from the database
-                byte[] saltedPasswordHash = (byte[])reader["Password"];
-
-                //Calculate user entered hash with the salt
-                byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
-
-                //Check if they match
-                if (saltedUserenteredHash == saltedPasswordHash)
+                //Check if a user was found
+                if (reader.HasRows)
                 {
-                    //Return true that the crendentials are valid
-                    return true;
-                }
-                else
+                    //Read the first row
+                    reader.Read();
+
+                    //Retrieve the salt password from the database and cast it to a byte array
+                    byte[] salt = (byte[])reader["Salt"];
+
+                    //Retrieve the salted hash from the database
+                    byte[] saltedPasswordHash = (byte[])reader["Password"];
+
+                    //Calculate user entered hash with the salt
+                    byte[] saltedUserenteredHash = generateSaltedHash(passwordPlaintext, salt);
+
+                    //Check if they match
+                    if (saltedUserenteredHash.SequenceEqual(saltedPasswordHash))
+                    {
+                        //Return true that the crendentials are valid
+                        return true;
+                    }
+                    else
+                    {
+                        //Show the fail message
+                        altAuthentication.Visible = true;
+
+                        //The crendentials are not valid so return false
+                        return false;
+                    }
+                } else
                 {
+                    //Show an error
+                    altAuthentication.Visible = true;
+
                     //The crendentials are not valid so return false
                     return false;
                 }
@@ -166,7 +208,7 @@ namespace ChessKnockoff
             if (IsValid)
             {
                 //Validate their credentials
-                if (validateUser(inpUsername.Value, inpPassword.Value) && isEmailConfirmed(inpUsername.Value))
+                if (validateUser(inpUsername.Value, inpPassword.Value))
                 {
                     //Store their information in a session variable
                     Session["Username"] = inpUsername.Value;

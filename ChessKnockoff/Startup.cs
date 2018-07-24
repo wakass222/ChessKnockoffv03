@@ -9,11 +9,8 @@ namespace ChessKnockoff
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
             //Create the signalir middleware
             app.MapSignalR();
-            //Require that all hubs require authenticaion
-            GlobalHost.HubPipeline.RequireAuthentication();
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using ChessKnockoff.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
@@ -11,13 +11,168 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// Class for the registration page
+    /// </summary>
     public partial class RegisterForm : ExtendedPage
     {
-
+        /// <summary>
+        /// Custom validation call this method, should not call directly.
+        /// </summary>
+        /// <param name="source">Object that raised event</param>
+        /// <param name="args">Contains event data</param>
         public void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on validation to the password validation function
             validatePassword(source, args, inpPassword.Value, inpRePassword.Value);
+        }
+
+        /// <summary>
+        /// Checks whether the email is taken
+        /// </summary>
+        /// <param name="email">The email to check</param>
+        /// <returns>Returns true if the email is taken else false</returns>
+        public bool isEmailTaken(string email)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Email=@Email";
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
+
+                //Add the username value the query
+                sqlCommand.Parameters.AddWithValue("@Email", email);
+
+                //Since a single row/column is returned only necessary to get first one
+                //Returns the amount of users by that name
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                //If there is email already registered
+                if (reader.HasRows)
+                {
+                    //Return true
+                    return true;
+                }
+                else
+                {
+                    //Return false since the email is not taken
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the username is taken
+        /// </summary>
+        /// <param name="username">The username to check</param>
+        /// <returns>True if the username is taken else false</returns>
+        public bool isUsernameTaken(string username)
+        {
+            //Stores the query string
+            string queryString = "SELECT * FROM Player WHERE Username=@Username";
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand sqlCommand = new SqlCommand(queryString, connection);
+
+                //Add the username value the query
+                sqlCommand.Parameters.AddWithValue("@Username", username);
+
+                //Since a single row/column is returned only necessary to get first one
+                //Returns the amount of users by that name
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                //If there is user by that name
+                if (reader.HasRows)
+                {
+                    //Return true
+                    return true;
+                }
+                else
+                {
+                    //Return false since the username is not taken
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create the account
+        /// </summary>
+        /// <param name="Username">The desired username</param>
+        /// <param name="Email">The email</param>
+        /// <param name="Password">The plaintext password</param>
+        public void createAccount(string username, string email, string passwordPlaintext)
+        {
+            //Stores the query string
+            string queryString = "INSERT INTO Player (Username, Email, Password, Salt) VALUES (@Username, @Email, @Password, @Salt)";
+
+            //Create the database connection then dispose when done
+            using (SqlConnection connection = new SqlConnection(dbConnectionString))
+            {
+                //Open the database connection
+                connection.Open();
+
+                //Create the query string in the sqlCommand format
+                SqlCommand command = new SqlCommand(queryString, connection);
+
+                //Declare the array to store the salt
+                byte[] saltByte = new byte[20];
+                //Fill the array with the salt
+                fillByteRandom(saltByte);
+
+                //Calculate the salted hash
+                byte[] saltedPasswordHash = generateSaltedHash(passwordPlaintext, saltByte);
+
+                //Pass on values to the command
+                command.Parameters.AddWithValue("@Username", username);
+                command.Parameters.AddWithValue("@Email", email);
+                command.Parameters.AddWithValue("@Password", saltedPasswordHash);
+                command.Parameters.AddWithValue("@Salt", saltByte);
+
+                //Execute the actual command and create the account
+                command.ExecuteNonQuery();
+
+                //Create a new query string
+                queryString = "INSERT INTO Reset (Username, Token) VALUES (@Username, @Token)";
+
+                //Overwrite with a new command
+                command = new SqlCommand(queryString, connection);
+
+                //Create an array to store 32 bytes
+                byte[] randomToken = new byte[32];
+
+                //Fill it with random bytes
+                fillByteRandom(randomToken);
+
+                //Add the values to the sql query
+                command.Parameters.AddWithValue("@Username", username);
+                command.Parameters.AddWithValue("@Token", Convert.ToBase64String(randomToken));
+
+                //Create a URI builder to create the path
+                UriBuilder builder = new UriBuilder();
+                //Set the host
+                builder.Host = Request.Url.Host;
+                //Set the port
+                builder.Port = Request.Url.Port;
+                //Set the path
+                builder.Path = "/Login/";
+                //Add the query with the token
+                builder.Query += "Token=" + Convert.ToBase64String(randomToken);
+                //Send the email to the user with the correct link
+                sendEmail(email, "Please click here to confirm email: " + "< a href =" + builder.ToString() + "\">here</a>");
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -44,76 +199,35 @@ namespace ChessKnockoff
             //Check if controls in the group are all valid
             if (IsValid)
             {
-                //Create manager
-                var manager = Context.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                //Check if the email is taken
+                bool emailTaken = isEmailTaken(inpEmail.Value);
 
-                //Check if password is valid and block until the a result is returned
-                IdentityResult resultPassword = manager.PasswordValidator.ValidateAsync(inpPassword.Value).Result;
-
-                //Check if the password can be used
-                if (!resultPassword.Succeeded)
+                //If it is then show a message
+                if (emailTaken)
                 {
-                    //Show the error
-                    altPassword.Visible = true;
-                    //Also show the specific issue
-                    altPassword.InnerText = resultPassword.Errors.FirstOrDefault<string>();
+                    //Show the email is taken message
+                    altEmailTaken.Visible = true;
+
                 }
 
-                //Check if username is not taken
-                ApplicationUser resultUsername = manager.FindByName(inpUsername.Value);
+                //Check if the username is taken
+                bool usernameTaken = isUsernameTaken(inpUsername.Value);
 
-                //Check if the user is not null
-                if (resultUsername != null)
+                //If it is then show a message
+                if (usernameTaken)
                 {
-                    //Show the error
+                    //Show that the email is taken
                     altUsernameTaken.Visible = true;
                 }
 
-                //Check if email is valid
-                ApplicationUser resultEmail = manager.FindByEmail(inpEmail.Value);
-
-                if (resultEmail != null)
+                //Make sure all vairables have not be taken
+                if (!emailTaken && !usernameTaken)
                 {
-                    //Show the error
-                    altEmailTaken.Visible = true;
-                }
+                    //Create the account
+                    createAccount(inpUsername.Value, inpEmail.Value, inpPassword.Value);
 
-                //If there are no errors
-                if (resultEmail == null && resultPassword.Succeeded && resultUsername == null)
-                {
-                    //Create sign in manager
-                    var signInManager = Context.GetOwinContext().Get<ApplicationSignInManager>();
-
-                    var user = new ApplicationUser() { UserName = inpUsername.Value, Email = inpEmail.Value };
-
-                    IdentityResult result = manager.Create(user, inpPassword.Value);
-
-                    //Check if it succeeded
-                    if (result.Succeeded)
-                    {
-                        //Send email confirmation link
-                        string code = manager.GenerateEmailConfirmationToken(user.Id);
-                        string callbackUrl = IdentityHelper.GetUserConfirmationRedirectUrl(code, user.Id, Request);
-
-                        try
-                        {
-                            //Try to send the email
-                            manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
-                        }
-                        catch (Exception)
-                        {
-                            //Email did not send so show error
-                            altError.Visible = true;
-                            //Delete the account since the email will never be able to get confirmed and play if the email never gets sent
-                            manager.Delete(user);
-
-                            //Don't redirect
-                            return;
-                        }
-
-                        //Redirect them to the login page
-                        Response.Redirect("~/Login?Registered=1");
-                    }
+                    //Redirect to login screen with the registered flag
+                    Response.Redirect("~/Login?Registered=1");
                 }
             }
         }

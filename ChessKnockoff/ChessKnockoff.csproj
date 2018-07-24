@@ -128,6 +128,15 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Providers">
       <HintPath>..\packages\Microsoft.AspNet.Providers.Core.2.0.0\lib\net40\System.Web.Providers.dll</HintPath>
     </Reference>
@@ -252,17 +261,17 @@
     <Content Include="BaseWithHeader.Master" />
     <Content Include="BaseWithHeaderNav.master" />
     <Content Include="Register.aspx" />
-    <Content Include="Forgot.aspx" />
+    <None Include="Forgot.aspx" />
     <Content Include="Login.aspx" />
+    <Content Include="Reset.aspx" />
     <Content Include="BaseWithHeaderNavLogin.master" />
     <Content Include="Account.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Doge.jpg" />
-    <Content Include="Leaderboard.aspx" />
+    <None Include="Leaderboard.aspx" />
     <Content Include="Play.aspx" />
     <Content Include="BaseWithHeaderNavNoLogo.master" />
     <Content Include="About.aspx" />
-    <Content Include="Reset.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -341,22 +350,13 @@
     <Compile Include="BaseWithHeaderNavLogin.master.designer.cs">
       <DependentUpon>BaseWithHeaderNavLogin.master</DependentUpon>
     </Compile>
-    <Compile Include="GameHub.cs" />
-    <Compile Include="GameState.cs" />
+    <None Include="GameHub.cs" />
+    <None Include="GameState.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201807130919314_initial.cs" />
-    <Compile Include="Migrations\201807130919314_initial.Designer.cs">
-      <DependentUpon>201807130919314_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201807130922366_add_ELO.cs" />
-    <Compile Include="Migrations\201807130922366_add_ELO.Designer.cs">
-      <DependentUpon>201807130922366_add_ELO.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Game.cs" />
-    <Compile Include="Models\Player.cs" />
+    <None Include="Models\Game.cs" />
+    <None Include="Models\Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Register.aspx.cs">
@@ -366,12 +366,19 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Forgot.aspx.cs">
+    <None Include="Forgot.aspx.cs">
       <DependentUpon>Forgot.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    </None>
     <Compile Include="Forgot.aspx.designer.cs">
       <DependentUpon>Forgot.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reset.aspx.cs">
+      <DependentUpon>Reset.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reset.aspx.designer.cs">
+      <DependentUpon>Reset.aspx</DependentUpon>
     </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
@@ -383,10 +390,10 @@
     <Compile Include="Page.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Account.aspx.cs">
+    <None Include="Account.aspx.cs">
       <DependentUpon>Account.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    </None>
     <Compile Include="Account.aspx.designer.cs">
       <DependentUpon>Account.aspx</DependentUpon>
     </Compile>
@@ -397,10 +404,10 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Leaderboard.aspx.cs">
+    <None Include="Leaderboard.aspx.cs">
       <DependentUpon>Leaderboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    </None>
     <Compile Include="Leaderboard.aspx.designer.cs">
       <DependentUpon>Leaderboard.aspx</DependentUpon>
     </Compile>
@@ -417,13 +424,6 @@
     </Compile>
     <Compile Include="About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reset.aspx.cs">
-      <DependentUpon>Reset.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reset.aspx.designer.cs">
-      <DependentUpon>Reset.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -456,14 +456,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201807130919314_initial.resx">
-      <DependentUpon>201807130919314_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807130922366_add_ELO.resx">
-      <DependentUpon>201807130922366_add_ELO.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChessDotNet\ChessDotNet.csproj">

@@ -14,6 +14,11 @@ namespace ChessKnockoff
     /// </summary>
     public partial class ResetForm : ExtendedPage
     {
+        /// <summary>
+        /// Custom validation calls this function. Should not be called directly
+        /// </summary>
+        /// <param name="source">Object that raised event</param>
+        /// <param name="args">Contains event data</param>
         protected void checkPassword(object source, ServerValidateEventArgs args)
         {
             //Pass on password validation to another function
@@ -95,7 +100,7 @@ namespace ChessKnockoff
                         //Create a byte array to store the salt
                         byte[] newSalt = new byte[20];
                         //Fill the array with the salt
-                        fillArraySalt(newSalt);
+                        fillByteRandom(newSalt);
 
                         //Hash the new password with the salt
                         byte[] saltedHash = generateSaltedHash(inpPassword.Value, newSalt);
