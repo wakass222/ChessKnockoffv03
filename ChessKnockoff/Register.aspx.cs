@@ -137,9 +137,6 @@ namespace ChessKnockoff
 
                 //Execute the actual command and create the account
                 command.ExecuteNonQuery();
-
-                //Create a new query string
-                queryString = "INSERT INTO Confirmation (Username, ConfirmationToken) VALUES (@Username, @Token)";
             }
 
             //Overwrite with a new querystring
@@ -149,6 +146,9 @@ namespace ChessKnockoff
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
             using (SqlCommand command = new SqlCommand(queryString, connection))
             {
+                //Open the connection
+                connection.Open();
+
                 //Create an array to store 32 bytes
                 byte[] randomToken = new byte[32];
 
@@ -169,9 +169,9 @@ namespace ChessKnockoff
                 //Set the port
                 builder.Port = Request.Url.Port;
                 //Set the path
-                builder.Path = "/Login/";
+                builder.Path = "/Login";
                 //Add the query with the token
-                builder.Query += "ConfirmationToken=" + encodeToString(randomToken);
+                builder.Query += "ConfirmationToken=" + HttpServerUtility.UrlTokenEncode(randomToken);
                 //Send the email to the user with the correct link
                 sendEmail(email, "Confirm email", "Please confirm your email by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
             }

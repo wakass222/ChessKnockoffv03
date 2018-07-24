@@ -158,20 +158,18 @@ namespace ChessKnockoff
                 //Stores the query string
                 string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Confirmation ON Player.Username = Confirmation.Username WHERE Confirmation.ConfirmationToken = @Token";
 
-                //Create the database connection then dispose when done
+                //Create the database connection and command then dispose when done
                 using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
                     //Open the database connection
                     connection.Open();
-
-                    //Create the query string in the sqlCommand format
-                    SqlCommand command = new SqlCommand(queryString, connection);
 
                     //Try to retrieve the token and convert to a byte array
                     try
                     {
                         //Add the parameters
-                        command.Parameters.AddWithValue("@Token", Convert.FromBase64String(HttpUtility.UrlDecode(Request.QueryString["ConfirmationToken"])));
+                        command.Parameters.AddWithValue("@Token", HttpServerUtility.UrlTokenDecode(Request.QueryString["ConfirmationToken"]));
 
                         //Store the result in a reader
                         int rowsAffected = command.ExecuteNonQuery();
@@ -181,18 +179,23 @@ namespace ChessKnockoff
                         {
                             //Show that the email has been confirmed
                             altEmailConfirm.Visible = true;
+                        }
 
-                            //Also delete the row since it will never be needed again
-                            queryString = "DELETE FROM Confirmation WHERE ConfirmationToken = @Token";
+                        //Also delete the row since it will never be needed again
+                        queryString = "DELETE FROM Confirmation WHERE ConfirmationToken = @Token";
 
-                            //Make a new query
-                            command = new SqlCommand(queryString, connection);
+                        //Create the database connection and command then dispose when done
+                        using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
+                        using (SqlCommand commandDelete = new SqlCommand(queryString, connection))
+                        {
+                            //Open the database connection
+                            connectionDelete.Open();
 
                             //Add the parameters
-                            command.Parameters.AddWithValue("@Token", decodeToBytes(Request.QueryString["ConfirmationToken"]));
+                            commandDelete.Parameters.AddWithValue("@Token", HttpServerUtility.UrlTokenDecode(Request.QueryString["ConfirmationToken"]));
 
                             //Execute the command
-                            command.ExecuteNonQuery();
+                            commandDelete.ExecuteNonQuery();
                         }
                     }
                     catch (Exception)
@@ -235,7 +238,7 @@ namespace ChessKnockoff
                 }
 
                 //Check whether the credentials are correct
-                bool credentialCorrect = checkUserCredentials(inpUsername.Value, inpPassword.Value);
+                bool credentialCorrect = checkUserCredentials(inpUsername.Value, inpPasswordLogin.Value);
                 if (!credentialCorrect)
                 {
                     //Show the alert
@@ -249,7 +252,7 @@ namespace ChessKnockoff
                     Session["Username"] = inpUsername.Value;
 
                     //Redirect them to the play page
-                    Response.Redirect("/Play");
+                    Response.Redirect("~/Play");
                 }
             }
         }

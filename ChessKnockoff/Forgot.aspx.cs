@@ -90,9 +90,9 @@ namespace ChessKnockoff
                     altEmailSent.Visible = true;
 
                     //Holds the random bytes
-                    byte[] randomToken = new byte[32];
+                    byte[] newResetToken = new byte[32];
                     //FIll it with random bytes
-                    fillByteRandom(randomToken);
+                    fillByteRandom(newResetToken);
 
                     //Create a URI builder
                     UriBuilder builder = new UriBuilder();
@@ -101,9 +101,9 @@ namespace ChessKnockoff
                     //Set the port
                     builder.Port = Request.Url.Port;
                     //Set the path
-                    builder.Path = "/Reset/";
+                    builder.Path = "/Reset";
                     //Set the query parameter
-                    builder.Query += "ResetToken=" + encodeToString(randomToken);
+                    builder.Query += "ResetToken=" + HttpServerUtility.UrlTokenEncode(newResetToken);
 
                     //Send the email
                     sendEmail(inpEmail.Value, "Reset password", "Please reset your password by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
@@ -134,20 +134,40 @@ namespace ChessKnockoff
                         }
                     }
 
+                    //Also delete the other reset tokens if there were any
+                    queryString = "DELETE FROM Reset WHERE Username = @Username";
+
+                    //Create the database connection and command then dispose when done
+                    using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
+                    using (SqlCommand commandDelete = new SqlCommand(queryString, connectionDelete))
+                    {
+                        //Open the database connection
+                        connectionDelete.Open();
+
+                        //Add the parameters
+                        commandDelete.Parameters.AddWithValue("@ResetToken", newResetToken);
+
+                        //Execute the command
+                        commandDelete.ExecuteNonQuery();
+                    }
+
                     //Create a new query string
-                    queryString = "INSERT INTO Reset (Username, ConfirmationToken, ExpirationDateUTC) VALUES (@Username, @ConfirmationToken, @ExpirationDateUTC)";
+                    queryString = "INSERT INTO Reset (Username, ResetToken, ExpirationDateUTC) VALUES (@Username, @ConfirmationToken, @ExpirationDateUTC)";
 
                     //Create the database connection and command then dispose when done
                     using (SqlConnection connection = new SqlConnection(dbConnectionString))
                     using (SqlCommand command = new SqlCommand(queryString, connection))
                     {
+                        //Open the connection
+                        connection.Open();
+
                         //Create the expiration date on the token
                         DateTime currentDate = DateTime.UtcNow;
                         TimeSpan expirationTime = new TimeSpan(2, 0, 0);
 
                         //Add the query parameters
                         command.Parameters.AddWithValue("@Username", username);
-                        command.Parameters.AddWithValue("@ConfirmationToken", randomToken);
+                        command.Parameters.AddWithValue("@ConfirmationToken", newResetToken);
                         command.Parameters.AddWithValue("@ExpirationDateUTC", currentDate.Add(expirationTime));
 
                         //Execute the command

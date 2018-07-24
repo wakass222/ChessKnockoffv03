@@ -90,26 +90,6 @@ namespace ChessKnockoff
         }
 
         /// <summary>
-        /// Encodes the byte array so it can be sent via URL
-        /// </summary>
-        /// <param name="bytesToEncode">The bytes to encode</param>
-        /// <returns>An encoded string</returns>
-        public string encodeToString(byte[] bytesToEncode)
-        {
-            return HttpUtility.UrlEncode(Convert.ToBase64String(bytesToEncode));
-        }
-
-        /// <summary>
-        /// Decodes the string
-        /// </summary>
-        /// <param name="stringToDecode">The string to decode</param>
-        /// <returns>The string in a byte array</returns>
-        public byte[] decodeToBytes(string stringToDecode)
-        {
-            return Convert.FromBase64String(HttpUtility.UrlDecode(stringToDecode));
-        }
-
-        /// <summary>
         /// Sends an email the address
         /// </summary>
         /// <param name="destination"></param>

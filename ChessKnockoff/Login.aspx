@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="inpPassword" class="form-control" placeholder="Password" required runat="server" autocomplete="on"/>
+            <input type="password" id="inpPasswordLogin" class="form-control" placeholder="Password" required runat="server" autocomplete="on"/>
             <div class="ml-auto">
                 <small id="emailHelp" class="form-text text-muted">Forgot your password? <a href="Forgot">Reset here</a></small>
             </div>
