@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Owin;
+
 [assembly: OwinStartupAttribute(typeof(ChessKnockoff.Startup))]
 
 namespace ChessKnockoff

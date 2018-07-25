@@ -260,7 +260,9 @@ namespace ChessKnockoff
         /// <param name="player">The player to remove from the waiting pool.</param>
         public void RemoveFromWaitingPool(playerConnection player)
         {
-            waitingPlayers.TryRemove(player.connectionString, out player);
+            //Create throwaway since method requires an out argument
+            playerConnection throwAway;
+            waitingPlayers.TryRemove(player.connectionString, out throwAway);
         }
 
         /// <summary>
