@@ -73,7 +73,7 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="playerId">The unique identifier of the player to find.</param>
         /// <returns>The found player; otherwise null.</returns>
-        public playerConnection GetPlayer(string playerId)
+        public playerConnection GetPlayerInGame(string playerId)
         {
             playerConnection foundPlayer;
             if (!players.TryGetValue(playerId, out foundPlayer))
@@ -138,10 +138,8 @@ namespace ChessKnockoff
         /// <param name="resultOfPlayerOne"></param>
         public void updateELO(string playerOneUsername, string playerTwoUsername, double resultOfPlayerOne)
         {
-            //Update the winning players ELO in which the player making the turn won
-
             //Finds the player and their ELO
-            string queryString = "SELECT * FROM Player WHERE Username=@Username";
+            string queryString = "SELECT ELO FROM Player WHERE Username=@Username";
 
             //Create the database connection and command then dispose when done
             using (SqlConnection connectionSelect = new SqlConnection(ExtendedPage.dbConnectionString))
@@ -154,7 +152,7 @@ namespace ChessKnockoff
                 commandSelect.Parameters.AddWithValue("@Username", playerOneUsername);
 
                 //Store the player one ELO
-                int playerOneElo = (int)commandSelect.ExecuteReader()["ELO"];
+                int playerOneElo = (int)commandSelect.ExecuteScalar();
 
                 //Clear the parameters
                 commandSelect.Parameters.Clear();
@@ -163,7 +161,7 @@ namespace ChessKnockoff
                 commandSelect.Parameters.AddWithValue("@Username", playerTwoUsername);
 
                 //Store the player two ELO
-                int playerTwoElo = (int)commandSelect.ExecuteReader()["ELO"];
+                int playerTwoElo = (int)commandSelect.ExecuteScalar();
 
                 //Calculate the different between them
                 int eloDifference = playerTwoElo - playerOneElo;
@@ -201,7 +199,7 @@ namespace ChessKnockoff
                     //Now update player two's ELO
                     commandUpdate.Parameters.AddWithValue("@Username", playerTwoUsername);
                     commandUpdate.Parameters.AddWithValue("@ELO", playerTwoElo);
-                    commandUpdate.BeginExecuteNonQuery();
+                    commandUpdate.ExecuteNonQuery();
                 }
             }
         }
@@ -258,11 +256,11 @@ namespace ChessKnockoff
         /// Removes specified player from the waiting pool.
         /// </summary>
         /// <param name="player">The player to remove from the waiting pool.</param>
-        public void RemoveFromWaitingPool(playerConnection player)
+        public void RemoveFromWaitingPool(string connectionString)
         {
             //Create throwaway since method requires an out argument
             playerConnection throwAway;
-            waitingPlayers.TryRemove(player.connectionString, out throwAway);
+            waitingPlayers.TryRemove(connectionString, out throwAway);
         }
 
         /// <summary>

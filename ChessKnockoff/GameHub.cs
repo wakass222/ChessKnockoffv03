@@ -39,9 +39,8 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.</returns>
         public void QuitFindGame()
         {
-            //Create a player connection object to store related connection data
-            playerConnection quittingPlayer = GameState.Instance.GetPlayer(this.Context.ConnectionId);
-            GameState.Instance.RemoveFromWaitingPool(quittingPlayer);
+            //Remove the player by their ID
+            GameState.Instance.RemoveFromWaitingPool(this.Context.ConnectionId);
         }
 
         /// <summary>
@@ -119,7 +118,7 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.<</returns>
         public void MakeTurn(string sourcePosition, string destinationPosition)
         {
-            playerConnection playerMakingTurn = GameState.Instance.GetPlayer(this.Context.ConnectionId);
+            playerConnection playerMakingTurn = GameState.Instance.GetPlayerInGame(this.Context.ConnectionId);
             playerConnection opponent;
             Game game;
 
@@ -137,6 +136,7 @@ namespace ChessKnockoff
                 //Apply that move and pass the to check parameter
                 game.Board.ApplyMove(move, false);
 
+                //Make sure the board state has actually changed
                 if (fenTemp != game.Board.GetFen())
                 {
                     //If an exception does not occur then reset the timer
@@ -186,8 +186,11 @@ namespace ChessKnockoff
         /// <returns></returns>
         public override async Task OnDisconnected(bool stopCalled)
         {
-            //Players are only added to the player list once they are in a game, therefore it is only necessary to remove the game along with its players
-            playerConnection leavingPlayer = GameState.Instance.GetPlayer(playerId: this.Context.ConnectionId);
+            //Remove them from the waiting pool
+            GameState.Instance.RemoveFromWaitingPool(this.Context.ConnectionId);
+
+            //Remove them if they were in game
+            playerConnection leavingPlayer = GameState.Instance.GetPlayerInGame(this.Context.ConnectionId);
 
             // Only handle cases where user was a player in a game or waiting for an opponent
             if (leavingPlayer != null)
@@ -201,6 +204,10 @@ namespace ChessKnockoff
                 {
                     //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
+
+                    //Stop them to prevent any more execution
+                    ongoingGame.timerWarning.Stop();
+                    ongoingGame.timerFinal.Stop();
 
                     //Remove the afk timers since they are not needed
                     ongoingGame.timerWarning.Dispose();

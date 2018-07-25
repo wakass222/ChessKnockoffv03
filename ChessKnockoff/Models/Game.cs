@@ -21,8 +21,9 @@ namespace ChessKnockoff.Models
         {
             this.firstPlayer = firstPlayer;
             this.secondPlayer = secondPlayer;
+            //Create a unique identifier for the game
             this.Id = Guid.NewGuid().ToString("d");
-            this.Board = new HordeChessGame();
+            this.Board = new ChessGame();
 
             // Link the players to the game as well
             this.firstPlayer.GameId = this.Id;
@@ -113,6 +114,10 @@ namespace ChessKnockoff.Models
                 context.Clients.Client(this.firstPlayer.connectionString).afkWin();
                 context.Clients.Client(this.secondPlayer.connectionString).afkLose();
             }
+
+            //Stop any ongoing timers
+            this.timerWarning.Stop();
+            this.timerFinal.Stop();
 
             //Get rid of the timers since it is not needed anymore
             this.timerFinal.Dispose();

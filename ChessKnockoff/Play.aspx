@@ -24,7 +24,7 @@
             var game;
 
             //Holds whether confetti should be made
-            var showConfetti = false;
+            var showEffect = false;
 
             //Store play information
             var gameData = {
@@ -105,9 +105,7 @@
             //Method call on how to process the board
             var onDrop = function (source, target, piece, newPos, oldPos, orientation) {
                 //Sends the data to the server
-                gameHubProxy.server.makeTurn(source, target).done(function () {
-                    console.log("It finised");
-                });
+                gameHubProxy.server.makeTurn(source, target);
             }
 
             //Method to set the board but not allowing dragging of pieces
@@ -126,6 +124,9 @@
             }
 
             var resetView = function (fenString, showPlay, draggable) {
+                //Stop any particles effects from being made
+                showEffect = false;
+
                 //Remove all messages/alerts
                 hideAllAlert();
 
@@ -214,11 +215,11 @@
 
             //Call if the player is already playing
             gameHubProxy.client.alreadyPlaying = function () {
-                    //Make the board empty
-                    resetView("", true, false);
+                //Make the board empty
+                resetView("", true, false);
 
-                    //Show that the user is already playing
-                    altAlreadyPlaying.show();
+                //Show that the user is already playing
+                altAlreadyPlaying.show();
             }
 
             gameHubProxy.client.afkWin = function () {
@@ -246,8 +247,10 @@
 
             //Shows that the player is in queue
             gameHubProxy.client.inQueue = function () {
-                //Check if the user is already playing
                 //The game is actively searching
+
+                //Make sure to hide all alerts just in case
+                hideAllAlert();
 
                 //Show that the matchmaking has started
                 btnPlay.html("Looking for game...");
@@ -267,9 +270,11 @@
                 //Set the board fen string
                 board.position(fenString);
 
-                //Set the persons current turn
-                gameData.currentTurn = turn;
-                showTurn();
+                //Set the persons current turn text only if their turn has changed
+                if (gameData.currentTurn !== turn) {
+                    gameData.currentTurn = turn;
+                    showTurn();
+                }
             };
 
             //The game drawed
@@ -301,12 +306,66 @@
                 } else {
                     //Show lose message
                     altLose.show();
+                    //Create some raindrops
+                    createRain();
                 }
             };
 
-            function createConffeti(time) {
+            //Call to create rain effect
+            function createRain() {
                 //Allow confetti to respawn
-                showConfetti = true;
+                showEffect = true;
+
+                //Make 250 drops
+                for (var i = 0; i < 100; i++) {
+                    create(i);
+                }
+
+                //Create the rain elements 
+                function create(i) {
+                    //Create the actual rain in the div of wrapper
+                    $('<div class="drop" id="drop' + i + '"></div>').css("left", getRandomInt(0, 1600)).css("top", getRandomInt(-1000, 1400)).appendTo('.wrapper');
+
+                    //Make them drop
+                    drop(i);
+                }
+
+                //Generate a random number between a range
+                function getRandomInt(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+                //Make them fall at different positions
+                function drop(x) {
+                    $('.drop' + x).animate({
+                        bottom: "0px",
+                    }, 63, function () {
+                        reset(x);
+                    });
+                }
+
+                //Once they have fallen reset and put them at the top
+                function reset(x) {
+                    $('.drop' + x).animate({
+                        "top": getRandomInt(-1000, 1400),
+                        "left": getRandomInt(0, 1600)
+                    }, 0, function () {
+                        //Check if they should be reset
+                        if (showEffect) {
+                            //If they should allow them to drop
+                            drop(x);
+                        } else {
+                            //Remove them if they are not needed
+                            $('.drop' + x).remove();
+                        }
+                    });
+                }
+            }
+
+            //Call to create confetti
+            function createConffeti() {
+                //Allow confetti to respawn
+                showEffect = true;
 
                 //Make 250 pieces
                 for (var i = 0; i < 100; i++) {
@@ -362,7 +421,7 @@
                         "left": "-=" + Math.random() * 15 + "%"
                     }, 0, function () {
                         //Check if they should be reset
-                        if (showConfetti) {
+                        if (showEffect) {
                             //If they should allow them to drop
                             drop(x);
                         } else {
@@ -386,8 +445,8 @@
                     //Change the value of the button
                     btnPlay.html("Looking for game...");
 
-                    //Stop making confetti if the player already won
-                    showConfetti = false;
+                    //Stop making particles
+                    showEffect = false;
 
                     //Call the server function to match make
                     gameHubProxy.server.findGame();
