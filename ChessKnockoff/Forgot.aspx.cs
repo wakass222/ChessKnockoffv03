@@ -151,7 +151,7 @@ namespace ChessKnockoff
                         commandDelete.ExecuteNonQuery();
                     }
 
-                    //Create a new query string
+                    //Create the reset token in the database
                     queryString = "INSERT INTO Reset (Username, ResetToken, ExpirationDateUTC) VALUES (@Username, @ConfirmationToken, @ExpirationDateUTC)";
 
                     //Create the database connection and command then dispose when done

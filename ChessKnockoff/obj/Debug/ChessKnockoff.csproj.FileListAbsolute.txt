@@ -749,3 +749,6 @@ C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\Ch
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.dll
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.pdb
 C:\Users\will-\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.xml
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.dll
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.pdb
+C:\Users\will\OneDrive - Haileybury\School\2018\IT\SAT\Final\ChessKnockoffv03\ChessKnockoff\bin\Microsoft.IdentityModel.Logging.xml

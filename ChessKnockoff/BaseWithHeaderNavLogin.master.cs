@@ -12,7 +12,7 @@ namespace ChessKnockoff
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is not authenticated
-            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            if (Session["Username"] == null)
             {
                 //Then redirect to the login page with reference to the current page
                 string OriginalUrl = HttpContext.Current.Request.RawUrl;

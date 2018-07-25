@@ -159,20 +159,20 @@ namespace ChessKnockoff
                 string queryString = "UPDATE Player SET Player.EmailIsConfirmed = 1 FROM Player INNER JOIN Confirmation ON Player.Username = Confirmation.Username WHERE Confirmation.ConfirmationToken = @Token";
 
                 //Create the database connection and command then dispose when done
-                using (SqlConnection connection = new SqlConnection(dbConnectionString))
-                using (SqlCommand command = new SqlCommand(queryString, connection))
+                using (SqlConnection connectionUpdate = new SqlConnection(dbConnectionString))
+                using (SqlCommand commandUpdate = new SqlCommand(queryString, connectionUpdate))
                 {
                     //Open the database connection
-                    connection.Open();
+                    connectionUpdate.Open();
 
                     //Try to retrieve the token and convert to a byte array
                     try
                     {
                         //Add the parameters
-                        command.Parameters.AddWithValue("@Token", HttpServerUtility.UrlTokenDecode(Request.QueryString["ConfirmationToken"]));
+                        commandUpdate.Parameters.AddWithValue("@Token", HttpServerUtility.UrlTokenDecode(Request.QueryString["ConfirmationToken"]));
 
                         //Store the result in a reader
-                        int rowsAffected = command.ExecuteNonQuery();
+                        int rowsAffected = commandUpdate.ExecuteNonQuery();
 
                         //Rows were affected therefore show the success message
                         if (rowsAffected > 0)
@@ -186,7 +186,7 @@ namespace ChessKnockoff
 
                         //Create the database connection and command then dispose when done
                         using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
-                        using (SqlCommand commandDelete = new SqlCommand(queryString, connection))
+                        using (SqlCommand commandDelete = new SqlCommand(queryString, connectionUpdate))
                         {
                             //Open the database connection
                             connectionDelete.Open();
