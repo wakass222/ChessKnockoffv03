@@ -66,7 +66,7 @@ namespace ChessKnockoff
             altEmailFail.Visible = false;
 
             //If user is already logged in
-            if (isAuthenticated())
+            if (isAuthenticated)
             {
                 //Redirect them to the play page
                 Response.Redirect("~/Play");

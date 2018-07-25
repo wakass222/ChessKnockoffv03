@@ -66,7 +66,7 @@ namespace ChessKnockoff
                         connectionSelect.Open();
 
                         //Add the parameters
-                        commandSelect.Parameters.AddWithValue("@Username", Session["Username"]);
+                        commandSelect.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
 
                         using (SqlDataReader reader = commandSelect.ExecuteReader())
                         {
@@ -96,7 +96,7 @@ namespace ChessKnockoff
                                     //Add the parameters
                                     commandUpdate.Parameters.AddWithValue("@Salt", newSalt);
                                     commandUpdate.Parameters.AddWithValue("@Password", newSaltedHash);
-                                    commandUpdate.Parameters.AddWithValue("@Username", Session["Username"]);
+                                    commandUpdate.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
 
                                     ///Execute the command
                                     rowsAffected = commandUpdate.ExecuteNonQuery();

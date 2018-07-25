@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Security;
 
 namespace ChessKnockoff
 {
@@ -13,8 +14,9 @@ namespace ChessKnockoff
     {
         protected void Logout_Click(object sender, EventArgs e)
         {
-            //Remove session variable
-            Session["Username"] = null;
+            //Remove the authentication cookie
+            FormsAuthentication.SignOut();
+
             //Redirect to the login page
             Response.Redirect("~/Login");
         }
@@ -22,14 +24,14 @@ namespace ChessKnockoff
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is authenticated
-            if (Session["Username"] != null)
+            if (Context.User.Identity.IsAuthenticated)
             {
                 //Display a logout link and hide the login links
                 navLogin.Visible = false;
                 navLogout.Visible = true;
 
                 //Display the name of the logged in user and escaping any tags
-                txtInfo.InnerText = string.Format(HttpUtility.HtmlEncode(Session["Username"]));
+                txtInfo.InnerText = string.Format(HttpUtility.HtmlEncode(Context.User.Identity.Name));
             }
             else
             {

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data.SqlClient;
+using System.Web.Security;
 
 namespace ChessKnockoff
 {
@@ -113,7 +114,7 @@ namespace ChessKnockoff
         protected void Page_Load(object sender, EventArgs e)
         {
             //If user is already logged in
-            if (isAuthenticated())
+            if (isAuthenticated)
             {
                 //Check if they had the return query
                 if (this.Request.QueryString["ReturnUrl"] != null)
@@ -277,8 +278,8 @@ namespace ChessKnockoff
                 //Check whether their credentials are correct and their email has been confirmed
                 if (credentialCorrect && emailConfirmed == true)
                 {
-                    //Store their information in a session variable
-                    Session["Username"] = inpUsername.Value;
+                    //Set the authentication cookie
+                    FormsAuthentication.SetAuthCookie(inpUsername.Value, boxRememberCheck.Checked);
 
                     //Redirect them to the play page
                     Response.Redirect("~/Play");

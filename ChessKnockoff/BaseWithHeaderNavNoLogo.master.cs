@@ -22,7 +22,7 @@ namespace ChessKnockoff
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is authenticated
-            if (Session["Username"] != null)
+            if (Context.User.Identity.IsAuthenticated)
             {
                 //Display a logout link and hide the login links
                 navLogin.Visible = false;

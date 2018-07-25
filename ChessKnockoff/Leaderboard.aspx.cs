@@ -46,7 +46,7 @@ namespace ChessKnockoff
             activateNav("likLeaderboard");
 
             //Check if the user is authenticated, if so search for them
-            if (isAuthenticated())
+            if (isAuthenticated)
             {
                 //Get all the users and order them by ELO is decending order
                 string queryString = "SELECT TOP 10 ROW_NUMBER() OVER (ORDER BY ELO DESC) AS Rank, Username, ELO FROM Player";

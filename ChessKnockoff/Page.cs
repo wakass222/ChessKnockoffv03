@@ -26,22 +26,27 @@ namespace ChessKnockoff
         /// </summary>
         public static string dbConnectionString { get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=True";
 
+        //User information is made as a property of the page to assist in code changes
+
         /// <summary>
-        /// Checks whether the user is validated
+        /// Holds whether the user is authenticated or not
         /// </summary>
-        /// <returns>Returns true if the user is logged in else false</returns>
-        public bool isAuthenticated()
+        public bool isAuthenticated
         {
-            //Check if the session variable Username is set
-            if (Session["Username"] != null)
+            get
             {
-                //Return true since they are authenticated
-                return true;
+                return Context.User.Identity.IsAuthenticated;
             }
-            else
+        }
+
+        /// <summary>
+        /// Holds the current person username, may be null
+        /// </summary>
+        public string currentUsername
+        {
+            get
             {
-                //Return false since they are not authenticated
-                return false;
+                return Context.User.Identity.Name;
             }
         }
 

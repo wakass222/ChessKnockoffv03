@@ -51,7 +51,7 @@ namespace ChessKnockoff
         public async Task FindGame()
         {
             //Create a player connection object to store related connection data
-            playerConnection joiningPlayer = new playerConnection(HttpContext.Current.Session["Username"].ToString(), this.Context.ConnectionId);
+            playerConnection joiningPlayer = new playerConnection(Context.User.Identity.Name, this.Context.ConnectionId);
             
             //Check if the player is already waiting or in game from another client to avoid pairing
             if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
