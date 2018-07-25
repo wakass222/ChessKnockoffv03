@@ -4,9 +4,6 @@ using System.Linq;
 using System.Web;
 using ChessDotNet;
 using System.Security.Principal;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace ChessKnockoff.Models
 {
@@ -17,10 +14,10 @@ namespace ChessKnockoff.Models
         /// </summary>
         /// <param name="applicationUser">The Identity of the user</param>
         /// <param name="connectionString"></param>
-        public playerConnection(IIdentity applicationIdentity, string connectionString)
+        public playerConnection(string Username, string connectionString)
         {
             //Setup the new object
-            this.Username = applicationIdentity.Name;
+            this.Username = Username;
             this.connectionString = connectionString;
         }
 

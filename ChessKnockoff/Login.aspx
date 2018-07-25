@@ -39,12 +39,6 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="boxRememberCheck" runat="server"/>
-                <label class="form-check-label" for="rememberMeCheck">Remember me</label>
-            </div>
-        </div>
-        <div class="form-group">
             <button id="btnSubmitLogin" class="btn btn-primary btn-block" type="submit" runat="server" onserverclick="LoginClick">Login</button>
         </div>
         <div class="form-group text-center">

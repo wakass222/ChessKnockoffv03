@@ -130,22 +130,6 @@ namespace ChessKnockoff
         /// <param name="resultOfPlayerOne"></param>
         public void updateELO(string playerOneUsername, string playerTwoUsername, double resultOfPlayerOne)
         {
-            //The current user information can not be accessed by using the OWIN context
-            //Therefore a connection has to be made manually and is stored for the lifetime of this object
-
-            //Create the database connection
-            ApplicationDbContext applicationContext = new ApplicationDbContext();
-
-            //Create the Entity framework that supports the identity interfaces
-            UserStore<ApplicationUser> userStore = new UserStore<ApplicationUser>(applicationContext);
-
-            //Create and store the user manager as a private field
-            ApplicationUserManager userManager = new ApplicationUserManager(userStore);
-
-            //Find the ApplicationUser of each of the players which holds the ELO
-            ApplicationUser playerOne = userManager.FindByName(playerOneUsername);
-            ApplicationUser playerTwo = userManager.FindByName(playerTwoUsername);
-
             //Update the winning players ELO in which the player making the turn won
             //Calculate the different between them
             int eloDifference = playerTwo.ELO - playerOne.ELO;
