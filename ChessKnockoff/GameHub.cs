@@ -9,6 +9,9 @@ using ChessDotNet;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// Class that inherits from hub and provides server functions the client can call
+    /// </summary>
     public class GameHub : Hub
     {
         /// <summary>
@@ -37,7 +40,7 @@ namespace ChessKnockoff
         public void QuitFindGame()
         {
             //Create a player connection object to store related connection data
-            playerConnection quittingPlayer = new playerConnection(HttpContext.Current.Session["Username"].ToString(), this.Context.ConnectionId);
+            playerConnection quittingPlayer = GameState.Instance.GetPlayer(this.Context.ConnectionId);
             GameState.Instance.RemoveFromWaitingPool(quittingPlayer);
 
         }

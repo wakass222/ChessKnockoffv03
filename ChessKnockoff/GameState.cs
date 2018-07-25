@@ -10,6 +10,7 @@ using ChessKnockoff.Models;
 using ChessDotNet;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
+using System.Data.SqlClient;
 
 namespace ChessKnockoff
 {
@@ -41,10 +42,10 @@ namespace ChessKnockoff
             new ConcurrentDictionary<string, Game>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// A queue of players that are waiting for an opponent.
+        /// A dictionary of players that are waiting for an opponent.
         /// </summary>
-        private readonly ConcurrentQueue<playerConnection> waitingPlayers =
-            new ConcurrentQueue<playerConnection>();
+        private readonly ConcurrentDictionary<string, playerConnection> waitingPlayers =
+            new ConcurrentDictionary<string, playerConnection>();
 
         private GameState(IHubContext context)
         {
@@ -109,8 +110,9 @@ namespace ChessKnockoff
         {
             //Check if player is in game
             bool playerInGame = this.players.Values.FirstOrDefault(player => player.Username == Username) != null;
+
             //Check if they are in queue
-            bool playerIsWaiting = this.waitingPlayers.FirstOrDefault(player => player.Username == Username) != null;
+            bool playerIsWaiting = this.waitingPlayers.Values.FirstOrDefault(player => player.Username == Username) != null;
 
             //If the player is waiting or in queue then return true
             if (playerInGame || playerIsWaiting)
@@ -131,24 +133,49 @@ namespace ChessKnockoff
         public void updateELO(string playerOneUsername, string playerTwoUsername, double resultOfPlayerOne)
         {
             //Update the winning players ELO in which the player making the turn won
-            //Calculate the different between them
-            int eloDifference = playerTwo.ELO - playerOne.ELO;
 
-            //Calculate the odds of player one would win
-            //A cast has to be used so there is enough precision
-            double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, (double)eloDifference / (double)400));
+            //Finds the player and their ELO
+            string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
-            //Calculate how much to update the ELO by
-            //K-factor of 20 is used
-            int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
+            //Create the database connection and command then dispose when done
+            using (SqlConnection connection = new SqlConnection(ExtendedPage.dbConnectionString))
+            using (SqlCommand command = new SqlCommand(queryString, connection))
+            {
+                //Open the database connection
+                connection.Open();
 
-            //ELO is a zero sum game, the amount lost is equivalent to the amount gained
-            playerOne.ELO += updateValue;
-            playerTwo.ELO -= updateValue;
+                //Add the parameters
+                command.Parameters.AddWithValue("@Username", playerOneUsername);
 
-            //Use the manager to save the updates into the database
-            userManager.Update(playerTwo);
-            userManager.Update(playerTwo);
+                //Store the player one ELO
+                int playerOneElo = (int)command.ExecuteReader()["ELO"];
+
+                //Clear the parameters
+                command.Parameters.Clear();
+
+                //Add the parameter for the second user
+                command.Parameters.AddWithValue("@Username", playerTwoUsername);
+
+                //Store the player two ELO
+                int playerTwoElo = (int)command.ExecuteReader()["ELO"];
+
+                //Calculate the different between them
+                int eloDifference = playerTwoElo - playerOneElo;
+
+                //Calculate the odds of player one would win
+                //A cast has to be used so there is enough precision
+                double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, (double)eloDifference / (double)400));
+
+                //Calculate how much to update the ELO by
+                //K-factor of 20 is used
+                int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
+
+                //ELO is a zero sum game, the amount lost is equivalent to the amount gained
+                playerOne.ELO += updateValue;
+                playerTwo.ELO -= updateValue;
+
+                //Save the results
+            }
         }
 
         /// <summary>
@@ -173,10 +200,7 @@ namespace ChessKnockoff
         public playerConnection GetWaitingOpponent()
         {
             playerConnection foundPlayer;
-            if (!waitingPlayers.TryDequeue(out foundPlayer))
-            {
-                return null;
-            }
+            waitingPlayers.TryRemove(this.waitingPlayers.Keys.FirstOrDefault(), out foundPlayer);
 
             return foundPlayer;
         }
@@ -208,7 +232,7 @@ namespace ChessKnockoff
         /// <param name="player">The player to remove from the waiting pool.</param>
         public void RemoveFromWaitingPool(playerConnection player)
         {
-            waitingPlayers.TryDequeue(out player);
+            waitingPlayers.TryRemove(player.connectionString, out player);
         }
 
         /// <summary>
@@ -217,7 +241,7 @@ namespace ChessKnockoff
         /// <param name="player">The player to add to waiting pool.</param>
         public void AddToWaitingPool(playerConnection player)
         {
-            waitingPlayers.Enqueue(player);
+            waitingPlayers.TryAdd(player.connectionString, player);
         }
 
         /// <summary>

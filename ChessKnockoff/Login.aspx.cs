@@ -186,7 +186,7 @@ namespace ChessKnockoff
 
                         //Create the database connection and command then dispose when done
                         using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
-                        using (SqlCommand commandDelete = new SqlCommand(queryString, connectionUpdate))
+                        using (SqlCommand commandDelete = new SqlCommand(queryString, connectionDelete))
                         {
                             //Open the database connection
                             connectionDelete.Open();
