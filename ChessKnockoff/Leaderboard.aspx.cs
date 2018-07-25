@@ -1,6 +1,8 @@
 ﻿using ChessKnockoff.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -10,7 +12,7 @@ namespace ChessKnockoff
 {
     public partial class WebForm8 : ExtendedPage
     {
-        private void addCellsForRow(int rank, string name, int elo, string css)
+        private void addCellsForRow(string rank, string name, string elo, string css)
         {
             //Create a new row
             TableRow tableRow = new TableRow();
@@ -24,7 +26,7 @@ namespace ChessKnockoff
             //Create a new cell
             TableCell tableCellRank = new TableCell();
             //Make the first column the rank
-            tableCellRank.Text = rank.ToString();
+            tableCellRank.Text = rank;
             tableRow.Cells.Add(tableCellRank);
 
             TableCell tableCellUsername = new TableCell();
@@ -34,7 +36,7 @@ namespace ChessKnockoff
 
             TableCell tableCellELO = new TableCell();
             //Make the third column the ELO
-            tableCellELO.Text = elo.ToString();
+            tableCellELO.Text = elo;
             tableRow.Cells.Add(tableCellELO);
         }
 
@@ -43,68 +45,92 @@ namespace ChessKnockoff
             //Activate the current link
             activateNav("likLeaderboard");
 
-            //Get all the users
-            var UsersContext = new ApplicationDbContext();
-
-            //Order them by their ELO in descending order and take the top 10
-            ApplicationUser[] orderedUsers = UsersContext.Users.OrderByDescending(appUser => appUser.ELO).ToArray();
-
             //Check if the user is authenticated, if so search for them
-            if (HttpContext.Current.User.Identity.IsAuthenticated)
+            if (isAuthenticated())
             {
-                //Get the username
-                string currentUsername = HttpContext.Current.User.Identity.Name;
+                //Get all the users and order them by ELO is decending order
+                string queryString = "SELECT TOP 10 ROW_NUMBER() OVER (ORDER BY ELO DESC) AS Rank, Username, ELO FROM Player";
 
-                //Store the rank counter
-                int rankCounter = 1;
-
+                //Stores whether the play is in the top 10
                 bool playerInTopTen = false;
-                //Loop through each of the top 10 users
-                //Will also not add empty cells if there is not enough users
-                foreach (ApplicationUser user in orderedUsers.Take(10))
-                {
-                    //If it is the same person
-                    if (user.UserName == currentUsername)
-                    {
-                        //Show speacial css
-                        playerInTopTen = true;
-                        addCellsForRow(rankCounter, user.UserName, user.ELO, "table-primary");
-                    }
-                    else
-                    {
-                        //Show no extra styling
-                        addCellsForRow(rankCounter, user.UserName, user.ELO, "");
-                    }
 
-                    //Increment the rank counter
-                    rankCounter++;
+                //Create the database connection and command then dispose when done
+                using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                using (SqlCommand command = new SqlCommand(queryString, connection))
+                {
+                    //Open the database connection
+                    connection.Open();
+
+                    //Execute the command
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    //Loop through each row
+                    foreach (DbDataRecord row in reader)
+                    {
+                        //If it is the same person
+                        if (row["Username"].ToString() == Session["Username"].ToString())
+                        {
+                            //Show speacial css
+                            playerInTopTen = true;
+                            addCellsForRow(row["Rank"].ToString(), row["Username"].ToString(), row["ELO"].ToString(), "table-primary");
+                        }
+                        else
+                        {
+                            //Show no extra styling
+                            addCellsForRow(row["Rank"].ToString(), row["Username"].ToString(), row["ELO"].ToString(), "");
+                        }
+                    }
                 }
 
                 //Check if the player is into the top ten
                 if (!playerInTopTen)
                 {
-                    //Find the position of the current player in the ELO rankings
-                    int positionOfPlayer = Array.FindIndex(orderedUsers, appUser => appUser.UserName == currentUsername);
-                    //Add the user to the end of the table
-                    addCellsForRow(positionOfPlayer + 1, currentUsername, orderedUsers[positionOfPlayer].ELO, "table-primary");
+                    //Finds the rank of the player
+                    queryString = "WITH OrderedPlayer AS (SELECT Username, ELO, ROW_NUMBER() OVER (ORDER BY ELO DESC) AS Rank FROM Player) SELECT * FROM OrderedPlayer WHERE Username=@Username";
+
+                    //Create the database connection and command then dispose when done
+                    using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                    using (SqlCommand command = new SqlCommand(queryString, connection))
+                    {
+                        //Open the database connection
+                        connection.Open();
+
+                        //Add the parameter
+                        command.Parameters.AddWithValue("@Username", Session["Username"]);
+
+                        //Execute the command
+                        SqlDataReader reader = command.ExecuteReader();
+
+                        //Read the first row
+                        reader.Read();
+
+                        //Add the user to the end of the table
+                        addCellsForRow(reader["Rank"].ToString(), reader["Username"].ToString(), reader["ELO"].ToString(), "table-primary");
+                    }
                 }
             }
             else
-            {   
-                //Store the rank counter
-                int rankCounter = 1;
+            {
+                //Select the top 10 players with their rank
+                string queryString = "SELECT TOP 10 ROW_NUMBER() OVER (ORDER BY ELO DESC) AS Rank, Username, ELO FROM Player";
 
-                //Loop through each of the top 10 users
-                //Will also not add empty cells if there is not enough users
-                foreach (ApplicationUser user in orderedUsers.Take(10))
+                //Create the database connection and command then dispose when done
+                using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
-                    //Show no extra styling
-                    addCellsForRow(rankCounter, user.UserName, user.ELO, "");
+                    //Open the database connection
+                    connection.Open();
 
-                    //Increment the rank counter
-                    rankCounter++;
+                    //Execute the command
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    //Loop through each row
+                    foreach (DbDataRecord row in reader)
+                    {
+                        //Show no extra styling
+                        addCellsForRow(row["Rank"].ToString(), row["Username"].ToString(), row["ELO"].ToString(), "");
+                    }
                 }
-
             }
         }
     }

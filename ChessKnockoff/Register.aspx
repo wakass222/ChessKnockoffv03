@@ -9,7 +9,7 @@
             <label for="username">Username</label>
             <asp:CustomValidator ID="valUsername" runat="server" ControlToValidate="inpUsername" ClientValidationFunction="wrappedUsername" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True" OnServerValidate="validateUsername"></asp:CustomValidator>
             <input id="inpUsername" required="" class="form-control" placeholder="Username" runat="server" />
-            <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters.</div>
+            <div id="fedUsername" class="invalid-feedback" runat="server">Username can only contain alphanumeric characters and must be 25 characters or less.</div>
         </div>
         <div id="altUsernameTaken" class="alert alert-danger" runat="server">
             Username has been taken.

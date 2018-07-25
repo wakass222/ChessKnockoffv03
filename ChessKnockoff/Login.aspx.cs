@@ -64,9 +64,6 @@ namespace ChessKnockoff
             //Selectt the player's information but exclude if they are not confirmed
             string queryString = "SELECT * FROM Player WHERE Username=@Username AND EmailIsConfirmed = 1";
 
-            //Create the reader to store results
-            SqlDataReader reader;
-
             //Create the database connection and command then dispose when done
             using (SqlConnection connection = new SqlConnection(dbConnectionString))
             using (SqlCommand command = new SqlCommand(queryString, connection))
@@ -78,7 +75,7 @@ namespace ChessKnockoff
                 command.Parameters.AddWithValue("@Username", username);
 
                 //Execute the SQL command and get the results
-                reader = command.ExecuteReader();
+                SqlDataReader reader = command.ExecuteReader();
 
                 //Check if a user was found
                 if (reader.HasRows)

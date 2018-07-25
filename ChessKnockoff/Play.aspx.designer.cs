@@ -10,6 +10,6 @@
 namespace ChessKnockoff {
     
     
-    public partial class WebForm9 {
+    public partial class PlayForm {
     }
 }

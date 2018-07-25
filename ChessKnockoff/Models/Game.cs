@@ -45,7 +45,14 @@ namespace ChessKnockoff.Models
             timerFinal.AutoReset = false;
         }
 
+
+        /// <summary>
+        /// A timer that when activated causes a warning
+        /// </summary>
         public Timer timerWarning;
+        /// <summary>
+        /// A timer that ends the game causing an automatic forfeit
+        /// </summary>
         public Timer timerFinal;
 
         /// <summary>

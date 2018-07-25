@@ -8,10 +8,19 @@ using ChessDotNet;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm9 : LoginRequiredPage
+    /// <summary>
+    /// Class for the play page
+    /// </summary>
+    public partial class PlayForm : LoginRequiredPage
     {
+        /// <summary>
+        /// Called when the page loads. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
+           //ACtivate the link in the navbar
             activateNav("likPlay");
         }
     }

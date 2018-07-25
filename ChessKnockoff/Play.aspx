@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Play" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Play.aspx.cs" Inherits="ChessKnockoff.WebForm9" %>
+﻿<%@ Page Title="Play" Language="C#" MasterPageFile="~/BaseWithHeaderNavLogin.master" AutoEventWireup="true" CodeBehind="Play.aspx.cs" Inherits="ChessKnockoff.PlayForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentHeaderNavLoginTitle" runat="server">
     <script type="text/javascript">
         //Once the DOM has loaded set the title

@@ -4,7 +4,7 @@ var inpPasswordID = "#inpPassword";
 var inpRePasswordID = "#inpRePassword";
 var inpEmailID = "#inpEmail";
 
-//All functions have a nameconfirm however only the password uses it and it is optional
+//Chekcs whether the passwords match
 function checkPasswordMatch() {
     //Get elements
     var inpPassword = $(inpPasswordID);
@@ -27,6 +27,7 @@ function checkPasswordMatch() {
         return false;
     }
 }
+//Checks whether the email is valid
 function checkEmailRule() {
     //Get element
     var inpEmail = $(inpEmailID);
@@ -48,6 +49,8 @@ function checkEmailRule() {
         return false;
     }
 }
+
+//Check whether the username is valid
 function checkUsernameRule() {
     //Get element
     var inpUsername = $(inpUsernameID);

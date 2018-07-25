@@ -15,14 +15,13 @@ using System.Data.SqlClient;
 namespace ChessKnockoff
 {
     /// <summary>
-    /// This class can statically persist a collection of players and
-    /// matches that each of the players are playing using the singleton pattern.
-    /// The singleton pattern restricts the instantiation of the class to one object.
+    /// Statically stores all games and players
     /// </summary>
     public class GameState
     {
         /// <summary>
-        /// Singleton instance that defers initialization until access time.
+        /// Singleton instance that defers initialization until access time. 
+        /// Also removes the need for locks or checks in order to be thread safe.
         /// </summary>
         private readonly static Lazy<GameState> instance =
             new Lazy<GameState>(() => new GameState(GlobalHost.ConnectionManager.GetHubContext<GameHub>()));
@@ -32,7 +31,7 @@ namespace ChessKnockoff
         /// Note that this collection is concurrent to handle multiple threads.
         /// </summary>
         private readonly ConcurrentDictionary<string, playerConnection> players =
-            new ConcurrentDictionary<string, playerConnection>(StringComparer.OrdinalIgnoreCase);
+            new ConcurrentDictionary<string, playerConnection>();
 
         /// <summary>
         /// A reference to all games. Key is the group name of the game.
@@ -47,12 +46,19 @@ namespace ChessKnockoff
         private readonly ConcurrentDictionary<string, playerConnection> waitingPlayers =
             new ConcurrentDictionary<string, playerConnection>();
 
+        /// <summary>
+        /// Private constructor used by the Lazy initialisation of this class
+        /// </summary>
+        /// <param name="context">The signalir hub context</param>
         private GameState(IHubContext context)
         {
             this.Clients = context.Clients;
             this.Groups = context.Groups;
         }
 
+        /// <summary>
+        /// A public property to access the class' values and information
+        /// </summary>
         public static GameState Instance
         {
             get { return instance.Value; }
@@ -138,26 +144,26 @@ namespace ChessKnockoff
             string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
             //Create the database connection and command then dispose when done
-            using (SqlConnection connection = new SqlConnection(ExtendedPage.dbConnectionString))
-            using (SqlCommand command = new SqlCommand(queryString, connection))
+            using (SqlConnection connectionSelect = new SqlConnection(ExtendedPage.dbConnectionString))
+            using (SqlCommand commandSelect = new SqlCommand(queryString, connectionSelect))
             {
                 //Open the database connection
-                connection.Open();
+                connectionSelect.Open();
 
                 //Add the parameters
-                command.Parameters.AddWithValue("@Username", playerOneUsername);
+                commandSelect.Parameters.AddWithValue("@Username", playerOneUsername);
 
                 //Store the player one ELO
-                int playerOneElo = (int)command.ExecuteReader()["ELO"];
+                int playerOneElo = (int)commandSelect.ExecuteReader()["ELO"];
 
                 //Clear the parameters
-                command.Parameters.Clear();
+                commandSelect.Parameters.Clear();
 
                 //Add the parameter for the second user
-                command.Parameters.AddWithValue("@Username", playerTwoUsername);
+                commandSelect.Parameters.AddWithValue("@Username", playerTwoUsername);
 
                 //Store the player two ELO
-                int playerTwoElo = (int)command.ExecuteReader()["ELO"];
+                int playerTwoElo = (int)commandSelect.ExecuteReader()["ELO"];
 
                 //Calculate the different between them
                 int eloDifference = playerTwoElo - playerOneElo;
@@ -171,10 +177,32 @@ namespace ChessKnockoff
                 int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
 
                 //ELO is a zero sum game, the amount lost is equivalent to the amount gained
-                playerOne.ELO += updateValue;
-                playerTwo.ELO -= updateValue;
+                playerOneElo += updateValue;
+                playerTwoElo -= updateValue;
 
-                //Save the results
+                //Save the results into the database
+                queryString = "UPDATE Player SET ELO = @ELO WHERE Username=@Username";
+
+                //Create the database connection and command then dispose when done
+                using (SqlConnection connectionUpdate = new SqlConnection(ExtendedPage.dbConnectionString))
+                using (SqlCommand commandUpdate = new SqlCommand(queryString, connectionUpdate))
+                {
+                    //Open the database connection
+                    connectionUpdate.Open();
+
+                    //Update player one's elo
+                    commandUpdate.Parameters.AddWithValue("@Username", playerOneUsername);
+                    commandUpdate.Parameters.AddWithValue("@ELO", playerOneElo);
+                    commandUpdate.ExecuteNonQuery();
+
+                    //Then clear the parameters
+                    commandUpdate.Parameters.Clear();
+
+                    //Now update player two's ELO
+                    commandUpdate.Parameters.AddWithValue("@Username", playerTwoUsername);
+                    commandUpdate.Parameters.AddWithValue("@ELO", playerTwoElo);
+                    commandUpdate.BeginExecuteNonQuery();
+                }
             }
         }
 

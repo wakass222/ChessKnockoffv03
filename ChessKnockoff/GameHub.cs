@@ -42,7 +42,6 @@ namespace ChessKnockoff
             //Create a player connection object to store related connection data
             playerConnection quittingPlayer = GameState.Instance.GetPlayer(this.Context.ConnectionId);
             GameState.Instance.RemoveFromWaitingPool(quittingPlayer);
-
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace ChessKnockoff
         {
             //Create a player connection object to store related connection data
             playerConnection joiningPlayer = new playerConnection(HttpContext.Current.Session["Username"].ToString(), this.Context.ConnectionId);
-
+            
             //Check if the player is already waiting or in game from another client to avoid pairing
             if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
             {
@@ -153,7 +152,6 @@ namespace ChessKnockoff
             }
 
             //Always return the position even if it is not valid so that the piece returns to its original position on the client
-            //The method is void therefore to a call needs to be made to parse the board state
             this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), playerEnumToString(game.Board.WhoseTurn));
             
             //If either player has stalemated
