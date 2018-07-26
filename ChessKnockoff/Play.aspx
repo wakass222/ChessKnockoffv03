@@ -311,20 +311,25 @@
                 }
             };
 
+            //Generates a random integer number within the range
+            function getRandomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
             //Call to create rain effect
             function createRain() {
                 //Allow confetti to respawn
                 showEffect = true;
 
-                //Make 250 drops
-                for (var i = 0; i < 100; i++) {
+                //Make 100 rain drops
+                for (var i = 0; i < 75; i++) {
                     create(i);
                 }
 
                 //Create the rain elements 
                 function create(i) {
                     //Create the actual rain in the div of wrapper
-                    $('<div class="drop" id="drop' + i + '"></div>').css("left", "323px").css("top", "0px").appendTo('.wrapper');
+                    $('<div class="drop" id="rain-' + i + '"></div>').css("left", getRandomInt(0, 100) + "%").css("top", getRandomInt(-20, 0) + "%").appendTo('.wrapper');
 
                     //Make them drop
                     drop(i);
@@ -332,18 +337,18 @@
 
                 //Make them fall
                 function drop(x) {
-                    $('.drop' + x).animate({
+                    $('#rain-' + x).animate({
                         top: "100%",
-                    }, 1000, function () {
+                    }, getRandomInt(250, 1000), function () {
                         reset(x);
                     });
                 }
 
                 //Once they have fallen reset and put them at the top and into random positions
                 function reset(x) {
-                    $('.drop' + x).animate({
-                        "top": "0px",
-                        "left": "300px"
+                    $('#rain-' + x).animate({
+                        "top": getRandomInt(-50, 0) + "%",
+                        "left": getRandomInt(0, 100) + "%"
                     }, 0, function () {
                         //Check if they should be reset
                         if (showEffect) {
@@ -351,7 +356,7 @@
                             drop(x);
                         } else {
                             //Remove them if they are not needed
-                            $('.drop' + x).remove();
+                            $('#rain-' + x).remove();
                         }
                     });
                 }
@@ -389,8 +394,8 @@
                     ($('<div class="confetti-' + i + ' ' + colour + '"></div>').css({
                         "width": width + "px",
                         "height": height + "px",
-                        "top": -Math.random() * 20 + "%",
-                        "left": Math.random() * 100 + "%",
+                        "top": -getRandomInt(0, 20) + "%",
+                        "left": getRandomInt(0, 100) + "%",
                         "opacity": Math.random() + 0.5,
                         "transform": "rotate(" + Math.random() * 360 + "deg)"
                     }).appendTo('.wrapper'));
@@ -403,7 +408,7 @@
                 function drop(x) {
                     $('.confetti-' + x).animate({
                         top: "100%",
-                        left: "+=" + Math.random() * 15 + "%"
+                        left: "+=" + getRandomInt(0, 15) + "%"
                     }, Math.random() * 3000 + 3000, function () {
                         reset(x);
                     });
@@ -412,8 +417,8 @@
                 //Once they have fallen reset and put them at the top
                 function reset(x) {
                     $('.confetti-' + x).animate({
-                        "top": -Math.random() * 20 + "%",
-                        "left": "-=" + Math.random() * 15 + "%"
+                        "top": -getRandomInt(0, 20) + "%",
+                        "left": "-=" + getRandomInt(0, 15) + "%"
                     }, 0, function () {
                         //Check if they should be reset
                         if (showEffect) {
@@ -426,9 +431,6 @@
                     });
                 }
             }
-
-            // Open a connection to the server hub
-            $.connection.hub.logging = true; // Enable client side logging
 
             //When the start search button is pressed
             btnPlay.click(function () {
@@ -511,7 +513,7 @@
                     It's a draw, both of you both suck...
                 </div>
                 <div id="altLose" class="alert alert-warning" role="alert">
-                    Not surprising, you lost...
+                    Not surprising, you lost. Queue the sad music and pathetic fallacy.
                 </div>
                 <div id="altAfkLose" class="alert alert-warning" role="alert">
                     You took too long to make a move...

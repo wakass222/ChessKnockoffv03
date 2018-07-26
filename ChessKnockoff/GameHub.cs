@@ -49,7 +49,7 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.</returns>
         public async Task FindGame()
         {
-            //In case the user has removed their cookie, then do nothing
+            //In case the user has removed their cookie, then do nothing so an error is not thrown when getting their username
             if (Context.User.Identity.IsAuthenticated)
             {
                 //Create a player connection object to store related connection data

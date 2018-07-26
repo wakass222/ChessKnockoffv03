@@ -7,11 +7,11 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
-    public partial class WebForm6 : System.Web.UI.Page
+    /// <summary>
+    /// Class for the default page
+    /// </summary>
+    public partial class DefaultForm : System.Web.UI.Page
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            
-        }
+
     }
 }

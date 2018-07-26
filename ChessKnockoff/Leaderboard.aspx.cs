@@ -68,7 +68,7 @@ namespace ChessKnockoff
                     foreach (DbDataRecord row in reader)
                     {
                         //If it is the same person
-                        if (row["Username"].ToString() == Session["Username"].ToString())
+                        if (row["Username"].ToString() == currentUsername)
                         {
                             //Show speacial css
                             playerInTopTen = true;
@@ -96,7 +96,7 @@ namespace ChessKnockoff
                         connection.Open();
 
                         //Add the parameter
-                        command.Parameters.AddWithValue("@Username", Session["Username"]);
+                        command.Parameters.AddWithValue("@Username", currentUsername);
 
                         //Execute the command
                         SqlDataReader reader = command.ExecuteReader();

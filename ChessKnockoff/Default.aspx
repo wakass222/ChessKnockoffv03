@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNavNoLogo.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ChessKnockoff.WebForm6" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNavNoLogo.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ChessKnockoff.DefaultForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavNoLogo" runat="server">
     <script type="text/javascript">
         //Once the DOM has fully loaded

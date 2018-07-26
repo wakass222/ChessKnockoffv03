@@ -19,8 +19,10 @@ namespace ChessKnockoff.Models
         /// <param name="secondPlayer">The second player to join the game.</param>
         public Game(playerConnection firstPlayer, playerConnection secondPlayer)
         {
+            //Store the players
             this.firstPlayer = firstPlayer;
             this.secondPlayer = secondPlayer;
+
             //Create a unique identifier for the game
             this.Id = Guid.NewGuid().ToString("d");
             this.Board = new ChessGame();

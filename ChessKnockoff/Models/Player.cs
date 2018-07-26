@@ -7,6 +7,9 @@ using System.Security.Principal;
 
 namespace ChessKnockoff.Models
 {
+    /// <summary>
+    /// Class that stores the player and other connection information
+    /// </summary>
     public class playerConnection
     {
         /// <summary>

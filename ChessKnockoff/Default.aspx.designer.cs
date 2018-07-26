@@ -11,7 +11,7 @@ namespace ChessKnockoff
 {
 
 
-    public partial class WebForm6
+    public partial class DefaultForm
     {
     }
 }

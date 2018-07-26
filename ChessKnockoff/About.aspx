@@ -39,7 +39,7 @@
                 <p>The Pawns wins by checkmating the King of the Pieces. Pawns on the first rank may move two squares, similar to Pawns on the second rank. However, Pawns of the Pieces may not capture Pawns on the first rank that has moved two squares, as it is not a valid en passant capture.</p>
             </div>
             <div class="row justify-content-center">
-                <p>But now with an ELO ranking system so you can realise how bad you are!</p>
+                <p>But now with a logistic ELO ranking system so you can realise how bad you are!</p>
             </div>
         </div>
     </div>
