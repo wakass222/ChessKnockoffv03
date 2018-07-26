@@ -156,7 +156,7 @@ namespace ChessKnockoff
 
             //Always return the position even if it is not valid so that the piece returns to its original position on the client
             this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), playerEnumToString(game.Board.WhoseTurn));
-            
+
             //If either player has stalemated
             if (game.Board.IsStalemated(playerMakingTurn.side))
             {
@@ -169,7 +169,7 @@ namespace ChessKnockoff
                 // Remove the game (in any game over scenario) to reclaim resources
                 GameState.Instance.RemoveGame(game.Id);
             }
-            else if (game.Board.IsCheckmated(opponent.side)) //Check if there is a winner
+            else if (game.Board.IsWinner(playerMakingTurn.side)) //Check if there is a winner
             {
                 //Update both players' ELO, in which the player making the turn won
                 GameState.Instance.updateELO(playerMakingTurn.Username, opponent.Username, 1);
