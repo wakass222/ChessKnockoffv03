@@ -24,7 +24,7 @@ namespace ChessKnockoff
         /// <summary>
         /// Stores the database connection string and can not be altered
         /// </summary>
-        public static string dbConnectionString { get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=True";
+        public static string dbConnectionString { get; } = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\Database.mdf;Integrated Security=False;User ID=defaultUser;Password=dw29XA9elhKHkNy7oxJj6eTevmuZyI3gE1jOiSO2D1N60MXXU7l7Trdq8cy6Y9KI3qWgNoxggWr8PPUt";
 
         //User information is made as a property of the page to assist in code changes
 

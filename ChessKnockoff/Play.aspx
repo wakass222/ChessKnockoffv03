@@ -324,31 +324,26 @@
                 //Create the rain elements 
                 function create(i) {
                     //Create the actual rain in the div of wrapper
-                    $('<div class="drop" id="drop' + i + '"></div>').css("left", getRandomInt(0, 1600)).css("top", getRandomInt(-1000, 1400)).appendTo('.wrapper');
+                    $('<div class="drop" id="drop' + i + '"></div>').css("left", "323px").css("top", "0px").appendTo('.wrapper');
 
                     //Make them drop
                     drop(i);
                 }
 
-                //Generate a random number between a range
-                function getRandomInt(min, max) {
-                    return Math.floor(Math.random() * (max - min + 1)) + min;
-                }
-
-                //Make them fall at different positions
+                //Make them fall
                 function drop(x) {
                     $('.drop' + x).animate({
-                        bottom: "0px",
-                    }, 63, function () {
+                        top: "100%",
+                    }, 1000, function () {
                         reset(x);
                     });
                 }
 
-                //Once they have fallen reset and put them at the top
+                //Once they have fallen reset and put them at the top and into random positions
                 function reset(x) {
                     $('.drop' + x).animate({
-                        "top": getRandomInt(-1000, 1400),
-                        "left": getRandomInt(0, 1600)
+                        "top": "0px",
+                        "left": "300px"
                     }, 0, function () {
                         //Check if they should be reset
                         if (showEffect) {

@@ -49,65 +49,68 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.</returns>
         public async Task FindGame()
         {
-            //Create a player connection object to store related connection data
-            playerConnection joiningPlayer = new playerConnection(Context.User.Identity.Name, this.Context.ConnectionId);
-            
-            //Check if the player is already waiting or in game from another client to avoid pairing
-            if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
+            //In case the user has removed their cookie, then do nothing
+            if (Context.User.Identity.IsAuthenticated)
             {
-                //Inform the client that they are already playing
-                Clients.Caller.AlreadyPlaying();
-            }             
-            else if (!GameState.Instance.isThereWaitingOpponent()) //Check if the player is already waiting
-            {
-                // No waiting players so enter the waiting pool
-                GameState.Instance.AddToWaitingPool(joiningPlayer);
-                Clients.Caller.InQueue();
-            }
-            else
-            {
-                // Find any pending games if any
-                playerConnection opponent = GameState.Instance.GetWaitingOpponent();
+                //Create a player connection object to store related connection data
+                playerConnection joiningPlayer = new playerConnection(Context.User.Identity.Name, this.Context.ConnectionId);
 
-                //Create a new random object
-                Random rand = new Random();
-                bool randomBool = rand.Next(0, 2) == 0;
-
-                // An opponent was found so make a new game
-                Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
-
-                //Make sure to HTML encode both players' username
-                string opponentUsername = HttpUtility.HtmlEncode(opponent.Username);
-                string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.Username);
-
-                //Hold the fen string for the new game
-                string fenString = newGame.Board.GetFen();
-
-                //Randomly assign the side the player is playing on
-                if (randomBool)
+                //Check if the player is already waiting or in game from another client to avoid pairing
+                if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
                 {
-                    //Set the respective players side
-                    joiningPlayer.side = Player.Black;
-                    opponent.side = Player.White;
-
-                    //The joining client
-                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "black");
-                    //The opponent client
-                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "white");
+                    //Inform the client that they are already playing
+                    Clients.Caller.AlreadyPlaying();
+                }
+                else if (!GameState.Instance.isThereWaitingOpponent()) //Check if the player is already waiting
+                {
+                    // No waiting players so enter the waiting pool
+                    GameState.Instance.AddToWaitingPool(joiningPlayer);
+                    Clients.Caller.InQueue();
                 }
                 else
                 {
-                    //Set the respective players side
-                    joiningPlayer.side = Player.White;
-                    opponent.side = Player.Black;
+                    // Find any pending games if any
+                    playerConnection opponent = GameState.Instance.GetWaitingOpponent();
 
-                    //The joining client
-                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "white");
-                    //The opponent client
-                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
+                    //Create a new random object
+                    Random rand = new Random();
+                    bool randomBool = rand.Next(0, 2) == 0;
+
+                    // An opponent was found so make a new game
+                    Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
+
+                    //Make sure to HTML encode both players' username
+                    string opponentUsername = HttpUtility.HtmlEncode(opponent.Username);
+                    string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.Username);
+
+                    //Hold the fen string for the new game
+                    string fenString = newGame.Board.GetFen();
+
+                    //Randomly assign the side the player is playing on
+                    if (randomBool)
+                    {
+                        //Set the respective players side
+                        joiningPlayer.side = Player.Black;
+                        opponent.side = Player.White;
+
+                        //The joining client
+                        Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "black");
+                        //The opponent client
+                        Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "white");
+                    }
+                    else
+                    {
+                        //Set the respective players side
+                        joiningPlayer.side = Player.White;
+                        opponent.side = Player.Black;
+
+                        //The joining client
+                        Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "white");
+                        //The opponent client
+                        Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
+                    }
                 }
             }
-
         }
 
         /// <summary>
