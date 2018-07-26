@@ -164,15 +164,15 @@ namespace ChessKnockoff
                 int playerTwoElo = (int)commandSelect.ExecuteScalar();
 
                 //Calculate the different between them
-                int eloDifference = playerTwoElo - playerOneElo;
+                double eloDifference = playerTwoElo - playerOneElo;
 
                 //Calculate the odds of player one would win
                 //A cast has to be used so there is enough precision
-                double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, (double)eloDifference / (double)400));
+                double expectationOfPlayerOne = 1 / (1 + Math.Pow(10, eloDifference / 400));
 
                 //Calculate how much to update the ELO by
                 //K-factor of 20 is used
-                int updateValue = Convert.ToInt32(20 * (resultOfPlayerOne - expectationOfPlayerOne));
+                int updateValue = Convert.ToInt32((double)20 * ((double)resultOfPlayerOne - expectationOfPlayerOne));
 
                 //ELO is a zero sum game, the amount lost is equivalent to the amount gained
                 playerOneElo += updateValue;

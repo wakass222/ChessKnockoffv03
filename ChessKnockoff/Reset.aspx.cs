@@ -30,25 +30,25 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="tokenID">The token from the url</param>
         /// <returns>Returns true if the token is correct else returns false</returns>
-        public bool isResetTokenCorrect(string token)
+        public bool isResetTokenCorrect(byte[] token)
         {
             //Finds the reset token and the associated user
             string queryString = "SELECT * FROM Reset INNER JOIN Player ON Reset.Username = Player.Username AND ResetToken=@ResetToken";
 
             //Create the database connection and command then dispose when done
-            using (SqlConnection connection = new SqlConnection(dbConnectionString))
-            using (SqlCommand sqlCommand = new SqlCommand(queryString, connection))
+            using (SqlConnection connectionSelect = new SqlConnection(dbConnectionString))
+            using (SqlCommand commandSelect = new SqlCommand(queryString, connectionSelect))
             {
                 //Open the database connection
-                connection.Open();
+                connectionSelect.Open();
 
                 try
                 {
                     //Add the sql parameter
-                    sqlCommand.Parameters.AddWithValue("@ResetToken", HttpServerUtility.UrlTokenDecode(token));
+                    commandSelect.Parameters.AddWithValue("@ResetToken", token);
 
                     //Execute the sql command
-                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    using (SqlDataReader reader = commandSelect.ExecuteReader())
                     {
                         //If the reader has rows then the token is correct
                         if (reader.HasRows)
@@ -57,7 +57,7 @@ namespace ChessKnockoff
                             reader.Read();
 
                             //Check if it has not expired
-                            if ((DateTime)reader["ExpirationDateUTC"] < DateTime.UtcNow)
+                            if ((DateTime)reader["ExpirationDateUTC"] > DateTime.UtcNow)
                             {
                                 return true;
                             }
@@ -70,7 +70,7 @@ namespace ChessKnockoff
 
                                 //Create the database connection and command then dispose when done
                                 using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
-                                using (SqlCommand commandDelete = new SqlCommand(queryString, connection))
+                                using (SqlCommand commandDelete = new SqlCommand(queryString, connectionDelete))
                                 {
                                     //Open the database connection
                                     connectionDelete.Open();
@@ -81,7 +81,6 @@ namespace ChessKnockoff
                                     //Execute the statement
                                     commandDelete.ExecuteNonQuery();
                                 }
-
                                 return false;
                             }
                         }
@@ -112,7 +111,7 @@ namespace ChessKnockoff
             if (IsValid && Request.QueryString["ResetToken"] != null)
             {
                 //Get the reset code in a string
-                string code = Request.QueryString["ResetToken"];
+                byte[] code = HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]);
 
                 //Re-check the reset token in case it was altered
                 if (isResetTokenCorrect(code))
@@ -155,7 +154,7 @@ namespace ChessKnockoff
                             //Add the parameters to the command
                             command.Parameters.AddWithValue("@Salt", newSalt);
                             command.Parameters.AddWithValue("@Password", newSaltedHash);
-                            command.Parameters.AddWithValue("@ResetToken", HttpServerUtility.UrlTokenDecode(code));
+                            command.Parameters.AddWithValue("@ResetToken", code);
 
                             //Execute the statement
                             rowsAffected = command.ExecuteNonQuery();
@@ -172,7 +171,7 @@ namespace ChessKnockoff
                             connection.Open();
 
                             //Add the parameters to the command
-                            command.Parameters.AddWithValue("@ResetToken", HttpServerUtility.UrlTokenDecode(code));
+                            command.Parameters.AddWithValue("@ResetToken", code);
 
                             //Execute the statement
                             command.ExecuteNonQuery();
@@ -181,6 +180,10 @@ namespace ChessKnockoff
                         //Redirect to the login page and show the success message
                         Response.Redirect("~/Login?ResetPassword=1");
                     }
+                } else
+                {
+                    //The code is incorrect or expired so redirect them
+                    Response.Redirect("~/Login");
                 }
             }
         }
@@ -195,11 +198,8 @@ namespace ChessKnockoff
             //Hide the error message
             altError.Visible = false;
 
-            //Get the reset code
-            string code = Request.QueryString["ResetToken"];
-
             //Check if the reset code is valid
-            bool isValid = isResetTokenCorrect(code);
+            bool isValid = isResetTokenCorrect(HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]));
 
             //Check if the code is invalid
             if (!isValid)

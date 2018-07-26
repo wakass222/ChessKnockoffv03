@@ -145,7 +145,7 @@ namespace ChessKnockoff
                         connectionDelete.Open();
 
                         //Add the parameters
-                        commandDelete.Parameters.AddWithValue("@ResetToken", newResetToken);
+                        commandDelete.Parameters.AddWithValue("@Username", username);
 
                         //Execute the command
                         commandDelete.ExecuteNonQuery();
