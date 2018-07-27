@@ -189,11 +189,6 @@
 
             //Function to setup the game
             gameHubProxy.client.start = function (fenString, opponentUsername, side) {
-                resetView(fenString, false, true);
-
-                //Display the opponent's username
-                hedTitle.html(opponentUsername);
-
                 //Turn off the loading visual
                 clearTimeout(randomMoveTimer);
 
@@ -205,6 +200,9 @@
                 gameData.opponentUsername = opponentUsername;
 
                 resetView(fenString, false, true);
+
+                //Display the opponent's username
+                hedTitle.html(opponentUsername);
 
                 //Show the message
                 msgTurn.show();
