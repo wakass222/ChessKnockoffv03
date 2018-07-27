@@ -20,28 +20,26 @@ namespace ChessKnockoff
     public class GameState
     {
         /// <summary>
-        /// Singleton instance that defers initialization until access time. 
-        /// Also removes the need for locks or checks in order to be thread safe.
+        /// Holds the singleton instance
+        /// Also removes the need for locks or checks in order to be thread safe
         /// </summary>
         private readonly static Lazy<GameState> instance =
             new Lazy<GameState>(() => new GameState(GlobalHost.ConnectionManager.GetHubContext<GameHub>()));
 
         /// <summary>
-        /// A reference to all players. Key is the unique ID of the player.
-        /// Note that this collection is concurrent to handle multiple threads.
+        /// Holds all the players. Key is their connection string
         /// </summary>
         private readonly ConcurrentDictionary<string, playerConnection> players =
             new ConcurrentDictionary<string, playerConnection>();
 
         /// <summary>
-        /// A reference to all games. Key is the group name of the game.
-        /// Note that this collection uses a concurrent dictionary to handle multiple threads.
+        /// Holds all the games. Key is the game id
         /// </summary>
         private readonly ConcurrentDictionary<string, Game> games =
             new ConcurrentDictionary<string, Game>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// A dictionary of players that are waiting for an opponent.
+        /// A dictionary of players that are waiting for an opponent
         /// </summary>
         private readonly ConcurrentDictionary<string, playerConnection> waitingPlayers =
             new ConcurrentDictionary<string, playerConnection>();

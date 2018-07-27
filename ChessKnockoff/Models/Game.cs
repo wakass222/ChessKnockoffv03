@@ -10,6 +10,9 @@ using System.Timers;
 
 namespace ChessKnockoff.Models
 {
+    /// <summary>
+    /// Class to store the game
+    /// </summary>
     public class Game
     {
         /// <summary>
