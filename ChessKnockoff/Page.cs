@@ -255,11 +255,12 @@ namespace ChessKnockoff
         /// <param name="args">Arguments from the validation call</param>
         protected void validateEmail(object source, ServerValidateEventArgs args)
         {
-            //Will only return true if the email has not been taken and is valid, also checks its length
+            //Will only return true if the email has not been taken and is valid
             Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", RegexOptions.IgnoreCase);
             bool regexEmailResult = regexEmail.IsMatch(args.Value);
 
-            if (regexEmailResult)
+            //Also check the email length
+            if (regexEmailResult && args.Value.Length <= 256)
             {
                 args.IsValid = true;
             }
