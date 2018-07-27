@@ -33,7 +33,7 @@
             <input id="inpRePassword" required="" type="password" class="form-control" placeholder="Password" runat="server" />
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>
-        <div id="altPassword" class="alert alert-danger" runat="server">
+        <div id="altPasswordFeedback" class="alert alert-danger" runat="server">
         </div>
         <div class="form-group">
             <asp:Button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" enableviewstate="False" validationgroup="grpRegister" Text="Register" OnClick="RegisterClick" />

@@ -41,19 +41,11 @@ namespace ChessKnockoff
                 //Show an error if it is not correct
                 if (validPasswordResult != "")
                 {
-                    altError.Visible = true;
-                    altError.InnerText = validPasswordResult;
-                } else
+                    altPasswordFeedback.Visible = true;
+                    altPasswordFeedback.InnerText = validPasswordResult;
+                }
+                else
                 {
-
-                    //Create a byte array to store the salt
-                    byte[] newSalt = new byte[20];
-                    //Fill the array with the salt
-                    fillByteRandom(newSalt);
-
-                    //Hash the new password with the salt
-                    byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
-
                     string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
                     //Hash the user's current password
@@ -76,6 +68,14 @@ namespace ChessKnockoff
                             //Get the values from the query
                             byte[] oldHash = (byte[])reader["Password"];
                             byte[] oldSalt = (byte[])reader["Salt"];
+
+                            //Create a byte array to store the salt
+                            byte[] newSalt = new byte[20];
+                            //Fill the array with the salt
+                            fillByteRandom(newSalt);
+
+                            //Hash the new password with the salt
+                            byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
 
                             //Check if they match
                             if (generateSaltedHash(inpCurrentPassword.Value, oldSalt).SequenceEqual(oldHash))
@@ -107,8 +107,7 @@ namespace ChessKnockoff
                             else
                             {
                                 //Show that it did not work
-                                altError.Visible = true;
-                                altError.InnerText = "Your current password is not correct.";
+                                altCurrent.Visible = true;
                             }
                         }
                     }
@@ -126,8 +125,9 @@ namespace ChessKnockoff
             //Activate the current link
             activateNav("likAccount");
 
-            //Hide the error message
-            altError.Visible = false;
+            //Hide the messages
+            altPasswordFeedback.Visible = false;
+            altCurrent.Visible = false;
             altSuccess.Visible = false;
         }
     }

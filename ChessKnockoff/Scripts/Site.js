@@ -27,17 +27,19 @@ function checkPasswordMatch() {
         return false;
     }
 }
+
 //Checks whether the email is valid
 function checkEmailRule() {
     //Get element
     var inpEmail = $(inpEmailID);
     //Create regex for email
     var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
-    //Check it against the regex
+    //Check if it is empty
     if (inpEmail.val() === "") {
         inpEmail.removeClass("is-valid is-invalid");
         return false;
-    } else if (emailRegex.test(inpEmail.val()) && inpEmail.val().length <= 320) {
+        //Check it against the regex and its length
+    } else if (emailRegex.test(inpEmail.val()) && inpEmail.val().length <= 256) {
         //Show success
         inpEmail.addClass("is-valid");
         inpEmail.removeClass("is-invalid");
@@ -56,10 +58,12 @@ function checkUsernameRule() {
     var inpUsername = $(inpUsernameID);
     //Create regex for alphanumeric characters only
     var usernameRegex = /^[a-z0-9]+$/i;
+
+    //If the field is empty show them no extra styling
     if (inpUsername.val() === "") {
-        //If the field is empty show them no extra styling
         inpUsername.removeClass("is-valid is-invalid");
         return false;
+    //Check it agains the regex and the required length
     } else if (usernameRegex.test(inpUsername.val()) && inpUsername.val().length <= 25) {
         //Show success
         inpUsername.addClass("is-valid");
@@ -101,8 +105,6 @@ function wrappedEmail(sender, args) {
 //Create function to add the validation check if it exists on the page
 function addValidation(control, validationFunction) {
     if (control.length > 0) {
-        validationFunction();
-
         //Assign the functions to their respective keyup events so that it will immediately
         //Add the error class to the input and notify the user
         control.keyup(function () {

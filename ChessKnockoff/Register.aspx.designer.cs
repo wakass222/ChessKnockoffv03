@@ -112,13 +112,13 @@ namespace ChessKnockoff {
         protected global::System.Web.UI.HtmlControls.HtmlInputPassword inpRePassword;
         
         /// <summary>
-        /// altPassword control.
+        /// altPasswordFeedback control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altPassword;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl altPasswordFeedback;
         
         /// <summary>
         /// btnSubmitRegister control.

@@ -195,7 +195,7 @@ namespace ChessKnockoff
             activateNav("likRegister");
 
             //Hide errors as the viewstate is not saved
-            altPassword.Visible = false;
+            altPasswordFeedback.Visible = false;
             altEmailTaken.Visible = false;
             altUsernameTaken.Visible = false;
             altError.Visible = false;
@@ -218,9 +218,9 @@ namespace ChessKnockoff
                 if (passwordResult != "")
                 {
                     //Make sure the alert gets rendered
-                    altPassword.Visible = true;
+                    altPasswordFeedback.Visible = true;
                     //Set the text
-                    altPassword.InnerText = passwordResult;
+                    altPasswordFeedback.InnerText = passwordResult;
                 }
 
                 //Check if the email is taken
