@@ -26,7 +26,8 @@ namespace ChessKnockoff
             {
                 //Return black
                 return "black";
-            } else
+            }
+            else
             {
                 //Else return white if they are not black
                 return "white";
@@ -49,66 +50,63 @@ namespace ChessKnockoff
         /// <returns>A Task to track the asynchronous method execution.</returns>
         public async Task FindGame()
         {
-            //In case the user has removed their cookie, then do nothing so an error is not thrown when getting their username
-            if (Context.User.Identity.IsAuthenticated)
-            {
-                //Create a player connection object to store related connection data
-                playerConnection joiningPlayer = new playerConnection(Context.User.Identity.Name, this.Context.ConnectionId);
+            //Even if the user has removed their cookie, it still knows their identity
+            //Create a player connection object to store related connection data
+            playerConnection joiningPlayer = new playerConnection(Context.User.Identity.Name, this.Context.ConnectionId);
 
-                //Check if the player is already waiting or in game from another client to avoid pairing
-                if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
+            //Check if the player is already waiting or in game from another client to avoid pairing
+            if (GameState.Instance.playerAlreadyExists(joiningPlayer.Username))
+            {
+                //Inform the client that they are already playing
+                Clients.Caller.AlreadyPlaying();
+            }
+            else if (!GameState.Instance.isThereWaitingOpponent()) //Check if the player is already waiting
+            {
+                // No waiting players so enter the waiting pool
+                GameState.Instance.AddToWaitingPool(joiningPlayer);
+                Clients.Caller.InQueue();
+            }
+            else
+            {
+                // Find any pending games if any
+                playerConnection opponent = GameState.Instance.GetWaitingOpponent();
+
+                //Create a new random object
+                Random rand = new Random();
+                bool randomBool = rand.Next(0, 2) == 0;
+
+                // An opponent was found so make a new game
+                Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
+
+                //Make sure to HTML encode both players' username
+                string opponentUsername = HttpUtility.HtmlEncode(opponent.Username);
+                string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.Username);
+
+                //Hold the fen string for the new game
+                string fenString = newGame.Board.GetFen();
+
+                //Randomly assign the side the player is playing on
+                if (randomBool)
                 {
-                    //Inform the client that they are already playing
-                    Clients.Caller.AlreadyPlaying();
-                }
-                else if (!GameState.Instance.isThereWaitingOpponent()) //Check if the player is already waiting
-                {
-                    // No waiting players so enter the waiting pool
-                    GameState.Instance.AddToWaitingPool(joiningPlayer);
-                    Clients.Caller.InQueue();
+                    //Set the respective players side
+                    joiningPlayer.side = Player.Black;
+                    opponent.side = Player.White;
+
+                    //The joining client
+                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "black");
+                    //The opponent client
+                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "white");
                 }
                 else
                 {
-                    // Find any pending games if any
-                    playerConnection opponent = GameState.Instance.GetWaitingOpponent();
+                    //Set the respective players side
+                    joiningPlayer.side = Player.White;
+                    opponent.side = Player.Black;
 
-                    //Create a new random object
-                    Random rand = new Random();
-                    bool randomBool = rand.Next(0, 2) == 0;
-
-                    // An opponent was found so make a new game
-                    Game newGame = await GameState.Instance.CreateGame(opponent, joiningPlayer);
-
-                    //Make sure to HTML encode both players' username
-                    string opponentUsername = HttpUtility.HtmlEncode(opponent.Username);
-                    string joiningPlayerUsername = HttpUtility.HtmlEncode(joiningPlayer.Username);
-
-                    //Hold the fen string for the new game
-                    string fenString = newGame.Board.GetFen();
-
-                    //Randomly assign the side the player is playing on
-                    if (randomBool)
-                    {
-                        //Set the respective players side
-                        joiningPlayer.side = Player.Black;
-                        opponent.side = Player.White;
-
-                        //The joining client
-                        Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "black");
-                        //The opponent client
-                        Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "white");
-                    }
-                    else
-                    {
-                        //Set the respective players side
-                        joiningPlayer.side = Player.White;
-                        opponent.side = Player.Black;
-
-                        //The joining client
-                        Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "white");
-                        //The opponent client
-                        Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
-                    }
+                    //The joining client
+                    Clients.Client(this.Context.ConnectionId).Start(fenString, opponentUsername, "white");
+                    //The opponent client
+                    Clients.Client(opponent.connectionString).Start(fenString, joiningPlayerUsername, "black");
                 }
             }
         }
@@ -149,7 +147,8 @@ namespace ChessKnockoff
                     //Also stop the final warning timer
                     game.timerFinal.Stop();
                 }
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 //Do nothing with the exception
             }
@@ -201,20 +200,12 @@ namespace ChessKnockoff
                 //Get the game of the leaving player
                 playerConnection opponent;
                 Game ongoingGame = GameState.Instance.GetGame(leavingPlayer, out opponent);
-                
+
                 //If there was a game
                 if (ongoingGame != null)
                 {
                     //Display that the opponent left to the client
                     this.Clients.Group(ongoingGame.Id).opponentLeft();
-
-                    //Stop them to prevent any more execution
-                    ongoingGame.timerWarning.Stop();
-                    ongoingGame.timerFinal.Stop();
-
-                    //Remove the afk timers since they are not needed
-                    ongoingGame.timerWarning.Dispose();
-                    ongoingGame.timerFinal.Dispose();
 
                     //Also count as a loss for the opponent
                     GameState.Instance.updateELO(leavingPlayer.Username, opponent.Username, 0);

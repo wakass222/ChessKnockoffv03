@@ -42,59 +42,55 @@ namespace ChessKnockoff
                 //Open the database connection
                 connectionSelect.Open();
 
-                try
+                //Add the sql parameter
+                commandSelect.Parameters.AddWithValue("@ResetToken", token);
+
+                //Execute the sql command
+                using (SqlDataReader reader = commandSelect.ExecuteReader())
                 {
-                    //Add the sql parameter
-                    commandSelect.Parameters.AddWithValue("@ResetToken", token);
-
-                    //Execute the sql command
-                    using (SqlDataReader reader = commandSelect.ExecuteReader())
+                    //If the reader has rows then the token is correct
+                    if (reader.HasRows)
                     {
-                        //If the reader has rows then the token is correct
-                        if (reader.HasRows)
+                        //Get the values of the first row
+                        reader.Read();
+
+                        //Check if it has not expired
+                        if ((DateTime)reader["ExpirationDateUTC"] > DateTime.UtcNow)
                         {
-                            //Get the values of the first row
-                            reader.Read();
-
-                            //Check if it has not expired
-                            if ((DateTime)reader["ExpirationDateUTC"] > DateTime.UtcNow)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                //Delete it since it is not required
-
-                                //Store a new query string
-                                queryString = "DELETE FROM Reset WHERE ResetToken=@ResetToken";
-
-                                //Create the database connection and command then dispose when done
-                                using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
-                                using (SqlCommand commandDelete = new SqlCommand(queryString, connectionDelete))
-                                {
-                                    //Open the database connection
-                                    connectionDelete.Open();
-
-                                    //Add the parameters to the command
-                                    commandDelete.Parameters.AddWithValue("@ResetToken", token);
-
-                                    //Execute the statement
-                                    commandDelete.ExecuteNonQuery();
-                                }
-                                return false;
-                            }
+                            return true;
                         }
                         else
                         {
-                            //Return false since the reset token is incorrect
+                            //Delete it since it is not required
+
+                            //Store a new query string
+                            queryString = "DELETE FROM Reset WHERE ResetToken=@ResetToken";
+
+                            //Create the database connection and command then dispose when done
+                            using (SqlConnection connectionDelete = new SqlConnection(dbConnectionString))
+                            using (SqlCommand commandDelete = new SqlCommand(queryString, connectionDelete))
+                            {
+                                //Open the database connection
+                                connectionDelete.Open();
+
+                                //Add the parameters to the command
+                                commandDelete.Parameters.AddWithValue("@ResetToken", token);
+
+                                //Execute the statement
+                                commandDelete.ExecuteNonQuery();
+                            }
+
+                            //Redirect the forgot page and show that it has expired
+                            Response.Redirect("~/Forgot?TokenExpired=1");
+
                             return false;
                         }
                     }
-                }
-                catch (Exception)
-                {
-                    //Return false since the token was not in the correct format
-                    return false;
+                    else
+                    {
+                        //Return false since the reset token is incorrect
+                        return false;
+                    }
                 }
             }
         }
@@ -190,8 +186,8 @@ namespace ChessKnockoff
             //Hide the error message
             altError.Visible = false;
 
-            //Check if the reset code is valid
-            bool isValid = isResetTokenCorrect(HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]));
+            //Check if the reset code is valid, must check before hand if it is null to not throw an error
+            bool isValid = Request.QueryString["ResetToken"] != null && isResetTokenCorrect(HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]));
 
             //Check if the code is invalid
             if (!isValid)

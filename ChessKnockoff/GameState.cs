@@ -246,7 +246,15 @@ namespace ChessKnockoff
                 throw new InvalidOperationException("Game not found.");
             }
 
-            // Remove the players, best effort
+            //Stop the afk timers to prevent execution after the game ahs finished
+            foundGame.timerWarning.Stop();
+            foundGame.timerFinal.Stop();
+
+            //Remove the afk timers since they are not needed
+            foundGame.timerWarning.Dispose();
+            foundGame.timerFinal.Dispose();
+
+            // Remove the players
             playerConnection foundPlayer;
             players.TryRemove(foundGame.firstPlayer.connectionString, out foundPlayer);
             players.TryRemove(foundGame.secondPlayer.connectionString, out foundPlayer);

@@ -20,7 +20,7 @@ namespace ChessKnockoff
         /// </summary>
         /// <param name="email">The email of the player</param>
         /// <returns>Returns true if their email is confirmed or false, returns null if user does not exist</returns>
-        public bool? isEmailConfirmedFromEmail(string email)
+        public bool isEmailConfirmedFromEmail(string email)
         {
             //Check if an email is confirmed
             string queryString = "SELECT * FROM Player WHERE Email=@Email";
@@ -47,9 +47,11 @@ namespace ChessKnockoff
                         //Return the result
                         return (bool)reader["EmailIsConfirmed"];
                     }
-
-                    //Return null if no user was found
-                    return null;
+                    else
+                    {
+                        //Return false if no user was found
+                        return false;
+                    }
                 }
             }
         }
@@ -61,15 +63,23 @@ namespace ChessKnockoff
         /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Hide the success message as the viewstate is not saved
+            //Hide the success message
             altEmailSent.Visible = false;
             altEmailFail.Visible = false;
+            altResetExpired.Visible = false;
 
             //If user is already logged in
             if (isAuthenticated)
             {
                 //Redirect them to the play page
                 Response.Redirect("~/Play");
+            }
+
+            //If their token has expired
+            if (Request["TokenExpired"] == "1")
+            {
+                //Show a message
+                altResetExpired.Visible = true;
             }
         }
 

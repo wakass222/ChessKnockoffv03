@@ -1,12 +1,18 @@
 ﻿<%@ Page Title="Forgot" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Forgot.aspx.cs" Inherits="ChessKnockoff.ForgotForm" %>
+
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
     Forgot
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNav" runat="server">
     <div class="inputForm mx-auto">
+        <div class="text-center">
+            <div id="altResetExpired" class="alert alert-danger" runat="server">
+                The reset link has expired.
+            </div>
+        </div>
         <div class="form-group">
-        <label for="email">Email</label>
+            <label for="email">Email</label>
             <asp:CustomValidator ID="valEmail" runat="server" ControlToValidate="inpEmail" ClientValidationFunction="wrappedEmail" Display="None" ValidationGroup="grpForgot" ValidateEmptyText="True" OnServerValidate="validateEmail"></asp:CustomValidator>
             <input type="email" id="inpEmail" class="form-control" placeholder="Email" required autofocus="" runat="server" />
             <div class="invalid-feedback">Email is not valid.</div>
@@ -18,7 +24,7 @@
             That email does not exist or has not been confirmed.
         </div>
         <div class="form-group">
-            <asp:Button id="btnForgotSubmit" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" Text="Submit" ValidationGroup="grpForgot" OnClick="EmailClick" />
+            <asp:Button ID="btnForgotSubmit" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" Text="Submit" ValidationGroup="grpForgot" OnClick="EmailClick" />
         </div>
     </div>
 </asp:Content>

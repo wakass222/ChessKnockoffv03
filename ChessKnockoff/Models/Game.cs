@@ -25,7 +25,7 @@ namespace ChessKnockoff.Models
 
             //Create a unique identifier for the game
             this.Id = Guid.NewGuid().ToString("d");
-            this.Board = new ChessGame();
+            this.Board = new HordeChessGame();
 
             // Link the players to the game as well
             this.firstPlayer.GameId = this.Id;
@@ -116,14 +116,6 @@ namespace ChessKnockoff.Models
                 context.Clients.Client(this.firstPlayer.connectionString).afkWin();
                 context.Clients.Client(this.secondPlayer.connectionString).afkLose();
             }
-
-            //Stop any ongoing timers
-            this.timerWarning.Stop();
-            this.timerFinal.Stop();
-
-            //Get rid of the timers since it is not needed anymore
-            this.timerFinal.Dispose();
-            this.timerWarning.Dispose();
 
             //Remove the game from the list of all current games
             GameState.Instance.RemoveGame(this.Id);
