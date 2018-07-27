@@ -252,6 +252,9 @@ namespace ChessKnockoff
                         //Execute the command
                         SqlDataReader reader = command.ExecuteReader();
 
+                        //Read the first row
+                        reader.Read();
+
                         //Create a URI builder to create the path
                         UriBuilder builder = new UriBuilder();
                         //Set the host
@@ -266,17 +269,12 @@ namespace ChessKnockoff
                         sendEmail(reader["Email"].ToString(), "Confirm email", "Please confirm your email by clicking <a href=\"" + builder.ToString() + "\">here</a>.");
                     }
                 }
-
-                //Check whether the credentials are correct
-                bool credentialCorrect = checkUserCredentials(inpUsername.Value, inpPasswordLogin.Value);
-                if (!credentialCorrect)
+                //Check if the credentials are correct
+                else if(!checkUserCredentials(inpUsername.Value, inpPasswordLogin.Value))
                 {
                     //Show the alert
                     altAuthentication.Visible = true;
-                }
-
-                //Check whether their credentials are correct and their email has been confirmed
-                if (credentialCorrect && emailConfirmed == true)
+                } else
                 {
                     //Set the authentication cookie
                     FormsAuthentication.SetAuthCookie(inpUsername.Value, boxRememberCheck.Checked);
