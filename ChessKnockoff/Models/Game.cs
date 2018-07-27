@@ -25,7 +25,7 @@ namespace ChessKnockoff.Models
 
             //Create a unique identifier for the game
             this.Id = Guid.NewGuid().ToString("d");
-            this.Board = new HordeChessGame();
+            this.Board = new ChessGame();
 
             // Link the players to the game as well
             this.firstPlayer.GameId = this.Id;
