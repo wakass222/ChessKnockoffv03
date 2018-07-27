@@ -140,6 +140,7 @@ namespace ChessKnockoff
             bool regexUsernameResult = regexUsername.IsMatch(args.Value);
 
             //Check if the username only contains alphanumeric values and is 25 characters or less
+            //Uses args to communicate whether it is valid or not
             if (regexUsernameResult && args.Value.Length <= 25)
             {
                 args.IsValid = true;
@@ -236,8 +237,7 @@ namespace ChessKnockoff
             //Check if passwords match
             bool matchResult = passwordValue == passwordValueConfirm;
 
-            //Only returns true if the password both match
-            //Additonal password check is implemented with the identity framework
+            //Uses args to communicate whether it is valid or not
             if (matchResult)
             {
                 args.IsValid = true;
@@ -259,7 +259,8 @@ namespace ChessKnockoff
             Regex regexEmail = new Regex(@"^(([^<>()\[\]\\.,;:\s@]+(\.[^<>()\[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$", RegexOptions.IgnoreCase);
             bool regexEmailResult = regexEmail.IsMatch(args.Value);
 
-            //Also check the email length
+            //Check the email length as well as the regex result
+            //Uses args to communicate whether it is valid or not
             if (regexEmailResult && args.Value.Length <= 256)
             {
                 args.IsValid = true;

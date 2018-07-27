@@ -73,16 +73,19 @@ function checkUsernameRule() {
     }
 }
 
-//Create a wrapper function to returns valid or invalid so that the original function can be called from the clientside validation which does not allow parameters
-function wrapperMatch(sender, args, rule, name, nameConfirm = null) {
-    if (rule(name, nameConfirm)) {
+//Create a wrapper function for the password validation check
+//Required since client validation passes an args object for the client side validation
+//whilst functions are used for a keyup event in Jquery which does not pass args
+function wrapperMatch(sender, args, rule, value, valueConfirm = null) {
+    //Apply the validation and use args to communicate whether it is valid or not
+    if (rule(value, valueConfirm)) {
         args.IsValid = true;
     } else {
         args.IsValid = false;
     }
 }
 
-//Create the wrapped functions that interface with the client validators
+//Create the wrapped functions that interface with the client side validators
 function wrappedUsername(sender, args) {
     wrapperMatch(sender, args, checkUsernameRule, inpUsername);
 }
@@ -95,19 +98,22 @@ function wrappedEmail(sender, args) {
     wrapperMatch(sender, args, checkEmailRule, inpEmail);
 }
 
-//Create function to add the validation check if it exists
+//Create function to add the validation check if it exists on the page
 function addValidation(control, validationFunction) {
     if (control.length > 0) {
         validationFunction();
 
+        //Assign the functions to their respective keyup events so that it will immediately
+        //Add the error class to the input and notify the user
         control.keyup(function () {
             validationFunction();
         });
     }
 }
 
-//Assign the events once the DOM has loaded
+//Once the DOM has loaded
 $(document).ready(function () {
+    //Call the add validation emthod to add the validation to the page
     addValidation($(inpPasswordID).add(inpRePasswordID), checkPasswordMatch);
     addValidation($(inpUsernameID), checkUsernameRule);
     addValidation($(inpEmailID), checkEmailRule);
