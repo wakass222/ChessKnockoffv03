@@ -7,11 +7,11 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// Class for the BaseWithHeader master page
+    /// </summary>
     public partial class BaseWithScripts : System.Web.UI.MasterPage
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
 
-        }
     }
 }

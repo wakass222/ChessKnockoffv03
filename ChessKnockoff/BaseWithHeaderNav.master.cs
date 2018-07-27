@@ -10,8 +10,16 @@ using System.Web.Security;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// Class for the BaseWithHeaderNav master page
+    /// </summary>
     public partial class BaseWithHeaderNav : System.Web.UI.MasterPage
     {
+        /// <summary>
+        /// Called when the log out button is pressed. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Logout_Click(object sender, EventArgs e)
         {
             //Remove the authentication cookie
@@ -21,6 +29,11 @@ namespace ChessKnockoff
             Response.Redirect("~/Login");
         }
 
+        /// <summary>
+        /// Called when the page loads. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is authenticated

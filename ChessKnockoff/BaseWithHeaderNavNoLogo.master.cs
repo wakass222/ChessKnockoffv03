@@ -9,16 +9,16 @@ using System.Web.UI.WebControls;
 
 namespace ChessKnockoff
 {
+    /// <summary>
+    /// Class for the BaseWithHeaderNavNoLogo master page
+    /// </summary>
     public partial class BaseWithHeaderNavNoLogo : System.Web.UI.MasterPage
     {
-        protected void Logout_Click(object sender, EventArgs e)
-        {
-            //Remove the cookie
-            Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            //Redirect to the login page
-            Response.Redirect("~/Login");
-        }
-
+        /// <summary>
+        /// Called when the page loads. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
             //If the user is authenticated
