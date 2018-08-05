@@ -13,6 +13,9 @@ using System.Net.Mail;
 using System.Configuration;
 using System.Text;
 using System.Net;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.Security;
 
 namespace ChessKnockoff
 {
@@ -21,6 +24,20 @@ namespace ChessKnockoff
     /// </summary>
     public class ExtendedPage : System.Web.UI.Page
     {
+        /// <summary>
+        /// Called when the log out button is pressed. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Logout_Click(object sender, EventArgs e)
+        {
+            //Remove the authentication cookie
+            FormsAuthentication.SignOut();
+
+            //Redirect to the login page
+            Response.Redirect("~/Login");
+        }
+
         /// <summary>
         /// Stores the database connection string and can not be altered
         /// </summary>

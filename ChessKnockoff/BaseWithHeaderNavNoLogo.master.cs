@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.Security;
 
 namespace ChessKnockoff
 {
@@ -14,6 +15,20 @@ namespace ChessKnockoff
     /// </summary>
     public partial class BaseWithHeaderNavNoLogo : System.Web.UI.MasterPage
     {
+        /// <summary>
+        /// Called when the log out button is pressed. Should not be called directly.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Logout_Click(object sender, EventArgs e)
+        {
+            //Remove the authentication cookie
+            FormsAuthentication.SignOut();
+
+            //Redirect to the login page
+            Response.Redirect("~/Login");
+        }
+
         /// <summary>
         /// Called when the page loads. Should not be called directly.
         /// </summary>
@@ -29,7 +44,7 @@ namespace ChessKnockoff
                 navLogout.Visible = true;
 
                 //Display the name of the logged in user and escaping any tags
-                txtInfo.InnerText = string.Format(HttpUtility.HtmlEncode(Session["Username"]));
+                txtInfo.InnerText = string.Format(HttpUtility.HtmlEncode(Context.User.Identity.Name));
             }
             else
             {

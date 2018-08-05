@@ -10,7 +10,7 @@ namespace ChessKnockoff
     /// <summary>
     /// Class for the default page
     /// </summary>
-    public partial class DefaultForm : System.Web.UI.Page
+    public partial class DefaultForm : ExtendedPage
     {
 
     }
