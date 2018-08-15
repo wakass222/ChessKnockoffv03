@@ -43,20 +43,25 @@ function checkPasswordRule() {
         inpPassword.add(inpRePassword).removeClass("is-valid is-invalid");
         return false;
     } //Check the password rules
-    else if (inpPassword.val().length <= 6) {
+
+    if (inpPassword.val().length <= 6) {
         errorList += "Password must be larger than 6 characters. ";
     }
-    else if (inpPassword.val().length >= 256) //Check the length of the password
+
+    if (inpPassword.val().length >= 256) //Check the length of the password
     {
         errorList += "Password must be shorter than 256 characters. ";
     }
-    else if (inpPassword.val() == inpPassword.val().toLowerCase()) { //Check if there is an upper case character
+
+    if (inpPassword.val() == inpPassword.val().toLowerCase()) { //Check if there is an upper case character
         errorList += "Password must contain upper case character. ";
     }
-    else if (!/\d/.test(inpPassword.val())) { //Check if there are any numbers
+
+    if (!/\d/.test(inpPassword.val())) { //Check if there are any numbers
         errorList += "Password must contain a number. ";
     }
-    else if (!/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(inpPassword.val())) // //Check for special characters 
+
+    if (!/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(inpPassword.val())) // //Check for special characters 
     {
         errorList += "Password must have a punctuation mark. ";
     }
