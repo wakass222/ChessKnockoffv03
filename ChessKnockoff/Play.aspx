@@ -65,9 +65,6 @@
             //The title element
             var hedTitle = $("#title");
 
-            //The check element
-            var msgCheck = $("#msgCheck");
-
             //The already playing alert
             var altAlreadyPlaying = $("#altAlreadyPlaying");
 
@@ -86,7 +83,6 @@
                 altAfkLose.hide()
                 altAfkWin.hide();
                 altAlreadyPlaying.hide();
-                msgCheck.hide();
             }
 
             //Hide all alerts
@@ -278,16 +274,6 @@
                     showTurn();
                 }
             };
-
-            //The player is in check
-            gameHubProxy.client.isInCheck = function () {
-                msgCheck.show();
-            }
-
-            //The player is in check
-            gameHubProxy.client.notInCheck = function () {
-                msgCheck.hide();
-            }
 
             //The game drawed
             gameHubProxy.client.gameDraw = function () {
@@ -507,11 +493,8 @@
             <div id="board" style="width: 400px">
             </div>
         </div>
-        <div class="row justify-content-center mt-1">
-            <p id="msgTurn" style="width: 400px"></p>
-        </div>
-        <div class="row justify-content-center" id="msgCheck" >
-            <p style="width: 400px">Your king is in check.</p>
+        <div class="row justify-content-center mt-1" >
+            <div id="msgTurn" style="width: 400px"></div>
         </div>
         <div class="row mt-2 justify-content-center">
             <div class="text-center" style="width: 400px">
