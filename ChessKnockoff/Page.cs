@@ -117,6 +117,10 @@ namespace ChessKnockoff
             //Create mail message object
             using (MailMessage mail = new MailMessage())
             {
+                //Get the logo
+                var inLinelogo = new LinkedResource(Server.MapPath("~/logo.png"), "image/png");
+                inLinelogo.ContentId = Guid.NewGuid().ToString();
+
                 //Set the sending email address
                 mail.From = new MailAddress(ConfigurationManager.AppSettings["emailServiceUserName"]);
                 //Set the destination address
@@ -124,7 +128,7 @@ namespace ChessKnockoff
                 //Set the subject
                 mail.Subject = subject;
                 //Set the body
-                mail.Body = message;
+                mail.Body = string.Format("<img src=\"{0}\" /> <p>Hi person of the internet!</p> <p>{1}</p> <b><p>Have a good day!</p></b>", inLinelogo, message);
                 //Make sure the body is rendered as HTML
                 mail.IsBodyHtml = true;
 
