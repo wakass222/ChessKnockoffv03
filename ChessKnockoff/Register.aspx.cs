@@ -195,7 +195,6 @@ namespace ChessKnockoff
             activateNav("likRegister");
 
             //Hide errors as the viewstate is not saved
-            altPasswordFeedback.Visible = false;
             altEmailTaken.Visible = false;
             altUsernameTaken.Visible = false;
             altError.Visible = false;
@@ -211,18 +210,6 @@ namespace ChessKnockoff
             //Check if controls in the group are all valid
             if (IsValid)
             {
-                //If the error list is empty then password is valid else false
-                string passwordResult = validatePassword(inpPassword.Value);
-
-                //If the password is not valid
-                if (passwordResult != "")
-                {
-                    //Make sure the alert gets rendered
-                    altPasswordFeedback.Visible = true;
-                    //Set the text
-                    altPasswordFeedback.InnerText = passwordResult;
-                }
-
                 //Check if the email is taken
                 bool emailTaken = isEmailTaken(inpEmail.Value);
 
@@ -244,7 +231,7 @@ namespace ChessKnockoff
                 }
 
                 //Make sure everything is correct
-                if (!emailTaken && !usernameTaken && passwordResult == "")
+                if (!emailTaken && !usernameTaken)
                 {
                     //Create the account
                     createAccount(inpUsername.Value, inpEmail.Value, inpPassword.Value);

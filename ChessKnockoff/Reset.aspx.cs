@@ -109,70 +109,54 @@ namespace ChessKnockoff
                 //Get the reset code in a string
                 byte[] code = HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]);
 
-                //Store the list of errors
-                string errorList = validatePassword(inpPassword.Value);
+                //Create a byte array to store the salt
+                byte[] newSalt = new byte[20];
+                //Fill the array with the salt
+                fillByteRandom(newSalt);
 
-                //Check error list is empty
-                if (errorList != "")
+                //Hash the new password with the salt
+                byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
+
+                //Updates the user's password
+                string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt FROM Player INNER JOIN Reset ON Player.Username = Reset.Username WHERE Reset.ResetToken = @ResetToken";
+
+                int rowsAffected;
+
+                //Create the database connection and command then dispose when done
+                using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
-                    //Show the error message
-                    altError.Visible = true;
-                    //Show the errors
-                    altError.InnerText = errorList;
+                    //Open the database connection
+                    connection.Open();
+
+                    //Add the parameters to the command
+                    command.Parameters.AddWithValue("@Salt", newSalt);
+                    command.Parameters.AddWithValue("@Password", newSaltedHash);
+                    command.Parameters.AddWithValue("@ResetToken", code);
+
+                    //Execute the statement
+                    rowsAffected = command.ExecuteNonQuery();
                 }
-                else
+
+                //Delete it since it has been used
+                queryString = "DELETE FROM Reset WHERE ResetToken=@ResetToken";
+
+                //Create the database connection and command then dispose when done
+                using (SqlConnection connection = new SqlConnection(dbConnectionString))
+                using (SqlCommand command = new SqlCommand(queryString, connection))
                 {
-                    //There was no error so change the password
+                    //Open the database connection
+                    connection.Open();
 
-                    //Create a byte array to store the salt
-                    byte[] newSalt = new byte[20];
-                    //Fill the array with the salt
-                    fillByteRandom(newSalt);
+                    //Add the parameters to the command
+                    command.Parameters.AddWithValue("@ResetToken", code);
 
-                    //Hash the new password with the salt
-                    byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
-
-                    //Updates the user's password
-                    string queryString = "UPDATE Player SET Password=@Password, Salt=@Salt FROM Player INNER JOIN Reset ON Player.Username = Reset.Username WHERE Reset.ResetToken = @ResetToken";
-
-                    int rowsAffected;
-
-                    //Create the database connection and command then dispose when done
-                    using (SqlConnection connection = new SqlConnection(dbConnectionString))
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        //Open the database connection
-                        connection.Open();
-
-                        //Add the parameters to the command
-                        command.Parameters.AddWithValue("@Salt", newSalt);
-                        command.Parameters.AddWithValue("@Password", newSaltedHash);
-                        command.Parameters.AddWithValue("@ResetToken", code);
-
-                        //Execute the statement
-                        rowsAffected = command.ExecuteNonQuery();
-                    }
-
-                    //Delete it since it has been used
-                    queryString = "DELETE FROM Reset WHERE ResetToken=@ResetToken";
-
-                    //Create the database connection and command then dispose when done
-                    using (SqlConnection connection = new SqlConnection(dbConnectionString))
-                    using (SqlCommand command = new SqlCommand(queryString, connection))
-                    {
-                        //Open the database connection
-                        connection.Open();
-
-                        //Add the parameters to the command
-                        command.Parameters.AddWithValue("@ResetToken", code);
-
-                        //Execute the statement
-                        command.ExecuteNonQuery();
-                    }
-
-                    //Redirect to the login page and show the success message
-                    Response.Redirect("~/Login?ResetPassword=1");
+                    //Execute the statement
+                    command.ExecuteNonQuery();
                 }
+
+                //Redirect to the login page and show the success message
+                Response.Redirect("~/Login?ResetPassword=1");
             }
         }
 
@@ -183,9 +167,6 @@ namespace ChessKnockoff
         /// <param name="e"></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Hide the error message
-            altError.Visible = false;
-
             //Check if the reset code is valid, must check before hand if it is null to not throw an error
             bool isValid = Request.QueryString["ResetToken"] != null && isResetTokenCorrect(HttpServerUtility.UrlTokenDecode(Request.QueryString["ResetToken"]));
 
