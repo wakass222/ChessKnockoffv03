@@ -156,13 +156,13 @@ namespace ChessKnockoff
             //Always return the position even if it is not valid so that the piece returns to its original position on the client
             this.Clients.Group(game.Id).UpdatePosition(game.Board.GetFen(), playerEnumToString(game.Board.WhoseTurn));
 
-            //Check if the black player is in check
-            if (game.Board.IsInCheck(Player.Black) && opponent.side == Player.Black)
+            //Check if the player is in checkmate
+            if (game.Board.IsInCheck(opponent.side))
             {
                 this.Clients.Client(opponent.connectionString).isInCheck();
             } else
             {
-                this.Clients.Group(game.Id).notInCheck();
+                this.Clients.Client(opponent.connectionString).notInCheck();
             }
 
             //If either player has stalemated
