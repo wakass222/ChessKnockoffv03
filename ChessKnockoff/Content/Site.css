@@ -11,9 +11,9 @@ table.table-bordered > tbody > tr > td {
     border: 1px solid black;
 }
 
-/* Make the default font Arial and set the background to a gray */
+/* Make the default font Calibri and set the background to a gray */
 body {
-    font-family: Arial;
+    font-family: Calibri;
     background-color: #f5f5f5;
 }
 
