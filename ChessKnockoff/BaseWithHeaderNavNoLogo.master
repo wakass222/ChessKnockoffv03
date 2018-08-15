@@ -12,7 +12,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item" id="likPLay" runat="server"><a class="nav-link" href="/Play">Play</a></li>
-                    <li class="nav-item" id="likAbout" runat="server"><a class="nav-link" href="/About">About</a></li>
+                    <li class="nav-item" id="likAbout" runat="server"><a class="nav-link" href="/Rules">Rules</a></li>
                     <li class="nav-item" id="likLeaderboard" runat="server"><a class="nav-link" href="/Leaderboard">Leaderboard</a></li>
                     <li class="nav-item" id="likAccount" runat="server"><a class="nav-link" href="/Account">Account</a></li>
                 </ul>

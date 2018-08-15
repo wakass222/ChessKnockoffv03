@@ -275,7 +275,7 @@
     <None Include="Leaderboard.aspx" />
     <Content Include="Play.aspx" />
     <Content Include="BaseWithHeaderNavNoLogo.master" />
-    <Content Include="About.aspx" />
+    <Content Include="Rules.aspx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -422,12 +422,12 @@
     <Compile Include="Play.aspx.designer.cs">
       <DependentUpon>Play.aspx</DependentUpon>
     </Compile>
-    <Compile Include="About.aspx.cs">
-      <DependentUpon>About.aspx</DependentUpon>
+    <Compile Include="Rules.aspx.cs">
+      <DependentUpon>Rules.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="About.aspx.designer.cs">
-      <DependentUpon>About.aspx</DependentUpon>
+    <Compile Include="Rules.aspx.designer.cs">
+      <DependentUpon>Rules.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

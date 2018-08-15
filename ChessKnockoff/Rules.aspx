@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ChessKnockoff.AboutForm" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/BaseWithHeaderNav.master" AutoEventWireup="true" CodeBehind="Rules.aspx.cs" Inherits="ChessKnockoff.AboutForm" %>
 <asp:Content ContentPlaceHolderID="BaseContentWithHeaderNavTitle" runat="server">
     About
 </asp:Content>
