@@ -9,6 +9,7 @@
             <label for="inpPassword">New password</label>
             <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
             <input id="inpPassword" required="" type="password" class="form-control" placeholder="Password" runat="server"/>
+            <div class="invalid-feedback" id="passwordFeedback"></div>
         </div>
         <div class="form-group">
             <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpReset" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
@@ -17,8 +18,6 @@
         </div>
         <div class="form-group">
             <asp:Button id="btnSubmitReset" class="btn btn-primary btn-block" type="submit" runat="server" Text="Change password" ValidationGroup="grpReset" OnClick="ResetPassword" />
-        </div>
-        <div id="altError" class="alert alert-danger" role="alert" runat="server">
         </div>
     </div>
 </asp:Content>

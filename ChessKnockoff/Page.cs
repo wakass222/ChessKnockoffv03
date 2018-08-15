@@ -71,44 +71,40 @@ namespace ChessKnockoff
         /// Validates a password
         /// </summary>
         /// <param name="password">The password to validate</param>
-        /// <returns>A string of errors or "" if there was no error</returns>
-        public string validatePassword(string password)
+        /// <returns>Returns true if the password</returns>
+        public void validatePassword(object source, ServerValidateEventArgs args)
         {
-            //Create a string to store the list of errors
-            string error = "";
+            args.IsValid = true;
 
             //Check if the password is too short
-            if (password.Length <= 6)
+            if (args.Value.Length <= 6)
             {
-                error += "Password must be larger than 6 characters. ";
+                args.IsValid = false;
             }
 
             //Check if the password is not too long
-            if (password.Length >= 256)
+            if (args.Value.Length >= 256)
             {
-                error += "Password must be shorter than 256 characters. ";
+                args.IsValid = false;
             }
 
             //Check if the password contains an upper case letter
-            if (!password.Any(char.IsUpper))
+            if (!args.Value.Any(char.IsUpper))
             {
-                error += "Password must contain upper case character. ";
+                args.IsValid = false;
             }
 
             //Check if the password contains a number
-            if (!password.Any(char.IsNumber))
+            if (!args.Value.Any(char.IsNumber))
             {
-                error += "Password must contain a number. ";
+                args.IsValid = false;
             }
 
             //Check if the password has a punctuation
-            if (!password.Any(char.IsPunctuation))
+            if (!args.Value.Any(char.IsPunctuation))
             {
-                error += "Password must have a punctuation mark. ";
+                args.IsValid = false;
             }
-
-            //Return the error
-            return error;
         }
 
         /// <summary>

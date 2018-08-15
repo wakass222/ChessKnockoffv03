@@ -3,8 +3,9 @@ var inpUsernameID = "#inpUsername";
 var inpPasswordID = "#inpPassword";
 var inpRePasswordID = "#inpRePassword";
 var inpEmailID = "#inpEmail";
+var passwordFeedback = "#passwordFeedback";
 
-//Chekcs whether the passwords match
+//Checks whether the passwords match
 function checkPasswordMatch() {
     //Get elements
     var inpPassword = $(inpPasswordID);
@@ -12,18 +13,67 @@ function checkPasswordMatch() {
     //Password validation is done serverside since it already has a function for that
     if (inpPassword.val() === "") {
         //If there is nothing them show no extra styling
-        inpPassword.add(inpRePassword).removeClass("is-valid is-invalid");
+        inpRePassword.removeClass("is-valid is-invalid");
         return false;
     }
     else if (inpPassword.val() === inpPasswordConfirm.val()) //Check if they match and are not empty
     {
         //Show success
-        inpPassword.add(inpRePassword).addClass("is-valid").removeClass("is-invalid");
+        inpPasswordConfirm.addClass("is-valid").removeClass("is-invalid");
         return true;
     }
     else {
         //Show error if they are not empty
-        inpPassword.add(inpPasswordConfirm).removeClass("is-valid").addClass("is-invalid");
+        inpPasswordConfirm.removeClass("is-valid").addClass("is-invalid");
+        return false;
+    }
+}
+
+//Checks whether the password is valid against the rules
+function checkPasswordRule() {
+    //Get password element
+    var inpPassword = $(inpPasswordID);
+    var fedPassword = $(passwordFeedback);
+
+    //Stores the list of password erros
+    var errorList = "";
+
+    if (inpPassword.val() === "") {
+        //If there is nothing them show no extra styling
+        inpPassword.add(inpRePassword).removeClass("is-valid is-invalid");
+        return false;
+    } //Check the password rules
+    else if (inpPassword.val().length <= 6) {
+        errorList += "Password must be larger than 6 characters. ";
+    }
+    else if (inpPassword.val().length >= 256) //Check the length of the password
+    {
+        errorList += "Password must be shorter than 256 characters. ";
+    }
+    else if (inpPassword.val() == inpPassword.val().toLowerCase()) { //Check if there is an upper case character
+        errorList += "Password must contain upper case character. ";
+    }
+    else if (!/\d/.test(inpPassword.val())) { //Check if there are any numbers
+        errorList += "Password must contain a number. ";
+    }
+    else if (!/[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(inpPassword.val())) // //Check for special characters 
+    {
+        errorList += "Password must have a punctuation mark. ";
+    }
+
+    //Set the innhtml of the feedback to the error list
+    fedPassword.html(errorList);
+
+    //If there was no error
+    if (errorList == "") {
+        //Show success
+        inpPassword.addClass("is-valid").removeClass("is-invalid");
+        return true;
+    }
+    else
+    {
+        //Show error if any of the rules are invalid
+        inpPassword.removeClass("is-valid").addClass("is-invalid");
         return false;
     }
 }
@@ -102,6 +152,10 @@ function wrappedEmail(sender, args) {
     wrapperMatch(sender, args, checkEmailRule, inpEmail);
 }
 
+function wrappedPasswordRule(sender, args) {
+    wrapperMatch(sender, args, checkPasswordMatch, inpPassword);
+}
+
 //Create function to add the validation check if it exists on the page
 function addValidation(control, validationFunction) {
     if (control.length > 0) {
@@ -119,4 +173,5 @@ $(document).ready(function () {
     addValidation($(inpPasswordID).add(inpRePasswordID), checkPasswordMatch);
     addValidation($(inpUsernameID), checkUsernameRule);
     addValidation($(inpEmailID), checkEmailRule);
+    addValidation($(inpPasswordID), checkPasswordRule)
 });
