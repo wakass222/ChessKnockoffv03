@@ -35,63 +35,80 @@ namespace ChessKnockoff
         {
             if (IsValid)
             {
-                string queryString = "SELECT * FROM Player WHERE Username=@Username";
+                //Check the password against the rule
+                string validPasswordResult = validatePassword(inpPassword.Value);
 
-                //Hash the user's current password
-
-                //Create the database connection and command then dispose when done
-                using (SqlConnection connectionSelect = new SqlConnection(dbConnectionString))
-                using (SqlCommand commandSelect = new SqlCommand(queryString, connectionSelect))
+                //Show an error if it is not correct
+                if (validPasswordResult != "")
                 {
-                    //Open the database connection
-                    connectionSelect.Open();
+                    altPasswordFeedback.Visible = true;
+                    altPasswordFeedback.InnerText = validPasswordResult;
+                }
+                else
+                {
+                    string queryString = "SELECT * FROM Player WHERE Username=@Username";
 
-                    //Add the parameters
-                    commandSelect.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
+                    //Hash the user's current password
 
-                    using (SqlDataReader reader = commandSelect.ExecuteReader())
+                    //Create the database connection and command then dispose when done
+                    using (SqlConnection connectionSelect = new SqlConnection(dbConnectionString))
+                    using (SqlCommand commandSelect = new SqlCommand(queryString, connectionSelect))
                     {
-                        //User should exist in order to be able to land on this page
-                        reader.Read();
+                        //Open the database connection
+                        connectionSelect.Open();
 
-                        //Get the values from the query
-                        byte[] oldHash = (byte[])reader["Password"];
-                        byte[] oldSalt = (byte[])reader["Salt"];
+                        //Add the parameters
+                        commandSelect.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
 
-                        //Create a byte array to store the salt
-                        byte[] newSalt = new byte[20];
-                        //Fill the array with the salt
-                        fillByteRandom(newSalt);
-
-                        //Hash the new password with the salt
-                        byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
-
-                        //Check if they match
-                        if (generateSaltedHash(inpCurrentPassword.Value, oldSalt).SequenceEqual(oldHash))
+                        using (SqlDataReader reader = commandSelect.ExecuteReader())
                         {
-                            //Updates the user's password
-                            queryString = "UPDATE Player SET Password=@Password, Salt=@Salt WHERE Username=@Username";
+                            //User should exist in order to be able to land on this page
+                            reader.Read();
 
-                            //Stores how many rows were affected
-                            int rowsAffected;
+                            //Get the values from the query
+                            byte[] oldHash = (byte[])reader["Password"];
+                            byte[] oldSalt = (byte[])reader["Salt"];
 
-                            //Create the database connection and command then dispose when done
-                            using (SqlConnection connectionUpdate = new SqlConnection(dbConnectionString))
-                            using (SqlCommand commandUpdate = new SqlCommand(queryString, connectionUpdate))
+                            //Create a byte array to store the salt
+                            byte[] newSalt = new byte[20];
+                            //Fill the array with the salt
+                            fillByteRandom(newSalt);
+
+                            //Hash the new password with the salt
+                            byte[] newSaltedHash = generateSaltedHash(inpPassword.Value, newSalt);
+
+                            //Check if they match
+                            if (generateSaltedHash(inpCurrentPassword.Value, oldSalt).SequenceEqual(oldHash))
                             {
-                                //Open the database connection
-                                connectionUpdate.Open();
+                                //Updates the user's password
+                                queryString = "UPDATE Player SET Password=@Password, Salt=@Salt WHERE Username=@Username";
 
-                                //Add the parameters
-                                commandUpdate.Parameters.AddWithValue("@Salt", newSalt);
-                                commandUpdate.Parameters.AddWithValue("@Password", newSaltedHash);
-                                commandUpdate.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
+                                //Stores how many rows were affected
+                                int rowsAffected;
 
-                                ///Execute the command
-                                rowsAffected = commandUpdate.ExecuteNonQuery();
+                                //Create the database connection and command then dispose when done
+                                using (SqlConnection connectionUpdate = new SqlConnection(dbConnectionString))
+                                using (SqlCommand commandUpdate = new SqlCommand(queryString, connectionUpdate))
+                                {
+                                    //Open the database connection
+                                    connectionUpdate.Open();
+
+                                    //Add the parameters
+                                    commandUpdate.Parameters.AddWithValue("@Salt", newSalt);
+                                    commandUpdate.Parameters.AddWithValue("@Password", newSaltedHash);
+                                    commandUpdate.Parameters.AddWithValue("@Username", Context.User.Identity.Name);
+
+                                    ///Execute the command
+                                    rowsAffected = commandUpdate.ExecuteNonQuery();
+                                }
+                                //Show that it succeeded
+                                altSuccess.Visible = true;
                             }
-                            //Show that it succeeded
-                            altSuccess.Visible = true;
+                            else
+                            {
+                                //Show that it did not work
+                                altCurrent.Visible = true;
+                            }
                         }
                     }
                 }
@@ -109,6 +126,8 @@ namespace ChessKnockoff
             activateNav("likAccount");
 
             //Hide the messages
+            altPasswordFeedback.Visible = false;
+            altCurrent.Visible = false;
             altSuccess.Visible = false;
         }
     }

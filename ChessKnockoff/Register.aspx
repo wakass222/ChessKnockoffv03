@@ -27,14 +27,14 @@
             <label for="inpPassword">Password</label>
             <asp:CustomValidator ID="valPassword" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpRegister" OnServerValidate="checkPassword"></asp:CustomValidator>
             <input id="inpPassword" required="" type="password" class="form-control" placeholder="Password" runat="server" />
-            <div class="invalid-feedback" id="passwordFeedback"></div>
         </div>
         <div class="form-group">
             <asp:CustomValidator ID="valRePassword" runat="server" ControlToValidate="inpRePassword" ClientValidationFunction="wrappedPassword" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
             <input id="inpRePassword" required="" type="password" class="form-control" placeholder="Password" runat="server" />
             <div class="invalid-feedback">Passwords do not match.</div>
         </div>
-        <asp:CustomValidator ID="valPasswordRule" runat="server" ControlToValidate="inpPassword" ClientValidationFunction="wrappedPasswordRule" Display="None" ValidationGroup="grpRegister" ValidateEmptyText="True" OnServerValidate="checkPassword"></asp:CustomValidator>
+        <div id="altPasswordFeedback" class="alert alert-danger" runat="server">
+        </div>
         <div class="form-group">
             <asp:Button id="btnSubmitRegister" class="btn btn-lg btn-primary btn-block" type="submit" runat="server" enableviewstate="False" validationgroup="grpRegister" Text="Register" OnClick="RegisterClick" />
             <div id="altError" class="invalid-feedback" runat="server">Your account could not be created at this time. Please try again later.</div>
