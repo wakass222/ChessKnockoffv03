@@ -196,6 +196,9 @@
                 //Turn off the loading visual
                 clearTimeout(randomMoveTimer);
 
+                //Stop the timer
+                console.timeEnd();
+
                 //Store the side
                 gameData.orientation = side;
                 //White always goes first
@@ -456,6 +459,9 @@
 
                     //Stop making particles
                     showEffect = false;
+
+                    //Start the timer
+                    console.time();
 
                     //Call the server function to match make
                     gameHubProxy.server.findGame();
